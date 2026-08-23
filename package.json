@@ -1,0 +1,21 @@
+{
+  "name": "attestflow",
+  "private": true,
+  "version": "0.1.0",
+  "description": "BUIDL CTC 2026 Fall - cross-chain verified AI agent payment engine on Attestcoin Protocol",
+  "workspaces": [
+    "agent",
+    "contracts",
+    "web"
+  ],
+  "scripts": {
+    "e2e:proof": "tsx scripts/e2e-proof.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "dotenv": "^16.4.5",
+    "tsx": "^4.19.2",
+    "typescript": "^5.6.3",
+    "@types/node": "^22.10.0"
+  }
+}

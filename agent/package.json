@@ -1,0 +1,14 @@
+{
+  "name": "@attestflow/agent",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "main": "src/index.ts",
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@gluwa/usc-sdk": "*",
+    "ethers": "^6.13.4"
+  }
+}
