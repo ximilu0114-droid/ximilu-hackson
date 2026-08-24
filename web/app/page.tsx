@@ -12,6 +12,7 @@ interface Pipeline {
 
 interface EventsResp {
   lastHeight: number;
+  live: boolean;
   stats: { rules: number; settled: number; rejected: number; deliveries: number };
   pipelines: Pipeline[];
 }
@@ -105,7 +106,13 @@ export default function Dashboard() {
         </div>
         <div className="flex items-center gap-3 text-xs">
           <span className="rounded-full bg-zinc-800 px-3 py-1">height #{ev?.lastHeight ?? '—'}</span>
-          <span className="rounded-full bg-emerald-900/60 px-3 py-1 text-emerald-300">DRY mode</span>
+          <span
+            className={`rounded-full px-3 py-1 ${
+              ev?.live ? 'bg-emerald-900/60 text-emerald-300' : 'bg-amber-900/60 text-amber-300'
+            }`}
+          >
+            {ev?.live ? 'LIVE' : 'DRY'} mode
+          </span>
         </div>
       </header>
 

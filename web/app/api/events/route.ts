@@ -11,6 +11,7 @@ export interface Pipeline {
 
 export async function GET() {
   const state = readState();
+  const live = !!process.env.LIVE || Object.values(state.settledTx).some((v) => /^0x[0-9a-fA-F]{64}$/.test(String(v)));
   const byTx = new Map<string, Pipeline>();
   for (const e of state.events) {
     if (!e.tx || !ORDER.includes(e.stage as any)) continue;
@@ -38,6 +39,7 @@ export async function GET() {
   const settled = Object.entries(state.settledTx).filter(([, v]) => !String(v).startsWith('rejected'));
   return NextResponse.json({
     lastHeight: state.lastHeight,
+    live,
     stats: {
       rules: state.rules.length,
       settled: pipelines.filter((p) => p.current === 'settled' || p.current === 'delivered').length,
