@@ -57,11 +57,15 @@ docs/        白皮书 PDF 源、集成说明
 npm install            # 根目录安装所有 workspace
 npm run e2e:proof      # Phase 0 端到端证明验证脚本
 npm run typecheck      # tsc --noEmit（根 tsconfig 覆盖 scripts/ 与 agent/src）
-npm run test:contracts # hardhat test（10 个用例）
+npm run test:contracts # hardhat test（14 个用例）
 npm run e2e:settle     # Phase 1 dry E2E（无需 gas）
 # 部署 + live 结算（需 CC3 测试币后执行）：
 npm run deploy:testnet --prefix contracts
 npm run e2e:settle:live --prefix contracts
+# Agent（dry 模式默认；LIVE=1 + ASC_ADDRESS + INBOX_ADDRESS 切 live）：
+npm run start --prefix agent -- --rule "当我在 Sepolia 收到 ≥100 USDC 时，按 10% 释放" --once
+# 仪表盘（:3100）：
+npm run dev --prefix web
 ```
 
 ## SDK 实测补充（0.18.0 实测，超出文档的部分）
@@ -86,13 +90,14 @@ npm run e2e:settle:live --prefix contracts
 - **验收**：① 合约部署到 CC3 Testnet，地址与 ABI 固化到 `deployments/`；② 端到端：Sepolia 发起真实 USDC 转账 → proof 验证 → ASC 自动铸凭证，全程日志留痕；③ Hardhat 测试覆盖安全路径：status != 0x1 的交易被拒绝。
 - **现状**：③ 已达成（10/10 tests）；② dry 版已达成（真实 USDC 交易真实 proof 字节 → ASC 解码/策略匹配/释放模拟 SUCCESS）；①② 的链上部分被 CC3 水龙头卡住（需 Discord /faucet 给 `.env` 钱包充值）→ `npm run deploy:testnet && npm run e2e:settle:live` 一条命令补完。
 
-### Phase 2 — Agent 服务 + Writability + LLM 规则解析（8/29–8/31）
-- 自然语言规则 → 结构化策略配置 JSON；Agent 循环：监听 → 等 attestation → proof → 验证 → 执行。
-- Writability：Creditcoin 决策结果经 Outbox 回传 Sepolia Inbox 触发动作（闭环）。
-- **验收**：① 一条中文自然语言规则输入后，全流程无人干预跑通并产出可复查日志；② writability 消息在目标链成功触发执行（有链上证据）；③ 服务崩溃重启后能恢复监听不丢事件。
+### Phase 2 — Agent 服务 + Writability + LLM 规则解析（8/29–8/31）✅ dry 完成（live 链上证据等双链水龙头）
+- 自然语言规则 → 结构化策略配置 JSON（builtin 确定性解析器 + 可选 LLM，需披露）；Agent 循环：监听 → 等 attestation → proof → 验证 → 执行。
+- Writability：**官方 Outbox/Inbox 尚未上 testnet**（文档明示审计中）→ ASC 发 `MessagePublished` 事件 + agent relayer 四步语义适配层（sign→deliver）+ Sepolia `InboxDemo` 验签执行合约。提交材料须如实披露此差异。
+- **验收**：① ✅ 中文规则输入后全流程无人干预跑通（`npm run start --prefix agent -- --rule "…" --once`），日志在 `agent/agent.log`；② 本地 InboxDemo 验签/防重放测试通过（writability.test.ts），live 链上证据待 Sepolia ETH；③ ✅ 崩溃重启恢复：state.json 游标 + txHash 去重，已实测。
 
-### Phase 3 — 前端仪表盘（9/1–9/3）
-- **验收**：① 可创建/启停规则；② 实时展示每笔跨链验证的状态流转（pending → attested → proved → executed）；③ 支持自然语言问答查历史；④ 录屏分辨率下 UI 无布局破损。
+### Phase 3 — 前端仪表盘（9/1–9/3）✅ 已完成
+- **验收**：① ✅ 创建/启停规则（POST /api/rules + toggle）；② ✅ 实时流水（5s 轮询，match→proved→settled→delivered 四段 stepper）；③ ✅ NL 问答查历史（/api/ask，builtin+可选 LLM）；④ 响应式布局 grid（lg 断点两栏）。
+- 运行：`npm run dev --prefix web`（:3100）；生产 `npm run build && npm start --prefix web`。
 
 ### Phase 4 — 提交材料（9/4–9/5）
 - **验收**：① 新机器从零 clone → 按 README 跑通 ≤ 30 分钟、无需人工排错；② 白皮书 PDF（问题/方案/架构/协议集成深度/路线图）；③ Demo 视频 2–3 分钟（脚本先行再录）；④ 集成说明单独成章，明确列出 Readability/Writability/precompile 用法与第三方披露。

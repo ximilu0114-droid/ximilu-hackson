@@ -2,14 +2,27 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { CONFIG } from './config.js';
 
+export interface AgentEvent {
+  ts: string;
+  stage: 'rule-added' | 'match' | 'proved' | 'settled' | 'rejected' | 'delivered';
+  tx?: string;
+  detail?: string;
+}
+
 export interface AgentState {
   lastHeight: number; // last Sepolia block scanned
   settledTx: Record<string, string>; // txHash -> settlement info
-  rules: Array<{ id: string; text: string; engine: string; spec: any; createdAt: string }>;
+  rules: Array<{ id: string; text: string; engine: string; active: boolean; policyId: number; spec: any; createdAt: string }>;
   deliveries: Record<string, string>; // MessagePublished key -> delivery tx
+  events: AgentEvent[]; // append-only pipeline feed for the dashboard
 }
 
-const EMPTY: AgentState = { lastHeight: 0, settledTx: {}, rules: [], deliveries: {} };
+const EMPTY: AgentState = { lastHeight: 0, settledTx: {}, rules: [], deliveries: {}, events: [] };
+
+export function recordEvent(s: AgentState, e: AgentEvent): void {
+  s.events.push(e);
+  if (s.events.length > 500) s.events = s.events.slice(-500); // ring buffer
+}
 
 export function loadState(): AgentState {
   try {

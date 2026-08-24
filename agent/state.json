@@ -1,16 +1,18 @@
 {
   "lastHeight": 11553940,
   "settledTx": {
-    "0xe66a17002403163110611d0fa1a552eff68a3ea4e47de140e86d91d91e07143b": "dry@2026-08-24T01:58:57.690Z",
-    "0xa45d1dbaaa3a9d6380effbd72f21ff5af955bc61ba7b12dba0f9bffa9fdd6516": "dry@2026-08-24T01:58:58.383Z",
-    "0x16dde240693ae911df6376f78313039ea5463d2066ef8f59aad4ba5f6dc612cf": "dry@2026-08-24T01:58:59.057Z",
-    "0x2421de3b61d4d9eddcaa1608a353d8a10afe3ea538604bc21388788d633b646e": "dry@2026-08-24T01:59:01.152Z"
+    "0xe66a17002403163110611d0fa1a552eff68a3ea4e47de140e86d91d91e07143b": "dry@2026-08-24T02:00:32.180Z",
+    "0xa45d1dbaaa3a9d6380effbd72f21ff5af955bc61ba7b12dba0f9bffa9fdd6516": "dry@2026-08-24T02:00:32.867Z",
+    "0x16dde240693ae911df6376f78313039ea5463d2066ef8f59aad4ba5f6dc612cf": "dry@2026-08-24T02:00:33.388Z",
+    "0x2421de3b61d4d9eddcaa1608a353d8a10afe3ea538604bc21388788d633b646e": "dry@2026-08-24T02:00:35.828Z"
   },
   "rules": [
     {
       "id": "r1",
       "text": "当我在 Sepolia 收到 ≥100 USDC 时，按 10% 释放给受益人",
       "engine": "builtin",
+      "active": true,
+      "policyId": 0,
       "spec": {
         "sourceChain": "sepolia",
         "token": "0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238",
@@ -19,7 +21,20 @@
         "payoutRatioE18": "100000000000000000",
         "memo": "当我在 Sepolia 收到 ≥100 USDC 时，按 10% 释放给受益人"
       },
-      "createdAt": "2026-08-24T01:58:53.231Z"
+      "createdAt": "2026-08-24T02:00:26.506Z"
+    },
+    {
+      "id": "r2",
+      "text": "当我在 Sepolia 收到 ≥200 USDC 时，按 5% 释放",
+      "engine": "builtin",
+      "active": false,
+      "policyId": 0,
+      "spec": {
+        "minAmount": "200000000",
+        "token": "0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238",
+        "payoutRatioE18": "50000000000000000"
+      },
+      "createdAt": "2026-08-24T02:04:21.975Z"
     }
   ],
   "deliveries": {
@@ -27,5 +42,167 @@
     "0xa45d1dbaaa3a9d6380effbd72f21ff5af955bc61ba7b12dba0f9bffa9fdd6516": "dry-sig",
     "0x16dde240693ae911df6376f78313039ea5463d2066ef8f59aad4ba5f6dc612cf": "dry-sig",
     "0x2421de3b61d4d9eddcaa1608a353d8a10afe3ea538604bc21388788d633b646e": "dry-sig"
-  }
+  },
+  "events": [
+    {
+      "ts": "2026-08-24T02:00:26.506Z",
+      "stage": "rule-added",
+      "detail": "r1: 当我在 Sepolia 收到 ≥100 USDC 时，按 10% 释放给受益人"
+    },
+    {
+      "ts": "2026-08-24T02:00:29.386Z",
+      "stage": "match",
+      "tx": "0xca65a37a014e5d0324184eb67c63a5112a69c3cb19612a5642a152a5299d9058",
+      "detail": "amount=720000000"
+    },
+    {
+      "ts": "2026-08-24T02:00:29.715Z",
+      "stage": "match",
+      "tx": "0xca65a37a014e5d0324184eb67c63a5112a69c3cb19612a5642a152a5299d9058",
+      "detail": "amount=720000000"
+    },
+    {
+      "ts": "2026-08-24T02:00:30.041Z",
+      "stage": "match",
+      "tx": "0xca65a37a014e5d0324184eb67c63a5112a69c3cb19612a5642a152a5299d9058",
+      "detail": "amount=720000000"
+    },
+    {
+      "ts": "2026-08-24T02:00:30.472Z",
+      "stage": "match",
+      "tx": "0xaf389a5793bc3242d2c9989ad5d41b0ed41120f3ae9ab7eb6af132a27160f031",
+      "detail": "amount=698059917"
+    },
+    {
+      "ts": "2026-08-24T02:00:30.883Z",
+      "stage": "match",
+      "tx": "0xe66a17002403163110611d0fa1a552eff68a3ea4e47de140e86d91d91e07143b",
+      "detail": "amount=102675499"
+    },
+    {
+      "ts": "2026-08-24T02:00:32.176Z",
+      "stage": "proved",
+      "tx": "0xe66a17002403163110611d0fa1a552eff68a3ea4e47de140e86d91d91e07143b",
+      "detail": "block=11553851 idx=10"
+    },
+    {
+      "ts": "2026-08-24T02:00:32.180Z",
+      "stage": "settled",
+      "tx": "0xe66a17002403163110611d0fa1a552eff68a3ea4e47de140e86d91d91e07143b",
+      "detail": "dry-run"
+    },
+    {
+      "ts": "2026-08-24T02:00:32.185Z",
+      "stage": "delivered",
+      "tx": "0xe66a17002403163110611d0fa1a552eff68a3ea4e47de140e86d91d91e07143b",
+      "detail": "dry-sig"
+    },
+    {
+      "ts": "2026-08-24T02:00:32.185Z",
+      "stage": "match",
+      "tx": "0xa45d1dbaaa3a9d6380effbd72f21ff5af955bc61ba7b12dba0f9bffa9fdd6516",
+      "detail": "amount=151000000"
+    },
+    {
+      "ts": "2026-08-24T02:00:32.864Z",
+      "stage": "proved",
+      "tx": "0xa45d1dbaaa3a9d6380effbd72f21ff5af955bc61ba7b12dba0f9bffa9fdd6516",
+      "detail": "block=11553750 idx=6"
+    },
+    {
+      "ts": "2026-08-24T02:00:32.867Z",
+      "stage": "settled",
+      "tx": "0xa45d1dbaaa3a9d6380effbd72f21ff5af955bc61ba7b12dba0f9bffa9fdd6516",
+      "detail": "dry-run"
+    },
+    {
+      "ts": "2026-08-24T02:00:32.869Z",
+      "stage": "delivered",
+      "tx": "0xa45d1dbaaa3a9d6380effbd72f21ff5af955bc61ba7b12dba0f9bffa9fdd6516",
+      "detail": "dry-sig"
+    },
+    {
+      "ts": "2026-08-24T02:00:32.870Z",
+      "stage": "match",
+      "tx": "0x16dde240693ae911df6376f78313039ea5463d2066ef8f59aad4ba5f6dc612cf",
+      "detail": "amount=151000000"
+    },
+    {
+      "ts": "2026-08-24T02:00:33.387Z",
+      "stage": "proved",
+      "tx": "0x16dde240693ae911df6376f78313039ea5463d2066ef8f59aad4ba5f6dc612cf",
+      "detail": "block=11553737 idx=13"
+    },
+    {
+      "ts": "2026-08-24T02:00:33.388Z",
+      "stage": "settled",
+      "tx": "0x16dde240693ae911df6376f78313039ea5463d2066ef8f59aad4ba5f6dc612cf",
+      "detail": "dry-run"
+    },
+    {
+      "ts": "2026-08-24T02:00:33.391Z",
+      "stage": "delivered",
+      "tx": "0x16dde240693ae911df6376f78313039ea5463d2066ef8f59aad4ba5f6dc612cf",
+      "detail": "dry-sig"
+    },
+    {
+      "ts": "2026-08-24T02:00:33.391Z",
+      "stage": "match",
+      "tx": "0xe1742a93f6e9c758afea7051a5c483a9a5a8f50bcc725f4dfcedf64ea335ddf6",
+      "detail": "amount=251000000"
+    },
+    {
+      "ts": "2026-08-24T02:00:33.716Z",
+      "stage": "match",
+      "tx": "0x8bb1b1d86853a43d1ca53b017c6c386703d38cd3aa7c0f7c4e2190e34fa9e213",
+      "detail": "amount=2200000000"
+    },
+    {
+      "ts": "2026-08-24T02:00:34.158Z",
+      "stage": "match",
+      "tx": "0x646b7106f1d277fc8e9c58ac735aba547fa9874c4a8bcaf7d9c06c3e2e600830",
+      "detail": "amount=304191156"
+    },
+    {
+      "ts": "2026-08-24T02:00:34.480Z",
+      "stage": "match",
+      "tx": "0x379024ef79319238b4a6d4065635034a5e33b13014ca79dc219e8501fd98b7b9",
+      "detail": "amount=1000000000"
+    },
+    {
+      "ts": "2026-08-24T02:00:34.791Z",
+      "stage": "match",
+      "tx": "0xc0dfb3d5937fb62ab795dea2739f53208c4c60c358b8bdb54234888cae0f532a",
+      "detail": "amount=1000000000"
+    },
+    {
+      "ts": "2026-08-24T02:00:35.119Z",
+      "stage": "match",
+      "tx": "0x2421de3b61d4d9eddcaa1608a353d8a10afe3ea538604bc21388788d633b646e",
+      "detail": "amount=100000000"
+    },
+    {
+      "ts": "2026-08-24T02:00:35.826Z",
+      "stage": "proved",
+      "tx": "0x2421de3b61d4d9eddcaa1608a353d8a10afe3ea538604bc21388788d633b646e",
+      "detail": "block=11553550 idx=4"
+    },
+    {
+      "ts": "2026-08-24T02:00:35.828Z",
+      "stage": "settled",
+      "tx": "0x2421de3b61d4d9eddcaa1608a353d8a10afe3ea538604bc21388788d633b646e",
+      "detail": "dry-run"
+    },
+    {
+      "ts": "2026-08-24T02:00:35.831Z",
+      "stage": "delivered",
+      "tx": "0x2421de3b61d4d9eddcaa1608a353d8a10afe3ea538604bc21388788d633b646e",
+      "detail": "dry-sig"
+    },
+    {
+      "ts": "2026-08-24T02:04:21.975Z",
+      "stage": "rule-added",
+      "detail": "r2: 当我在 Sepolia 收到 ≥200 USDC 时，按 5% 释放"
+    }
+  ]
 }

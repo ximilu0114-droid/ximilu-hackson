@@ -12,7 +12,7 @@
  */
 import { Wallet, Contract } from 'ethers';
 import { loadEnvDotenv, CONFIG } from './config.js';
-import { loadState, saveState, log, AgentState } from './state.js';
+import { loadState, saveState, log, recordEvent, AgentState } from './state.js';
 import { parseRule } from './llm.js';
 import { makeClients, agentWallet, getProof, settleOnASC, decodeTxBytes, decodeErc20Call } from './prover.js';
 import { scanOnce } from './watcher.js';
@@ -46,7 +46,8 @@ async function main() {
     if (!state.rules.find((r) => r.text === args.rule)) {
       const parsed = await parseRule(args.rule!, wallet.address);
       const id = 'r' + (state.rules.length + 1);
-      state.rules.push({ id, text: args.rule!, engine: parsed.engine, spec: parsed.spec as any, createdAt: new Date().toISOString() });
+      state.rules.push({ id, text: args.rule!, engine: parsed.engine, active: true, policyId: 0, spec: parsed.spec as any, createdAt: new Date().toISOString() });
+      recordEvent(state, { ts: new Date().toISOString(), stage: 'rule-added', detail: `${id}: ${args.rule}` });
       log(`rule ${id} registered via ${parsed.engine}: min=${parsed.spec.minAmount} token=${parsed.spec.token} ratio=${parsed.spec.payoutRatioE18}`);
     }
   }
@@ -70,10 +71,11 @@ async function main() {
 
   while (running) {
     try {
-      const matches = await scanOnce(sepolia, state, state.rules as any, wallet.address);
+      const matches = await scanOnce(sepolia, state, state.rules.filter((r) => r.active) as any, wallet.address);
 
       for (const m of matches) {
         if (state.settledTx[m.txHash]) continue; // dedupe across restarts
+        recordEvent(state, { ts: new Date().toISOString(), stage: 'match', tx: m.txHash, detail: `amount=${m.amount}` });
 
         // pre-filter: underlying calldata must pay the payee via transfer/transferFrom
         const tx = await sepolia.getTransaction(m.txHash);
@@ -86,15 +88,18 @@ async function main() {
 
         // proof generation (waits only because we scan the attested window)
         const proof = await getProof(m.txHash);
+        recordEvent(state, { ts: new Date().toISOString(), stage: 'proved', tx: m.txHash, detail: `block=${proof.headerNumber} idx=${proof.txIndex}` });
 
         // on-chain settle (live) or local decode validation (dry)
         const res = await settleOnASC(0, proof);
         if (res.rejected) {
           state.settledTx[m.txHash] = 'rejected:status!=1';
+          recordEvent(state, { ts: new Date().toISOString(), stage: 'rejected', tx: m.txHash, detail: 'status!=1' });
           continue;
         }
         if (!res.dry && !res.txHash) continue;
         state.settledTx[m.txHash] = res.dry ? `dry@${new Date().toISOString()}` : res.txHash;
+        recordEvent(state, { ts: new Date().toISOString(), stage: 'settled', tx: m.txHash, detail: res.dry ? 'dry-run' : res.txHash });
 
         // writability leg: payload mirrors ASC MessagePublished encoding
         const tv = decodeTxBytes(proof.txBytes);
@@ -108,6 +113,7 @@ async function main() {
         );
         const delivery = await deliverMessage(payload, wallet as Wallet, inbox);
         state.deliveries[m.txHash] = delivery.dry ? `dry-sig` : delivery.txHash;
+        recordEvent(state, { ts: new Date().toISOString(), stage: 'delivered', tx: m.txHash, detail: delivery.dry ? 'dry-sig' : delivery.txHash });
         log(`settled+delivered: ${m.txHash} release≈${released}`);
       }
 
