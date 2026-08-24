@@ -8,6 +8,12 @@ export const ASC_ABI = [
   'event MessagePublished(uint64 destChainKey, address destContract, bytes payload)',
   'function settle(uint256 policyId, uint64 chainKey, uint64 height, uint64 txIndex, bytes encodedTransaction, (bytes32,(bytes32,bool)[]) merkleProof, (bytes32,bytes32[]) continuityProof) external',
   'function previewTx(bytes) view returns ((address from,address to,bool toIsNull,uint256 value,bytes data,bool receiptStatus))',
+  'function findPolicy(uint64 chainKey, address payee, address token) view returns (int256)',
+  'function createPolicy(uint64 chainKey, address token, uint8 tokenDecimals, address payee, uint256 minAmount, address beneficiary, uint256 payoutRatioE18) returns (uint256)',
+  'function setOperator(address operator, bool enabled) external',
+  'function operators(address) view returns (bool)',
+  'function escrowBalance() view returns (uint256)',
+  'function owner() view returns (address)',
 ];
 
 export async function makeClients() {
@@ -87,12 +93,42 @@ export function decodeErc20Call(data: string): { recipient: string; amount: bigi
 }
 
 /**
+ * Find or create the ASC policy for a matched payment.
+ * Returns policyId; agent wallet acts as owner/beneficiary in demo mode.
+ */
+export async function ensurePolicy(
+  asc: Contract,
+  signerAddress: string,
+  spec: { token: string | null; minAmount: bigint; payoutRatioE18: bigint },
+  payee: string
+): Promise<number> {
+  const token = spec.token ?? '0x0000000000000000000000000000000000000000';
+  const existing = Number(await asc.findPolicy(CONFIG.sepoliaChainKey, payee, token));
+  if (existing >= 0) return existing;
+  const decimals = spec.token ? 6 : 18;
+  const tx = await asc.createPolicy(
+    CONFIG.sepoliaChainKey,
+    token,
+    decimals,
+    payee,
+    spec.minAmount,
+    signerAddress,
+    spec.payoutRatioE18,
+  );
+  await tx.wait();
+  log(`policy created on ASC for payee ${payee}`);
+  return Number(await asc.findPolicy(CONFIG.sepoliaChainKey, payee, token));
+}
+
+/**
  * Settle on ASC.
- * - LIVE (LIVE=1 + ASC_ADDRESS + funded key): real verifyAndEmit via precompile.
+ * - LIVE (LIVE=1 + ASC_ADDRESS + funded key): real on-chain verification via
+ *   precompile verify() + escrow release.
  * - DRY (default): local decode validation only — no gas needed.
  * Both paths enforce source-tx success status before settling.
  */
 export async function settleOnASC(
+  asc: Contract | null,
   policyId: number,
   proof: any
 ): Promise<{ txHash: string; dry: boolean; rejected?: boolean }> {
@@ -103,22 +139,20 @@ export async function settleOnASC(
     return { txHash: '', dry: true, rejected: true };
   }
 
-  if (!CONFIG.liveMode || !CONFIG.ascAddress || !CONFIG.privateKey || CONFIG.ascAddress === '') {
+  if (!asc) {
     log(
       `DRY settle: sourceTx=${proof.txHash} status=${tv.success} to=${tv.to} dataLen=${tv.data.length} — live settle skipped (unfunded)`,
     );
     return { txHash: '', dry: true };
   }
-  const { cc3 } = await makeClients();
-  const wallet = agentWallet(cc3);
-  const asc = new Contract(CONFIG.ascAddress, ASC_ABI, wallet);
   const tx = await asc.settle(
     policyId,
     proof.chainKey,
     proof.headerNumber,
     proof.txIndex,
     proof.txBytes,
-    [proof.merkleProof.root, proof.merkleProof.siblings],
+    // tuples as positional arrays (SDK returns objects; ABI components are unnamed)
+    [proof.merkleProof.root, (proof.merkleProof.siblings ?? []).map((s: any) => [s.hash, s.isLeft])],
     [proof.continuityProof.lowerEndpointDigest, proof.continuityProof.roots],
   );
   const rcpt = await tx.wait();

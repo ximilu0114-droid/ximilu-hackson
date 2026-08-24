@@ -85,15 +85,17 @@ npm run dev --prefix web
 - Sepolia USDC 上 transferFrom(0x23b872dd) 比 transfer 常见得多，ASC 两种 selector 都支持。
 - txBytes 布局（encoding v1）：`(uint8 txType, bytes[] chunks)`；chunk[0] 所有类型通用 `(uint64,uint64,address,bool,address,uint256,bytes)`；**最后一块是 receipt 含 status**——ASC 靠这个自查交易成败。
 
-### Phase 1 — ASC 合约最小闭环（8/26–8/28）✅ 代码完成（live 部署等水龙头）
+### Phase 1 — ASC 合约最小闭环（8/26–8/28）✅ 全部达成（含 live）
 - ASC 合约：验证通过后自动执行业务逻辑（铸造凭证 + 释放资产）。
-- **验收**：① 合约部署到 CC3 Testnet，地址与 ABI 固化到 `deployments/`；② 端到端：Sepolia 发起真实 USDC 转账 → proof 验证 → ASC 自动铸凭证，全程日志留痕；③ Hardhat 测试覆盖安全路径：status != 0x1 的交易被拒绝。
-- **现状**：③ 已达成（10/10 tests）；② dry 版已达成（真实 USDC 交易真实 proof 字节 → ASC 解码/策略匹配/释放模拟 SUCCESS）；①② 的链上部分被 CC3 水龙头卡住（需 Discord /faucet 给 `.env` 钱包充值）→ `npm run deploy:testnet && npm run e2e:settle:live` 一条命令补完。
+- **验收**：① ✅ 合约部署到 CC3 Testnet `0x0cFd2f6eBA1B2B8Af9C5a49c886b8F950594374F`（ABI 固化 `deployments/`）；② ✅ 端到端 live：真实 Sepolia USDC 支付 → proof → ASC 链上验证+结算，例：settle `0x643fb17d...`（释放 1.99 CTC）；③ ✅ Hardhat 测试 14/14 含 status!=0x1 拒绝路径。
+- **关键实测**：CC3 testnet 上**合约上下文调用 `verifyAndEmit()` 会裸 revert（EOA 直调正常）**；合约内改用只读 `verify()` 同步验证，事件由 ASC 自发（PaymentSettled/MessagePublished），密码学等价。
 
-### Phase 2 — Agent 服务 + Writability + LLM 规则解析（8/29–8/31）✅ dry 完成（live 链上证据等双链水龙头）
+### Phase 2 — Agent 服务 + Writability + LLM 规则解析（8/29–8/31）✅ 全部达成（含 live）
 - 自然语言规则 → 结构化策略配置 JSON（builtin 确定性解析器 + 可选 LLM，需披露）；Agent 循环：监听 → 等 attestation → proof → 验证 → 执行。
 - Writability：**官方 Outbox/Inbox 尚未上 testnet**（文档明示审计中）→ ASC 发 `MessagePublished` 事件 + agent relayer 四步语义适配层（sign→deliver）+ Sepolia `InboxDemo` 验签执行合约。提交材料须如实披露此差异。
-- **验收**：① ✅ 中文规则输入后全流程无人干预跑通（`npm run start --prefix agent -- --rule "…" --once`），日志在 `agent/agent.log`；② 本地 InboxDemo 验签/防重放测试通过（writability.test.ts），live 链上证据待 Sepolia ETH；③ ✅ 崩溃重启恢复：state.json 游标 + txHash 去重，已实测。
+- **验收**：① ✅ 中文规则输入后全流程无人干预跑通（`npm run start --prefix agent -- --rule "…" --once`），日志在 `agent/agent.log`；② ✅ live 双链证据：CC3 settle `0x9c8caf6b...` → Sepolia InboxDemo `MessageExecuted` `0xd6abf721...`；③ ✅ 崩溃重启恢复：state.json 游标 + txHash 去重，已实测。
+- **部署地址**：ASC `0x0cFd2f6eBA1B2B8Af9C5a49c886b8F950594374F`（CC3）；InboxDemo `0x83A0b8D26Dd28094eE0CA74E57e79028194f868E`（Sepolia）。
+- **LIVE 运行方式**：`LIVE=1 ASC_ADDRESS=0x0cFd… INBOX_ADDRESS=0x83A0… npm run start --prefix agent -- --rule "…" [--once]`；escrow 会在启动时自动补足到 500 CTC。
 
 ### Phase 3 — 前端仪表盘（9/1–9/3）✅ 已完成
 - **验收**：① ✅ 创建/启停规则（POST /api/rules + toggle）；② ✅ 实时流水（5s 轮询，match→proved→settled→delivered 四段 stepper）；③ ✅ NL 问答查历史（/api/ask，builtin+可选 LLM）；④ 响应式布局 grid（lg 断点两栏）。

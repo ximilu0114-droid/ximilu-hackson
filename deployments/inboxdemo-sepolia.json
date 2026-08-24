@@ -1,0 +1,141 @@
+{
+  "name": "InboxDemo",
+  "address": "0x83A0b8D26Dd28094eE0CA74E57e79028194f868E",
+  "deployer": "0x4dAC2a94AAa8A038632264090048F955F184ac2c",
+  "txHash": "0x482c72ca1da3368ee35bdcc30dfbf8ff48c6803fc30772f6cba8b47c1bd596d1",
+  "blockNumber": 11555092,
+  "chainId": 11155111,
+  "network": "sepolia",
+  "deployedAt": "2026-08-24T05:48:25.988Z",
+  "abi": [
+    {
+      "type": "constructor",
+      "stateMutability": "undefined",
+      "payable": false,
+      "inputs": [
+        {
+          "type": "address",
+          "name": "relayer"
+        }
+      ]
+    },
+    {
+      "type": "event",
+      "anonymous": false,
+      "name": "MessageExecuted",
+      "inputs": [
+        {
+          "type": "bytes32",
+          "name": "payloadHash",
+          "indexed": true
+        },
+        {
+          "type": "address",
+          "name": "executor",
+          "indexed": true
+        },
+        {
+          "type": "uint256",
+          "name": "policyId",
+          "indexed": false
+        },
+        {
+          "type": "uint256",
+          "name": "released",
+          "indexed": false
+        }
+      ]
+    },
+    {
+      "type": "function",
+      "name": "authorizedRelayer",
+      "constant": true,
+      "stateMutability": "view",
+      "payable": false,
+      "inputs": [],
+      "outputs": [
+        {
+          "type": "address",
+          "name": ""
+        }
+      ]
+    },
+    {
+      "type": "function",
+      "name": "execute",
+      "constant": false,
+      "payable": false,
+      "inputs": [
+        {
+          "type": "bytes",
+          "name": "payload"
+        },
+        {
+          "type": "bytes",
+          "name": "signature"
+        }
+      ],
+      "outputs": []
+    },
+    {
+      "type": "function",
+      "name": "executedPayloads",
+      "constant": true,
+      "stateMutability": "view",
+      "payable": false,
+      "inputs": [
+        {
+          "type": "bytes32",
+          "name": ""
+        }
+      ],
+      "outputs": [
+        {
+          "type": "bool",
+          "name": ""
+        }
+      ]
+    },
+    {
+      "type": "function",
+      "name": "lastAmountReceived",
+      "constant": true,
+      "stateMutability": "view",
+      "payable": false,
+      "inputs": [],
+      "outputs": [
+        {
+          "type": "uint256",
+          "name": ""
+        }
+      ]
+    },
+    {
+      "type": "function",
+      "name": "lastPayloadHash",
+      "constant": true,
+      "stateMutability": "view",
+      "payable": false,
+      "inputs": [],
+      "outputs": [
+        {
+          "type": "bytes32",
+          "name": ""
+        }
+      ]
+    },
+    {
+      "type": "function",
+      "name": "setAuthorizedRelayer",
+      "constant": false,
+      "payable": false,
+      "inputs": [
+        {
+          "type": "address",
+          "name": "next"
+        }
+      ],
+      "outputs": []
+    }
+  ]
+}

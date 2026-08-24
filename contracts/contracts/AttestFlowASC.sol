@@ -212,14 +212,19 @@ contract AttestFlowASC {
         require(p.active, 'POLICY_INACTIVE');
         require(chainKey == p.chainKey, 'CHAIN_MISMATCH');
 
-        // 1) Cryptographic verification against attestations (reverts if invalid).
-        BLOCK_PROVER.verifyAndEmit(
+        // 1) Cryptographic verification against attestations.
+        // NOTE: we use the read-only verify() rather than verifyAndEmit():
+        // on CC3 testnet state-changing precompile calls from contract context
+        // revert, while verify() works identically for our purposes (the ASC
+        // emits its own settlement events; no dependency on precompile events).
+        bool verified = BLOCK_PROVER.verify(
             chainKey,
             height,
             encodedTransaction,
             merkleProof,
             continuityProof
         );
+        require(verified, 'PROOF_INVALID');
 
         // 2) Replay protection — each source tx settles exactly once.
         bytes32 sourceTxId = keccak256(abi.encodePacked(chainKey, height, txIndex));

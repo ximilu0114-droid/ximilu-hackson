@@ -27,8 +27,11 @@ export async function deliverMessage(
   signer: Wallet,
   inbox: Contract | null
 ): Promise<{ txHash: string; dry: boolean }> {
-  const payloadHash = (await import('ethers')).keccak256(payload);
-  const sig = await signer.signMessage(payload);
+  const ethers = await import('ethers');
+  const payloadHash = ethers.keccak256(payload);
+  // Inbox validates keccak256("\x19Ethereum Signed Message:\n32" ++ payloadHash),
+  // so sign the 32-byte digest (signMessage(bytesLike) applies EIP-191 itself).
+  const sig = await signer.signMessage(ethers.getBytes(payloadHash));
 
   if (!CONFIG.liveMode || !CONFIG.inboxAddress || !inbox) {
     log(`DRY deliver: payloadHash=${payloadHash} sig=${sig.slice(0, 20)}... — live Inbox delivery skipped (unfunded)`);

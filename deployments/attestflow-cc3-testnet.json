@@ -1,0 +1,694 @@
+{
+  "name": "AttestFlowASC",
+  "address": "0x0cFd2f6eBA1B2B8Af9C5a49c886b8F950594374F",
+  "deployer": "0x4dAC2a94AAa8A038632264090048F955F184ac2c",
+  "txHash": "0x3b661c7db049fd22623bb8a8705e3c13495bee085efbd9a7b4a1ded888c78eec",
+  "blockNumber": 5363545,
+  "chainId": 102031,
+  "network": "cc3-testnet",
+  "deployedAt": "2026-08-24T03:12:46.899Z",
+  "abi": [
+    {
+      "type": "constructor",
+      "stateMutability": "undefined",
+      "payable": false,
+      "inputs": []
+    },
+    {
+      "type": "event",
+      "anonymous": false,
+      "name": "Deposited",
+      "inputs": [
+        {
+          "type": "address",
+          "name": "from",
+          "indexed": true
+        },
+        {
+          "type": "uint256",
+          "name": "amount",
+          "indexed": false
+        }
+      ]
+    },
+    {
+      "type": "event",
+      "anonymous": false,
+      "name": "MessagePublished",
+      "inputs": [
+        {
+          "type": "uint64",
+          "name": "destChainKey",
+          "indexed": false
+        },
+        {
+          "type": "address",
+          "name": "destContract",
+          "indexed": false
+        },
+        {
+          "type": "bytes",
+          "name": "payload",
+          "indexed": false
+        }
+      ]
+    },
+    {
+      "type": "event",
+      "anonymous": false,
+      "name": "PaymentSettled",
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": "policyId",
+          "indexed": true
+        },
+        {
+          "type": "bytes32",
+          "name": "sourceTxId",
+          "indexed": true
+        },
+        {
+          "type": "address",
+          "name": "payer",
+          "indexed": true
+        },
+        {
+          "type": "address",
+          "name": "token",
+          "indexed": false
+        },
+        {
+          "type": "uint256",
+          "name": "amount",
+          "indexed": false
+        },
+        {
+          "type": "address",
+          "name": "beneficiary",
+          "indexed": false
+        },
+        {
+          "type": "uint256",
+          "name": "releasedAmount",
+          "indexed": false
+        },
+        {
+          "type": "uint64",
+          "name": "srcHeight",
+          "indexed": false
+        },
+        {
+          "type": "uint64",
+          "name": "srcTxIndex",
+          "indexed": false
+        }
+      ]
+    },
+    {
+      "type": "event",
+      "anonymous": false,
+      "name": "PolicyActiveSet",
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": "policyId",
+          "indexed": true
+        },
+        {
+          "type": "bool",
+          "name": "active",
+          "indexed": false
+        }
+      ]
+    },
+    {
+      "type": "event",
+      "anonymous": false,
+      "name": "PolicyCreated",
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": "policyId",
+          "indexed": true
+        },
+        {
+          "type": "tuple",
+          "name": "policy",
+          "indexed": false,
+          "components": [
+            {
+              "type": "uint64",
+              "name": "chainKey"
+            },
+            {
+              "type": "address",
+              "name": "token"
+            },
+            {
+              "type": "uint8",
+              "name": "tokenDecimals"
+            },
+            {
+              "type": "address",
+              "name": "payee"
+            },
+            {
+              "type": "uint256",
+              "name": "minAmount"
+            },
+            {
+              "type": "address",
+              "name": "beneficiary"
+            },
+            {
+              "type": "uint256",
+              "name": "payoutRatioE18"
+            },
+            {
+              "type": "bool",
+              "name": "active"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "event",
+      "anonymous": false,
+      "name": "Withdrawn",
+      "inputs": [
+        {
+          "type": "address",
+          "name": "to",
+          "indexed": true
+        },
+        {
+          "type": "uint256",
+          "name": "amount",
+          "indexed": false
+        }
+      ]
+    },
+    {
+      "type": "function",
+      "name": "BLOCK_PROVER",
+      "constant": true,
+      "stateMutability": "view",
+      "payable": false,
+      "inputs": [],
+      "outputs": [
+        {
+          "type": "address",
+          "name": ""
+        }
+      ]
+    },
+    {
+      "type": "function",
+      "name": "createPolicy",
+      "constant": false,
+      "payable": false,
+      "inputs": [
+        {
+          "type": "uint64",
+          "name": "chainKey"
+        },
+        {
+          "type": "address",
+          "name": "token"
+        },
+        {
+          "type": "uint8",
+          "name": "tokenDecimals"
+        },
+        {
+          "type": "address",
+          "name": "payee"
+        },
+        {
+          "type": "uint256",
+          "name": "minAmount"
+        },
+        {
+          "type": "address",
+          "name": "beneficiary"
+        },
+        {
+          "type": "uint256",
+          "name": "payoutRatioE18"
+        }
+      ],
+      "outputs": [
+        {
+          "type": "uint256",
+          "name": "policyId"
+        }
+      ]
+    },
+    {
+      "type": "function",
+      "name": "creditOf",
+      "constant": true,
+      "stateMutability": "view",
+      "payable": false,
+      "inputs": [
+        {
+          "type": "address",
+          "name": ""
+        }
+      ],
+      "outputs": [
+        {
+          "type": "uint256",
+          "name": ""
+        }
+      ]
+    },
+    {
+      "type": "function",
+      "name": "debugMatch",
+      "constant": true,
+      "stateMutability": "view",
+      "payable": false,
+      "inputs": [
+        {
+          "type": "bytes",
+          "name": "txBytes"
+        },
+        {
+          "type": "uint256",
+          "name": "policyId"
+        }
+      ],
+      "outputs": [
+        {
+          "type": "bool",
+          "name": "toIsNull_"
+        },
+        {
+          "type": "bool",
+          "name": "tokenIsZero"
+        },
+        {
+          "type": "bool",
+          "name": "toEqToken"
+        },
+        {
+          "type": "uint256",
+          "name": "dataLen"
+        },
+        {
+          "type": "bytes4",
+          "name": "selector_"
+        },
+        {
+          "type": "address",
+          "name": "recipient"
+        },
+        {
+          "type": "uint256",
+          "name": "amt"
+        },
+        {
+          "type": "bool",
+          "name": "recEqPayee"
+        }
+      ]
+    },
+    {
+      "type": "function",
+      "name": "escrowBalance",
+      "constant": true,
+      "stateMutability": "view",
+      "payable": false,
+      "inputs": [],
+      "outputs": [
+        {
+          "type": "uint256",
+          "name": ""
+        }
+      ]
+    },
+    {
+      "type": "function",
+      "name": "findPolicy",
+      "constant": true,
+      "stateMutability": "view",
+      "payable": false,
+      "inputs": [
+        {
+          "type": "uint64",
+          "name": "chainKey"
+        },
+        {
+          "type": "address",
+          "name": "payee"
+        },
+        {
+          "type": "address",
+          "name": "token"
+        }
+      ],
+      "outputs": [
+        {
+          "type": "int256",
+          "name": ""
+        }
+      ]
+    },
+    {
+      "type": "function",
+      "name": "getPolicy",
+      "constant": true,
+      "stateMutability": "view",
+      "payable": false,
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": "policyId"
+        }
+      ],
+      "outputs": [
+        {
+          "type": "tuple",
+          "name": "",
+          "components": [
+            {
+              "type": "uint64",
+              "name": "chainKey"
+            },
+            {
+              "type": "address",
+              "name": "token"
+            },
+            {
+              "type": "uint8",
+              "name": "tokenDecimals"
+            },
+            {
+              "type": "address",
+              "name": "payee"
+            },
+            {
+              "type": "uint256",
+              "name": "minAmount"
+            },
+            {
+              "type": "address",
+              "name": "beneficiary"
+            },
+            {
+              "type": "uint256",
+              "name": "payoutRatioE18"
+            },
+            {
+              "type": "bool",
+              "name": "active"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "function",
+      "name": "operators",
+      "constant": true,
+      "stateMutability": "view",
+      "payable": false,
+      "inputs": [
+        {
+          "type": "address",
+          "name": ""
+        }
+      ],
+      "outputs": [
+        {
+          "type": "bool",
+          "name": ""
+        }
+      ]
+    },
+    {
+      "type": "function",
+      "name": "owner",
+      "constant": true,
+      "stateMutability": "view",
+      "payable": false,
+      "inputs": [],
+      "outputs": [
+        {
+          "type": "address",
+          "name": ""
+        }
+      ]
+    },
+    {
+      "type": "function",
+      "name": "policyCount",
+      "constant": true,
+      "stateMutability": "view",
+      "payable": false,
+      "inputs": [],
+      "outputs": [
+        {
+          "type": "uint256",
+          "name": ""
+        }
+      ]
+    },
+    {
+      "type": "function",
+      "name": "policyIdByPayee",
+      "constant": true,
+      "stateMutability": "view",
+      "payable": false,
+      "inputs": [
+        {
+          "type": "bytes32",
+          "name": ""
+        }
+      ],
+      "outputs": [
+        {
+          "type": "uint256",
+          "name": ""
+        }
+      ]
+    },
+    {
+      "type": "function",
+      "name": "previewTx",
+      "constant": true,
+      "stateMutability": "pure",
+      "payable": false,
+      "inputs": [
+        {
+          "type": "bytes",
+          "name": "txBytes"
+        }
+      ],
+      "outputs": [
+        {
+          "type": "tuple",
+          "name": "tv",
+          "components": [
+            {
+              "type": "address",
+              "name": "from"
+            },
+            {
+              "type": "address",
+              "name": "to"
+            },
+            {
+              "type": "bool",
+              "name": "toIsNull"
+            },
+            {
+              "type": "uint256",
+              "name": "value"
+            },
+            {
+              "type": "bytes",
+              "name": "data"
+            },
+            {
+              "type": "bool",
+              "name": "receiptStatus"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "function",
+      "name": "setOperator",
+      "constant": false,
+      "payable": false,
+      "inputs": [
+        {
+          "type": "address",
+          "name": "op"
+        },
+        {
+          "type": "bool",
+          "name": "enabled"
+        }
+      ],
+      "outputs": []
+    },
+    {
+      "type": "function",
+      "name": "setPolicyActive",
+      "constant": false,
+      "payable": false,
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": "policyId"
+        },
+        {
+          "type": "bool",
+          "name": "active"
+        }
+      ],
+      "outputs": []
+    },
+    {
+      "type": "function",
+      "name": "settle",
+      "constant": false,
+      "payable": false,
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": "policyId"
+        },
+        {
+          "type": "uint64",
+          "name": "chainKey"
+        },
+        {
+          "type": "uint64",
+          "name": "height"
+        },
+        {
+          "type": "uint64",
+          "name": "txIndex"
+        },
+        {
+          "type": "bytes",
+          "name": "encodedTransaction"
+        },
+        {
+          "type": "tuple",
+          "name": "merkleProof",
+          "components": [
+            {
+              "type": "bytes32",
+              "name": "root"
+            },
+            {
+              "type": "tuple[]",
+              "name": "siblings",
+              "components": [
+                {
+                  "type": "bytes32",
+                  "name": "hash"
+                },
+                {
+                  "type": "bool",
+                  "name": "isLeft"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "tuple",
+          "name": "continuityProof",
+          "components": [
+            {
+              "type": "bytes32",
+              "name": "lowerEndpointDigest"
+            },
+            {
+              "type": "bytes32[]",
+              "name": "roots"
+            }
+          ]
+        }
+      ],
+      "outputs": []
+    },
+    {
+      "type": "function",
+      "name": "settledTxs",
+      "constant": true,
+      "stateMutability": "view",
+      "payable": false,
+      "inputs": [
+        {
+          "type": "bytes32",
+          "name": ""
+        }
+      ],
+      "outputs": [
+        {
+          "type": "bool",
+          "name": ""
+        }
+      ]
+    },
+    {
+      "type": "function",
+      "name": "totalSettledPerPolicy",
+      "constant": true,
+      "stateMutability": "view",
+      "payable": false,
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": ""
+        }
+      ],
+      "outputs": [
+        {
+          "type": "uint256",
+          "name": ""
+        }
+      ]
+    },
+    {
+      "type": "function",
+      "name": "transferOwnership",
+      "constant": false,
+      "payable": false,
+      "inputs": [
+        {
+          "type": "address",
+          "name": "next"
+        }
+      ],
+      "outputs": []
+    },
+    {
+      "type": "function",
+      "name": "withdrawEscrow",
+      "constant": false,
+      "payable": false,
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": "amount"
+        }
+      ],
+      "outputs": []
+    },
+    {
+      "type": "receive",
+      "stateMutability": "payable"
+    }
+  ]
+}

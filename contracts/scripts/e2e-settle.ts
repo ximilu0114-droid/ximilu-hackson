@@ -10,9 +10,28 @@
  *   MODE=live npx hardhat run scripts/e2e-settle.ts --network cc3Testnet
  *             Requires: funded deployer, ASC_ADDRESS env.
  */
+import * as fs from 'fs';
+import * as path from 'path';
 import { ethers } from 'hardhat';
 import { JsonRpcProvider } from 'ethers';
 import { blockProver, proofProvider } from '@gluwa/usc-sdk';
+
+const VERIFIED_SET_FILE = path.resolve(__dirname, '../../deployments/verified-txs.json');
+
+function readVerifiedSet(): Set<string> {
+  try {
+    return new Set(JSON.parse(fs.readFileSync(VERIFIED_SET_FILE, 'utf8')));
+  } catch {
+    return new Set();
+  }
+}
+
+function markVerified(txHash: string): void {
+  const s = readVerifiedSet();
+  s.add(txHash);
+  fs.mkdirSync(path.dirname(VERIFIED_SET_FILE), { recursive: true });
+  fs.writeFileSync(VERIFIED_SET_FILE, JSON.stringify([...s], null, 2));
+}
 
 const SEPOLIA_RPC = process.env.SEPOLIA_RPC_URL ?? 'https://ethereum-sepolia-rpc.publicnode.com';
 const PROVER_URL = process.env.PROVER_URL ?? 'https://prover.cc3-testnet.creditcoin.network';
@@ -49,20 +68,42 @@ async function findSourcePayment(sepolia: JsonRpcProvider, attestedHeight: numbe
         toBlock: '0x' + attestedHeight.toString(16),
       },
     ]);
+    // skip already-verified txs (precompile rejects duplicate verification)
+    const verified = readVerifiedSet();
     for (let i = logs.length - 1; i >= 0; i--) {
       const log = logs[i];
       const amount = BigInt(log.data);
       if (amount < MIN_USDC || !log.topics[2]) continue;
+      if (verified.has(log.transactionHash)) continue;
+      const payee = '0x' + log.topics[2].slice(26);
+      if (payee === ethers.ZeroAddress) continue; // skip mint/burn
+
+      // The ASC policy matches on raw calldata (transfer / transferFrom),
+      // so the underlying tx must be a direct token call paying the payee.
+      const src = await sepolia.getTransaction(log.transactionHash);
+      if (!src || src.to == null || src.to.toLowerCase() !== USDC_SEPOLIA.toLowerCase()) continue;
+      const sel = src.data.slice(0, 10).toLowerCase();
+      try {
+        if (sel === '0xa9059cbb') {
+          const [rcpt, amt] = new ethers.AbiCoder().decode(['address', 'uint256'], '0x' + src.data.slice(10));
+          if (rcpt.toLowerCase() !== payee.toLowerCase() || amt !== amount) continue;
+        } else if (sel === '0x23b872dd') {
+          const [, rcpt, amt] = new ethers.AbiCoder().decode(['address', 'address', 'uint256'], '0x' + src.data.slice(10));
+          if (rcpt.toLowerCase() !== payee.toLowerCase() || amt !== amount) continue;
+        } else continue;
+      } catch {
+        continue;
+      }
       return {
         txHash: log.transactionHash,
         token: USDC_SEPOLIA,
-        payee: '0x' + log.topics[2].slice(26),
+        payee,
         amount,
         decimals: 6,
         kind: 'USDC transfer',
       };
     }
-    console.log('[A] No recent USDC transfers; falling back to native ETH payments');
+    console.log('[A] No NEW USDC transfers; falling back to native ETH payments');
   } catch {
     console.log('[A] getLogs unavailable; falling back to native ETH payments');
   }
@@ -167,12 +208,33 @@ async function mainInner(): Promise<void> {
     return;
   }
 
-  // LIVE mode: real verifyAndEmit through the precompile + escrow release
-  const [owner, operator, beneficiary] = await ethers.getSigners();
+  // LIVE mode: real verifyAndEmit through the precompile + escrow release.
+  // cc3Testnet exposes a single funded signer — it plays owner+operator+beneficiary.
+  const owner = (await ethers.getSigners())[0];
+  const operator = owner;
+  const beneficiary = owner;
   const beneficiaryBefore = await ethers.provider.getBalance(beneficiary.address);
-  await (await owner.sendTransaction({ to: ascAddress, value: ethers.parseEther('10') })).wait();
-  await (await asc.createPolicy(SEPOLIA_CHAIN_KEY, payment.token, payment.decimals, payment.payee, payment.amount, beneficiary.address, ratio)).wait();
-  await (await asc.setOperator(operator.address, true)).wait();
+
+  // Idempotent setup: reuse policy, top up escrow only as needed.
+  let policyId = Number(await asc.findPolicy(SEPOLIA_CHAIN_KEY, payment.payee, payment.token));
+  if (policyId < 0) {
+    await (await asc.createPolicy(SEPOLIA_CHAIN_KEY, payment.token, payment.decimals, payment.payee, payment.amount, beneficiary.address, ratio)).wait();
+    policyId = Number(await asc.findPolicy(SEPOLIA_CHAIN_KEY, payment.payee, payment.token));
+    console.log(`[5] policy #${policyId} created`);
+  } else {
+    console.log(`[5] reusing policy #${policyId}`);
+    // ensure amount threshold still satisfied by existing policy
+    const pol = await asc.getPolicy(policyId);
+    if (payment.amount < pol.minAmount) throw new Error('existing policy minAmount > this payment; waiting for a larger transfer');
+  }
+  if (!(await asc.operators(operator.address))) {
+    await (await asc.setOperator(operator.address, true)).wait();
+  }
+  const need = ethers.parseEther('10');
+  if ((await asc.escrowBalance()) < need) {
+    await (await owner.sendTransaction({ to: ascAddress, value: need })).wait();
+  }
+  console.log(`[5] escrow ready`);
 
   const prover = new blockProver.PrecompileBlockProver(ethers.provider); // sanity: read-only check first
   const roCheck = await prover.verifySingle(
@@ -182,13 +244,30 @@ async function mainInner(): Promise<void> {
   if (!roCheck) throw new Error('read-only verification failed');
 
   const tx = await asc.connect(operator).settle(
-    0, proof.chainKey, proof.headerNumber, proof.txIndex, proof.txBytes, proof.merkleProof, proof.continuityProof,
+    policyId, proof.chainKey, proof.headerNumber, proof.txIndex, proof.txBytes, proof.merkleProof, proof.continuityProof,
   );
   const rcpt = await tx.wait();
   console.log(`[6] settle() mined: ${rcpt.hash}`);
-  const delta = (await ethers.provider.getBalance(beneficiary.address)) - beneficiaryBefore;
-  console.log(JSON.stringify({ step: 'e2e-settle(live)', settlementTx: rcpt.hash, gasUsed: rcpt.gasUsed?.toString(), beneficiaryDeltaCTC: ethers.formatEther(delta), status: delta > 0n ? 'SUCCESS' : 'FAILED' }, null, 2));
-  if (delta <= 0n) process.exit(1);
+  markVerified(payment.txHash);
+
+  const settledEv = rcpt.logs
+    .map((l: any) => { try { return asc.interface.parseLog(l); } catch { return null; } })
+    .find((e: any) => e?.name === 'PaymentSettled');
+  if (!settledEv) {
+    console.log(JSON.stringify({ step: 'e2e-settle(live)', status: 'FAILED', note: 'PaymentSettled event missing' }));
+    process.exit(1);
+  }
+  console.log(JSON.stringify({
+    step: 'e2e-settle(live)',
+    asc: ascAddress,
+    sourceTx: payment.txHash,
+    verifiedAmount: settledEv.args.amount.toString(),
+    releasedCTC: ethers.formatEther(settledEv.args.releasedAmount),
+    settlementTx: rcpt.hash,
+    gasUsed: rcpt.gasUsed?.toString(),
+    explorer: `https://explorer.cc3-testnet.creditcoin.network/tx/${rcpt.hash}`,
+    status: 'SUCCESS',
+  }, null, 2));
 }
 
 async function main() {

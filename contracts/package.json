@@ -7,7 +7,8 @@
     "compile": "hardhat compile",
     "deploy:testnet": "hardhat run deploy/deploy.ts --network cc3Testnet",
     "e2e:settle": "hardhat run scripts/e2e-settle.ts",
-    "e2e:settle:live": "MODE=live hardhat run scripts/e2e-settle.ts --network cc3Testnet"
+    "e2e:settle:live": "MODE=live hardhat run scripts/e2e-settle.ts --network cc3Testnet",
+    "deploy:inbox": "hardhat run deploy/deploy-inbox.ts --network sepolia"
   },
   "devDependencies": {
     "@nomicfoundation/hardhat-chai-matchers": "^2.0.0",
