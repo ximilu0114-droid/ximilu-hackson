@@ -1,6 +1,9 @@
 {
-  "lastHeight": 11558130,
-  "settledTx": {},
+  "lastHeight": 11558340,
+  "settledTx": {
+    "0x4362fea81aa7996c3ce57bad6a4274dd9e7fe5fe1be7199aeed931908826f72b": "0xb6867873835193e253963709696405c0ef43d13f94950ecbea5f81dacb76549e",
+    "0x9f0fdd4140d455df7c424bdf124e7da3191a594cdf55e2e13f6fef427dd295ad": "error:execution reverted: \"AMOUNT_TOO_LOW\" (action=\"estimateGas\", "
+  },
   "rules": [
     {
       "id": "r1",
@@ -19,6 +22,117 @@
       "createdAt": "2026-08-24T09:15:00.458Z"
     }
   ],
-  "deliveries": {},
-  "events": []
+  "deliveries": {
+    "0x4362fea81aa7996c3ce57bad6a4274dd9e7fe5fe1be7199aeed931908826f72b": "0xe01193bb449f7e9bb774727d929795b9037a4ed91959026887fe3754f9ad49cc"
+  },
+  "events": [
+    {
+      "ts": "2026-08-24T16:24:31.215Z",
+      "stage": "match",
+      "tx": "0xcda02a68fa2622ba8b11ffe292dad536b10bc283ca146989e7e7b682228abc68",
+      "detail": "amount=100000000"
+    },
+    {
+      "ts": "2026-08-24T16:24:31.381Z",
+      "stage": "match",
+      "tx": "0x3df6d93dad11ccd926c02b1998e529e81f4f682e44c71d3d90aa55ac9245b381",
+      "detail": "amount=100000000"
+    },
+    {
+      "ts": "2026-08-24T16:24:31.702Z",
+      "stage": "match",
+      "tx": "0x4362fea81aa7996c3ce57bad6a4274dd9e7fe5fe1be7199aeed931908826f72b",
+      "detail": "amount=200000000"
+    },
+    {
+      "ts": "2026-08-24T16:24:33.040Z",
+      "stage": "proved",
+      "tx": "0x4362fea81aa7996c3ce57bad6a4274dd9e7fe5fe1be7199aeed931908826f72b",
+      "detail": "block=11558134 idx=24"
+    },
+    {
+      "ts": "2026-08-24T16:25:02.358Z",
+      "stage": "settled",
+      "tx": "0x4362fea81aa7996c3ce57bad6a4274dd9e7fe5fe1be7199aeed931908826f72b",
+      "detail": "0xb6867873835193e253963709696405c0ef43d13f94950ecbea5f81dacb76549e"
+    },
+    {
+      "ts": "2026-08-24T16:40:49.381Z",
+      "stage": "delivered",
+      "tx": "0x4362fea81aa7996c3ce57bad6a4274dd9e7fe5fe1be7199aeed931908826f72b",
+      "detail": "0xe01193bb449f7e9bb774727d929795b9037a4ed91959026887fe3754f9ad49cc"
+    },
+    {
+      "ts": "2026-08-24T16:41:21.013Z",
+      "stage": "match",
+      "tx": "0x9f0fdd4140d455df7c424bdf124e7da3191a594cdf55e2e13f6fef427dd295ad",
+      "detail": "amount=198998798"
+    },
+    {
+      "ts": "2026-08-24T16:41:22.294Z",
+      "stage": "proved",
+      "tx": "0x9f0fdd4140d455df7c424bdf124e7da3191a594cdf55e2e13f6fef427dd295ad",
+      "detail": "block=11558224 idx=12"
+    },
+    {
+      "ts": "2026-08-24T16:41:23.986Z",
+      "stage": "rejected",
+      "tx": "0x9f0fdd4140d455df7c424bdf124e7da3191a594cdf55e2e13f6fef427dd295ad",
+      "detail": "execution reverted: \"AMOUNT_TOO_LOW\" (action=\"estimateGas\", data=\"0x08c379a0000000000000000000000000000000000000000000000000000000000000002000000000000000000000"
+    },
+    {
+      "ts": "2026-08-24T16:42:58.060Z",
+      "stage": "match",
+      "tx": "0x7d986e0d6e36167b8328cde4e0992b1bcde64b68d59c51d3e7ed52595196c91d",
+      "detail": "amount=111000000"
+    },
+    {
+      "ts": "2026-08-24T16:42:58.295Z",
+      "stage": "match",
+      "tx": "0x7d986e0d6e36167b8328cde4e0992b1bcde64b68d59c51d3e7ed52595196c91d",
+      "detail": "amount=111000000"
+    },
+    {
+      "ts": "2026-08-24T17:00:28.210Z",
+      "stage": "match",
+      "tx": "0x1ebd8dacefbe9282745e3623d19b3a3505c2db523e189c3e0cc76812ed3e0221",
+      "detail": "amount=100000000"
+    },
+    {
+      "ts": "2026-08-24T17:00:28.355Z",
+      "stage": "match",
+      "tx": "0xafd15ef4c2d4db9486d9919e993da481114cb7706447ba58ac17a5807581393f",
+      "detail": "amount=100000000"
+    },
+    {
+      "ts": "2026-08-24T17:00:28.671Z",
+      "stage": "match",
+      "tx": "0x6a373bd287684a64c2b37ab111379c8ae6a47f21e4100afeb570462e5315bc4d",
+      "detail": "amount=100000000"
+    },
+    {
+      "ts": "2026-08-24T17:00:28.980Z",
+      "stage": "match",
+      "tx": "0x805c0dd332c806b17ad5f83153a7c6dac35d119a65d0a514a4e322a8fbca9417",
+      "detail": "amount=123320000"
+    },
+    {
+      "ts": "2026-08-24T17:00:29.292Z",
+      "stage": "match",
+      "tx": "0x805c0dd332c806b17ad5f83153a7c6dac35d119a65d0a514a4e322a8fbca9417",
+      "detail": "amount=100000000"
+    },
+    {
+      "ts": "2026-08-24T17:00:29.641Z",
+      "stage": "match",
+      "tx": "0x9736a6731785f49a23ce384a5c29de322f7199fafc7649319564eb2f6fbaa5da",
+      "detail": "amount=100000000"
+    },
+    {
+      "ts": "2026-08-24T17:01:45.816Z",
+      "stage": "match",
+      "tx": "0x355a06cb3e7a19feaf77ff50fd906a3f995fdce0329d0346ef012a4e6b817d7c",
+      "detail": "amount=251000000"
+    }
+  ]
 }

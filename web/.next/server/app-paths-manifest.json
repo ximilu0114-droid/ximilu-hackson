@@ -1,8 +1,8 @@
 {
   "/_not-found/page": "app/_not-found/page.js",
   "/api/ask/route": "app/api/ask/route.js",
-  "/api/rules/route": "app/api/rules/route.js",
-  "/api/events/route": "app/api/events/route.js",
   "/api/rules/toggle/route": "app/api/rules/toggle/route.js",
-  "/page": "app/page.js"
+  "/page": "app/page.js",
+  "/api/events/route": "app/api/events/route.js",
+  "/api/rules/route": "app/api/rules/route.js"
 }
