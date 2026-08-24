@@ -68,3 +68,13 @@ Terminal 2 (send ≥100 USDC to any fresh address — e.g. from another funded t
 - [ ] Agent wallet has ≥400 CTC (escrow auto-top-up to 500) and ≥0.02 Sepolia ETH
 - [ ] A USDC transfer ≥100 USDC happened recently (agent scans last 400 attested blocks)
 - [ ] Explorer tabs pre-loaded with the evidence txs
+- [ ] Clean demo state (start scanning from current height, no backlog):
+  ```bash
+  H=$(curl -s "https://prover.cc3-testnet.creditcoin.network/api/v1/attested-height/1" | python3 -c "import json,sys;print(json.load(sys.stdin)['attestedHeight'])")
+  python3 -c "
+  import json
+  s = json.load(open('agent/state.json'))
+  s['lastHeight'] = $H; s['events'] = []; s['settledTx'] = {}; s['deliveries'] = {}
+  json.dump(s, open('agent/state.json','w'), indent=2)
+  "
+  ```
