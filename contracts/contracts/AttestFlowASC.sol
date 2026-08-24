@@ -69,6 +69,11 @@ contract AttestFlowASC {
 
     event PolicyCreated(uint256 indexed policyId, Policy policy);
     event PolicyActiveSet(uint256 indexed policyId, bool active);
+
+    /// Writability step-1 semantics: published for delivery to destChainKey.
+    /// When official Outbox lands on testnet this maps 1:1 to outbox.publish().
+    event MessagePublished(uint64 destChainKey, address destContract, bytes payload);
+
     event PaymentSettled(
         uint256 indexed policyId,
         bytes32 indexed sourceTxId,
@@ -255,6 +260,14 @@ contract AttestFlowASC {
             released,
             height,
             txIndex
+        );
+
+        // Writability step 1: publish settlement result for the destination
+        // chain relayer network (payload consumed by the beneficiary-side app).
+        emit MessagePublished(
+            chainKey, // dest = the source chain in our payment loop-back design
+            tv.from, // destination app entry: the payer's address on dest chain
+            abi.encode(policyId, sourceTxId, amount, released)
         );
     }
 

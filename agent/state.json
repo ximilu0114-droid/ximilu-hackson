@@ -1,0 +1,31 @@
+{
+  "lastHeight": 11553940,
+  "settledTx": {
+    "0xe66a17002403163110611d0fa1a552eff68a3ea4e47de140e86d91d91e07143b": "dry@2026-08-24T01:58:57.690Z",
+    "0xa45d1dbaaa3a9d6380effbd72f21ff5af955bc61ba7b12dba0f9bffa9fdd6516": "dry@2026-08-24T01:58:58.383Z",
+    "0x16dde240693ae911df6376f78313039ea5463d2066ef8f59aad4ba5f6dc612cf": "dry@2026-08-24T01:58:59.057Z",
+    "0x2421de3b61d4d9eddcaa1608a353d8a10afe3ea538604bc21388788d633b646e": "dry@2026-08-24T01:59:01.152Z"
+  },
+  "rules": [
+    {
+      "id": "r1",
+      "text": "当我在 Sepolia 收到 ≥100 USDC 时，按 10% 释放给受益人",
+      "engine": "builtin",
+      "spec": {
+        "sourceChain": "sepolia",
+        "token": "0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238",
+        "payee": null,
+        "minAmount": "100000000",
+        "payoutRatioE18": "100000000000000000",
+        "memo": "当我在 Sepolia 收到 ≥100 USDC 时，按 10% 释放给受益人"
+      },
+      "createdAt": "2026-08-24T01:58:53.231Z"
+    }
+  ],
+  "deliveries": {
+    "0xe66a17002403163110611d0fa1a552eff68a3ea4e47de140e86d91d91e07143b": "dry-sig",
+    "0xa45d1dbaaa3a9d6380effbd72f21ff5af955bc61ba7b12dba0f9bffa9fdd6516": "dry-sig",
+    "0x16dde240693ae911df6376f78313039ea5463d2066ef8f59aad4ba5f6dc612cf": "dry-sig",
+    "0x2421de3b61d4d9eddcaa1608a353d8a10afe3ea538604bc21388788d633b646e": "dry-sig"
+  }
+}

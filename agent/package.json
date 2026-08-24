@@ -5,10 +5,12 @@
   "type": "module",
   "main": "src/index.ts",
   "scripts": {
+    "start": "tsx src/index.ts",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@gluwa/usc-sdk": "*",
-    "ethers": "^6.13.4"
+    "ethers": "^6.13.4",
+    "tsx": "^4.19.2"
   }
 }

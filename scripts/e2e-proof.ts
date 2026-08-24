@@ -45,8 +45,8 @@ async function main(): Promise<void> {
   console.log(`[1] Using chainKey=${chainKey} for Ethereum Sepolia`);
 
   // [2] Resolve target transaction
-  let txHash = process.env.TX_HASH;
-  let blockNumber: number;
+  let txHash: string | undefined = process.env.TX_HASH;
+  let blockNumber = 0;
 
   if (txHash) {
     const tx = await sepolia.getTransaction(txHash);
@@ -82,7 +82,7 @@ async function main(): Promise<void> {
   // [3] Generate inclusion proof via hosted prover service
   const builder = new proofProvider.service.ProofBuilder(chainKey, PROVER_URL, 10_000);
   process.stdout.write('[3] Waiting for attestation... ');
-  await builder.waitUntilHeightAttested(chainKey, blockNumber!, POLL_MS, WAIT_TIMEOUT_MS);
+  await builder.waitUntilHeightAttested(chainKey, blockNumber, POLL_MS, WAIT_TIMEOUT_MS);
   console.log('attested.');
   const result = await builder.getProof(txHash);
   if (!result.success || !result.data) {
