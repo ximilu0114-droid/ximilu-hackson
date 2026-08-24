@@ -57,6 +57,11 @@ docs/        白皮书 PDF 源、集成说明
 npm install            # 根目录安装所有 workspace
 npm run e2e:proof      # Phase 0 端到端证明验证脚本
 npm run typecheck      # tsc --noEmit（根 tsconfig 覆盖 scripts/ 与 agent/src）
+npm run test:contracts # hardhat test（10 个用例）
+npm run e2e:settle     # Phase 1 dry E2E（无需 gas）
+# 部署 + live 结算（需 CC3 测试币后执行）：
+npm run deploy:testnet --prefix contracts
+npm run e2e:settle:live --prefix contracts
 ```
 
 ## SDK 实测补充（0.18.0 实测，超出文档的部分）
@@ -65,10 +70,21 @@ npm run typecheck      # tsc --noEmit（根 tsconfig 覆盖 scripts/ 与 agent/s
 - ethers v6 中 `provider.getBlock(h, true)` 返回的 `transactions[i]` **直接是 hash 字符串**，不是对象——别取 `.hash`。
 - ChainInfo 的 `chainName` 是 hex 编码字符串（如 `0x5365706f6c6961...` = "Sepolia ethereum"），展示前需 decode。
 - Sepolia 公共 RPC 用 `https://ethereum-sepolia-rpc.publicnode.com` 可免注册直连。
+- prover 服务有 REST：`GET /api/v1/attested-height/{chainKey}` → `{"attestedHeight":N}`，免链上查询。
 
-### Phase 1 — ASC 合约最小闭环（8/26–8/28）
+## 合约/工程实测坑（Phase 1 踩过的）
+
+- **仓库路径不能含非 ASCII 字符**：Node 24 下中文路径会破坏部分工具的模块解析 → 项目实体在 `~/Documents/dev/attestflow`，旧位置留了 symlink。
+- **hardhat 锁 2.26.5**：2.29 的 EDR 节点 fork CC3 直接报 "No known hardfork"；2.26 老 node 能 fork 但会把 `0x0FD2` 预编译当地址段内置劫持 → **fork 模式对预编译不可用**，用 dry 模式替代。
+- contracts/ 必须有自己的 tsconfig（module: CommonJS），否则 ts-node 会捡到根 tsconfig 的 ES2022 导致 ESM 报错。
+- viaIR 已开启（settle() 栈太深）；**viaIR 下内联汇编读 memory bytes 不可靠**，解码一律用纯 Solidity 循环。
+- Sepolia USDC 上 transferFrom(0x23b872dd) 比 transfer 常见得多，ASC 两种 selector 都支持。
+- txBytes 布局（encoding v1）：`(uint8 txType, bytes[] chunks)`；chunk[0] 所有类型通用 `(uint64,uint64,address,bool,address,uint256,bytes)`；**最后一块是 receipt 含 status**——ASC 靠这个自查交易成败。
+
+### Phase 1 — ASC 合约最小闭环（8/26–8/28）✅ 代码完成（live 部署等水龙头）
 - ASC 合约：验证通过后自动执行业务逻辑（铸造凭证 + 释放资产）。
 - **验收**：① 合约部署到 CC3 Testnet，地址与 ABI 固化到 `deployments/`；② 端到端：Sepolia 发起真实 USDC 转账 → proof 验证 → ASC 自动铸凭证，全程日志留痕；③ Hardhat 测试覆盖安全路径：status != 0x1 的交易被拒绝。
+- **现状**：③ 已达成（10/10 tests）；② dry 版已达成（真实 USDC 交易真实 proof 字节 → ASC 解码/策略匹配/释放模拟 SUCCESS）；①② 的链上部分被 CC3 水龙头卡住（需 Discord /faucet 给 `.env` 钱包充值）→ `npm run deploy:testnet && npm run e2e:settle:live` 一条命令补完。
 
 ### Phase 2 — Agent 服务 + Writability + LLM 规则解析（8/29–8/31）
 - 自然语言规则 → 结构化策略配置 JSON；Agent 循环：监听 → 等 attestation → proof → 验证 → 执行。
