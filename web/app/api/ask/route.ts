@@ -11,8 +11,10 @@ export async function POST(req: Request) {
   const q = String(question ?? '').toLowerCase();
   const state = readState();
 
-  const settledCount = Object.values(state.settledTx).filter((v) => !String(v).startsWith('rejected')).length;
-  const rejectedCount = Object.values(state.settledTx).filter((v) => String(v).startsWith('rejected')).length;
+  const settledCount = Object.values(state.settledTx).filter(
+    (v) => /^0x[0-9a-fA-F]{64}$/.test(String(v)) || String(v).startsWith('dry@') || String(v) === 'already-settled',
+  ).length;
+  const rejectedCount = Object.values(state.settledTx).filter((v) => String(v).startsWith('rejected') || String(v).startsWith('error:')).length;
 
   // sum of matched amounts × ratio (from events, base units → display)
   const amounts = state.events.filter((e) => e.stage === 'match').map((e) => Number(e.detail?.split('=')[1] ?? 0));

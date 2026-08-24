@@ -162,8 +162,14 @@ async function main() {
           // isolate per-tx failures (e.g. ALREADY_SETTLED on historical matches)
           const msg = String(e?.message ?? e).slice(0, 160);
           log(`match ${m.txHash} failed: ${msg}`);
-          state.settledTx[m.txHash] = 'error:' + msg.slice(0, 60);
-          recordEvent(state, { ts: new Date().toISOString(), stage: 'rejected', tx: m.txHash, detail: msg });
+          const already = msg.includes('ALREADY_SETTLED');
+          state.settledTx[m.txHash] = already ? 'already-settled' : 'error:' + msg.slice(0, 60);
+          recordEvent(state, {
+            ts: new Date().toISOString(),
+            stage: already ? 'settled' : 'rejected',
+            tx: m.txHash,
+            detail: already ? 'already settled on-chain (replay guard)' : msg,
+          });
         }
       }
 
