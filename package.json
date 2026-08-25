@@ -12,7 +12,8 @@
     "e2e:proof": "tsx scripts/e2e-proof.ts",
     "e2e:settle": "npm --prefix contracts run e2e:settle",
     "test:contracts": "npm --prefix contracts test",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "demo:reset": "bash scripts/demo-reset.sh"
   },
   "devDependencies": {
     "@nomicfoundation/hardhat-ethers": "^3.1.0",

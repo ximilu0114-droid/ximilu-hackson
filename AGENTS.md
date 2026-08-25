@@ -100,12 +100,15 @@ npm run dev --prefix web
 ### Phase 3 — 前端仪表盘（9/1–9/3）✅ 已完成
 - **验收**：① ✅ 创建/启停规则（POST /api/rules + toggle）；② ✅ 实时流水（5s 轮询，match→proved→settled→delivered 四段 stepper）；③ ✅ NL 问答查历史（/api/ask，builtin+可选 LLM）；④ 响应式布局 grid（lg 断点两栏）。
 - 运行：`npm run dev --prefix web`（:3100）；生产 `npm run build && npm start --prefix web`。
+- **坑**：Next 14 会把不带 `request` 的 GET 路由当静态缓存 → 两个 GET 路由已加 `export const dynamic = 'force-dynamic'`，新增路由记得加。
 
-### Phase 4 — 提交材料（9/4–9/5）
-- **验收**：① 新机器从零 clone → 按 README 跑通 ≤ 30 分钟、无需人工排错；② 白皮书 PDF（问题/方案/架构/协议集成深度/路线图）；③ Demo 视频 2–3 分钟（脚本先行再录）；④ 集成说明单独成章，明确列出 Readability/Writability/precompile 用法与第三方披露。
+### Phase 4 — 提交材料（9/4–9/5）✅ 材料齐，视频待录
+- **验收**：① ✅ 新 clone 复现实测 <2 分钟（install→14 tests→e2e:proof SUCCESS）；② ✅ `docs/whitepaper.pdf`（pandoc→Chrome headless 生成，样式 `docs/pdf-style.css`）；③ ⏳ Demo 视频按 `docs/demo-script.md` 录制（命令全部验证过）；④ ✅ `docs/integration.md` 集成深度说明。
+- **实测补充**：Sepolia USDC 真实流量以 transferFrom 为主且大量是金库合约内部转账——发现层必须校验 calldata 而非只看 Transfer 事件。
 
 ### Phase 5 — 缓冲与提交（9/5）
-- **9/5 提交完毕，绝不卡 9/6 deadline**。提交前对照“比赛硬性约束”逐项勾选。
+- **9/5 提交完毕，绝不卡 9/6 deadline**。提交前对照 `docs/submission-checklist.md` 逐项勾选。
+- 待办：① GitHub 建公开仓库并推送（`git remote add origin … && git push -u origin main --tags`）；② 录 Demo 视频（2:30，脚本在 docs/demo-script.md）；③ DoraHacks 表单（团队信息需真实姓名/邮箱/国籍）。
 
 ## 工作纪律
 
