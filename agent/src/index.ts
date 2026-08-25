@@ -44,6 +44,7 @@ async function processMatch(
   m: MatchResult,
   state: AgentState,
   sepolia: any,
+  cc3: any,
   asc: Contract | null,
   inbox: Contract | null,
   wallet: Wallet
@@ -60,6 +61,18 @@ async function processMatch(
   if (spec.token && (!call || call.recipient.toLowerCase() !== m.payee.toLowerCase())) return;
 
   log(`match: rule=${m.ruleId} tx=${m.txHash} amount=${m.amount}`);
+
+  // LIVE: pre-flight escrow solvency — top up before attempting settlement
+  if (asc) {
+    const decimals = spec.token ? 6n : 18n;
+    const released = (m.amount * BigInt(spec.payoutRatioE18)) / 10n ** decimals;
+    const esc: bigint = await asc.escrowBalance();
+    if (esc < released) {
+      const topUp = released * 2n - esc;
+      await (await agentWallet(cc3).sendTransaction({ to: CONFIG.ascAddress, value: topUp })).wait();
+      log(`escrow topped up by ${Number(topUp) / 1e18} CTC for this settlement`);
+    }
+  }
 
   // proof generation (waits only because we scan the attested window)
   const proof = await getProof(m.txHash);
@@ -157,7 +170,7 @@ async function main() {
       for (const m of matches) {
         if (state.settledTx[m.txHash]) continue; // dedupe across restarts
         try {
-          await processMatch(m, state, sepolia, asc, inbox, wallet);
+          await processMatch(m, state, sepolia, cc3, asc, inbox, wallet);
         } catch (e: any) {
           // isolate per-tx failures (e.g. ALREADY_SETTLED on historical matches)
           const msg = String(e?.message ?? e).slice(0, 160);

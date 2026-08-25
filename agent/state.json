@@ -1,8 +1,30 @@
 {
-  "lastHeight": 11558340,
+  "lastHeight": 11560390,
   "settledTx": {
     "0x4362fea81aa7996c3ce57bad6a4274dd9e7fe5fe1be7199aeed931908826f72b": "0xb6867873835193e253963709696405c0ef43d13f94950ecbea5f81dacb76549e",
-    "0x9f0fdd4140d455df7c424bdf124e7da3191a594cdf55e2e13f6fef427dd295ad": "error:execution reverted: \"AMOUNT_TOO_LOW\" (action=\"estimateGas\", "
+    "0x9f0fdd4140d455df7c424bdf124e7da3191a594cdf55e2e13f6fef427dd295ad": "error:execution reverted: \"AMOUNT_TOO_LOW\" (action=\"estimateGas\", ",
+    "0x5a329f415df30ea85dfd2588e743d574f5f193759db15e1f9fce96e4080e0d1b": "0xd7cc38fb1f6863c194bfade6a74f96f5ee98a0d23ea87f7b7203d6a6fd968fa7",
+    "0x6020c749bd2e91772402228907797c1ed429bb832a9d36202397da99bc5093e3": "0x26fa80ce36f43fcdc747646fad2dae3eb9a448376c7462b2e7236590f5af482d",
+    "0x7a17f9acf01bdaa45c2c361ab0e2b6ce56429c852a137ad02af8ddb5ebed632f": "0x5454c97733cba860058cf84ca646d191dc69e70a320c5dfcc62fea0975953ae1",
+    "0x6149a995b17b26b17957e84a76f85f7c0a3f408463f575f4b46ef38bc020271a": "error:execution reverted: \"REPLAY\" (action=\"estimateGas\", data=\"0x",
+    "0x527696d3f32e3ca3c5446ef61b02ba9847beb7d2e0940fc456da71acd23a1f0f": "error:execution reverted: \"REPLAY\" (action=\"estimateGas\", data=\"0x",
+    "0x99698d85bdaf0d8af83e3b0115401d817d322edc3e433ca4d7a8768559bd2b1d": "0xe2a1d753d574bb5d11aa2d2a52b3347b4cf83a864ff62e6929165b14a01d6e8d",
+    "0xec668fc5e4f607618cd95d8f57023cfaabbe8b2d01a8664883dfc40fc01715bd": "0x64d075acd66c32a554a6ddcb428f5ac0f79699198982161358cc0852365d2b96",
+    "0xebaa2943d562c2e670b57516e59d80784284025525bf886f9f8858746648a86f": "error:request timeout (code=TIMEOUT, version=6.17.0)",
+    "0xaccaa3c719502541a3c6021571ca17e8ff47da206621780ad5037f1092412950": "0x2a0edb70a2dc4d0a538b6055ab5e4ca271c2d720a2361523640b136f57c7dd14",
+    "0x76a922f645b796c1445f5ca41b79f54afa68cd2efd6cb88d2174ee0e77f99f17": "0xc135565aa96ceea03a9d7400b369f33b4d5a811b37e97883950680a87e55a9a6",
+    "0x55553667c42c72a4c8df8de09bacc92e56b4684fe378768b5d05b9be97d41631": "0x40b218bd33fa7dbbb99fc6ba65685edd5b8474dea22c9ecc5f14442d3d6d3a0f",
+    "0xf15fd08f5772ac85f8b587e540b91625f5800e4e01957fa81763fbd70ed55e5f": "0x8988d5f7d92f3ed77ab80dbeaec7ec72b31c029af56d991d5243cf7e9eb251e9",
+    "0x1d97c0546a4fad270f5041d840b5e0f8447cc90304054d169ac57f4b0e7f16e8": "0xf76c9f3774637c1b11f01a899cdf3f9e37755fd1b0d4c51ca39ab009fcfabd55",
+    "0x4e4f9db99179e3daf9b0ce1d4f84a48c59d7cb1206cfc2d16f56e92ef371f60a": "error:request timeout (code=TIMEOUT, version=6.17.0)",
+    "0x9580a7f37154e31e1e392f52e8e52b00ec4ef0dfe6171e7581ec4fe0823e5385": "0xd82783cd48a6ba92fb4510e0b0e2de70036d55f548ae7f38181dff2b724f79e9",
+    "0x7ad97ef920ce048a7e2d99accbee54a2b1807cd469c34d794a6634602d0d483c": "error:execution reverted: \"INSUFFICIENT_ESCROW\" (action=\"estimateG",
+    "0xde84df07dad4de97596d16d061bf3f55060398598dec0c3dc060579b2ba7c148": "0xc7b918d7f3aa6c8126905fc23396264aea6ae0f3138c09e81294cdd661dd3c88",
+    "0xdd7fde9491e80007f6bf080a41b7786e4b2f1524939afe3d78323fd1fb7354c2": "error:execution reverted: \"INSUFFICIENT_ESCROW\" (action=\"estimateG",
+    "0x23175d18911c147e92dc5dad7f9836e36dc5ea826a5460542643ba8f94e0bf70": "error:execution reverted: \"INSUFFICIENT_ESCROW\" (action=\"estimateG",
+    "0xbbe626af4847c2f21d8883bfcc1c36060e3ceeb4d7e778e5225ab28a65bbc6cc": "0xd9382412192d9121c31f8650213efe738e325e7b74caf46245ab76397d5a6037",
+    "0xb8f02c0ecd3c5d30d7ab3fad7e0dd85dd72e8065c2804bfcede7eb2607e237df": "0xc339bd4561be875bbb8a7edbbfaa37e840674591c4fdedf5c35fd3c4ac7a3914",
+    "0x8eefd351ede2c1a94a4938010cd6503e29e9e24ce0afd657223036f158c45a3b": "error:execution reverted: \"AMOUNT_TOO_LOW\" (action=\"estimateGas\", "
   },
   "rules": [
     {
@@ -23,7 +45,21 @@
     }
   ],
   "deliveries": {
-    "0x4362fea81aa7996c3ce57bad6a4274dd9e7fe5fe1be7199aeed931908826f72b": "0xe01193bb449f7e9bb774727d929795b9037a4ed91959026887fe3754f9ad49cc"
+    "0x4362fea81aa7996c3ce57bad6a4274dd9e7fe5fe1be7199aeed931908826f72b": "0xe01193bb449f7e9bb774727d929795b9037a4ed91959026887fe3754f9ad49cc",
+    "0x5a329f415df30ea85dfd2588e743d574f5f193759db15e1f9fce96e4080e0d1b": "0x17c31a689d737b15fdbd43adc10d0c1d9159b31eb5bcef9159c935d84f6358a4",
+    "0x6020c749bd2e91772402228907797c1ed429bb832a9d36202397da99bc5093e3": "0x2d1a3e25698c08ea22495394c79f19cd8ce84561b2556119be06f7eb547d3b53",
+    "0x7a17f9acf01bdaa45c2c361ab0e2b6ce56429c852a137ad02af8ddb5ebed632f": "0x189e172d3f2437e605274fd7d6eabf169f04ac6ccc4a4106d2846fec3ea32004",
+    "0x99698d85bdaf0d8af83e3b0115401d817d322edc3e433ca4d7a8768559bd2b1d": "0x0febc805e5dbd659101e475c29d9d0e48b52dcfd8138803290ed86bfcfcb6236",
+    "0xec668fc5e4f607618cd95d8f57023cfaabbe8b2d01a8664883dfc40fc01715bd": "0xe67ad70befa28252ac1ecbc57f36432d7485404248f2befaf412b9af0a12b1a7",
+    "0xaccaa3c719502541a3c6021571ca17e8ff47da206621780ad5037f1092412950": "0x9e128b7f4693cc6b3d71382518c6200588818653c0664ca3ada600539532f1cb",
+    "0x76a922f645b796c1445f5ca41b79f54afa68cd2efd6cb88d2174ee0e77f99f17": "0x0037680f0c49cd703c2e68023e37268f51baed925d527fc8e3e846883388e88e",
+    "0x55553667c42c72a4c8df8de09bacc92e56b4684fe378768b5d05b9be97d41631": "0x4efc2814bc8b539144e00a43f960c803b5b2379147b9042f6743549bc64c0ae8",
+    "0xf15fd08f5772ac85f8b587e540b91625f5800e4e01957fa81763fbd70ed55e5f": "0xe14629119c7716a76a95465afea007b54fd8ee1abfdebc9a83b6f859fc4d4996",
+    "0x1d97c0546a4fad270f5041d840b5e0f8447cc90304054d169ac57f4b0e7f16e8": "0xd17415ea4a8dd2f760e306da6e9fa5800c42ae6d66840cbcd7b1d1d152680e97",
+    "0x9580a7f37154e31e1e392f52e8e52b00ec4ef0dfe6171e7581ec4fe0823e5385": "0x724de0c5e8dcfe1f1964728d373e03e9d3d5312a2b1d26c243056a44b648a7c3",
+    "0xde84df07dad4de97596d16d061bf3f55060398598dec0c3dc060579b2ba7c148": "0x43c61a854410cf7db635916d6911261976cfc1e663975d6560ec66b9c165c3b8",
+    "0xbbe626af4847c2f21d8883bfcc1c36060e3ceeb4d7e778e5225ab28a65bbc6cc": "0x2b08d9a1f5270efc2906751f734b416b074cbbb9601c75eb34380320fce2b3ed",
+    "0xb8f02c0ecd3c5d30d7ab3fad7e0dd85dd72e8065c2804bfcede7eb2607e237df": "0x7dd91912c2f91ace4caf056aa8d5a11217aa57e91bb0fac1dea763c6cb3ac4d3"
   },
   "events": [
     {
@@ -133,6 +169,1020 @@
       "stage": "match",
       "tx": "0x355a06cb3e7a19feaf77ff50fd906a3f995fdce0329d0346ef012a4e6b817d7c",
       "detail": "amount=251000000"
+    },
+    {
+      "ts": "2026-08-24T17:18:45.554Z",
+      "stage": "match",
+      "tx": "0x5a329f415df30ea85dfd2588e743d574f5f193759db15e1f9fce96e4080e0d1b",
+      "detail": "amount=500000000"
+    },
+    {
+      "ts": "2026-08-24T17:18:47.026Z",
+      "stage": "proved",
+      "tx": "0x5a329f415df30ea85dfd2588e743d574f5f193759db15e1f9fce96e4080e0d1b",
+      "detail": "block=11558416 idx=118"
+    },
+    {
+      "ts": "2026-08-24T17:19:16.177Z",
+      "stage": "settled",
+      "tx": "0x5a329f415df30ea85dfd2588e743d574f5f193759db15e1f9fce96e4080e0d1b",
+      "detail": "0xd7cc38fb1f6863c194bfade6a74f96f5ee98a0d23ea87f7b7203d6a6fd968fa7"
+    },
+    {
+      "ts": "2026-08-24T17:35:41.183Z",
+      "stage": "delivered",
+      "tx": "0x5a329f415df30ea85dfd2588e743d574f5f193759db15e1f9fce96e4080e0d1b",
+      "detail": "0x17c31a689d737b15fdbd43adc10d0c1d9159b31eb5bcef9159c935d84f6358a4"
+    },
+    {
+      "ts": "2026-08-24T17:36:13.372Z",
+      "stage": "match",
+      "tx": "0x6020c749bd2e91772402228907797c1ed429bb832a9d36202397da99bc5093e3",
+      "detail": "amount=111110000"
+    },
+    {
+      "ts": "2026-08-24T17:36:14.679Z",
+      "stage": "proved",
+      "tx": "0x6020c749bd2e91772402228907797c1ed429bb832a9d36202397da99bc5093e3",
+      "detail": "block=11558500 idx=1"
+    },
+    {
+      "ts": "2026-08-24T17:46:48.610Z",
+      "stage": "settled",
+      "tx": "0x6020c749bd2e91772402228907797c1ed429bb832a9d36202397da99bc5093e3",
+      "detail": "0x26fa80ce36f43fcdc747646fad2dae3eb9a448376c7462b2e7236590f5af482d"
+    },
+    {
+      "ts": "2026-08-24T17:47:04.307Z",
+      "stage": "delivered",
+      "tx": "0x6020c749bd2e91772402228907797c1ed429bb832a9d36202397da99bc5093e3",
+      "detail": "0x2d1a3e25698c08ea22495394c79f19cd8ce84561b2556119be06f7eb547d3b53"
+    },
+    {
+      "ts": "2026-08-24T17:47:04.308Z",
+      "stage": "match",
+      "tx": "0x7a17f9acf01bdaa45c2c361ab0e2b6ce56429c852a137ad02af8ddb5ebed632f",
+      "detail": "amount=111110000"
+    },
+    {
+      "ts": "2026-08-24T17:47:05.668Z",
+      "stage": "proved",
+      "tx": "0x7a17f9acf01bdaa45c2c361ab0e2b6ce56429c852a137ad02af8ddb5ebed632f",
+      "detail": "block=11558486 idx=1"
+    },
+    {
+      "ts": "2026-08-24T18:00:04.256Z",
+      "stage": "settled",
+      "tx": "0x7a17f9acf01bdaa45c2c361ab0e2b6ce56429c852a137ad02af8ddb5ebed632f",
+      "detail": "0x5454c97733cba860058cf84ca646d191dc69e70a320c5dfcc62fea0975953ae1"
+    },
+    {
+      "ts": "2026-08-24T18:00:14.978Z",
+      "stage": "delivered",
+      "tx": "0x7a17f9acf01bdaa45c2c361ab0e2b6ce56429c852a137ad02af8ddb5ebed632f",
+      "detail": "0x189e172d3f2437e605274fd7d6eabf169f04ac6ccc4a4106d2846fec3ea32004"
+    },
+    {
+      "ts": "2026-08-24T18:00:14.978Z",
+      "stage": "match",
+      "tx": "0x6149a995b17b26b17957e84a76f85f7c0a3f408463f575f4b46ef38bc020271a",
+      "detail": "amount=111110000"
+    },
+    {
+      "ts": "2026-08-24T18:00:16.674Z",
+      "stage": "proved",
+      "tx": "0x6149a995b17b26b17957e84a76f85f7c0a3f408463f575f4b46ef38bc020271a",
+      "detail": "block=11558479 idx=9"
+    },
+    {
+      "ts": "2026-08-24T18:00:33.652Z",
+      "stage": "settled",
+      "tx": "0x6149a995b17b26b17957e84a76f85f7c0a3f408463f575f4b46ef38bc020271a",
+      "detail": "0xd85bbb5072cfdb9a00c23c3838b77a12d2ff3a50514c266ce831e978a9e67c65"
+    },
+    {
+      "ts": "2026-08-24T18:00:34.263Z",
+      "stage": "rejected",
+      "tx": "0x6149a995b17b26b17957e84a76f85f7c0a3f408463f575f4b46ef38bc020271a",
+      "detail": "execution reverted: \"REPLAY\" (action=\"estimateGas\", data=\"0x08c379a000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000"
+    },
+    {
+      "ts": "2026-08-24T18:00:34.263Z",
+      "stage": "match",
+      "tx": "0xdfb05d29d4d17968f337c4aee9df95452c2701308cde9e4c30695bdcfe034304",
+      "detail": "amount=211780000000"
+    },
+    {
+      "ts": "2026-08-24T18:00:34.567Z",
+      "stage": "match",
+      "tx": "0xdfb05d29d4d17968f337c4aee9df95452c2701308cde9e4c30695bdcfe034304",
+      "detail": "amount=211780000000"
+    },
+    {
+      "ts": "2026-08-24T18:00:34.878Z",
+      "stage": "match",
+      "tx": "0xdfb05d29d4d17968f337c4aee9df95452c2701308cde9e4c30695bdcfe034304",
+      "detail": "amount=211780000000"
+    },
+    {
+      "ts": "2026-08-24T18:00:35.191Z",
+      "stage": "match",
+      "tx": "0x527696d3f32e3ca3c5446ef61b02ba9847beb7d2e0940fc456da71acd23a1f0f",
+      "detail": "amount=111110000"
+    },
+    {
+      "ts": "2026-08-24T18:00:36.268Z",
+      "stage": "proved",
+      "tx": "0x527696d3f32e3ca3c5446ef61b02ba9847beb7d2e0940fc456da71acd23a1f0f",
+      "detail": "block=11558466 idx=1"
+    },
+    {
+      "ts": "2026-08-24T18:00:48.731Z",
+      "stage": "settled",
+      "tx": "0x527696d3f32e3ca3c5446ef61b02ba9847beb7d2e0940fc456da71acd23a1f0f",
+      "detail": "0x6d0348875f349b14fe183caf00ae61258f01250d3d6feaa2193841e9eea488e2"
+    },
+    {
+      "ts": "2026-08-24T18:00:49.342Z",
+      "stage": "rejected",
+      "tx": "0x527696d3f32e3ca3c5446ef61b02ba9847beb7d2e0940fc456da71acd23a1f0f",
+      "detail": "execution reverted: \"REPLAY\" (action=\"estimateGas\", data=\"0x08c379a000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000"
+    },
+    {
+      "ts": "2026-08-24T18:00:49.342Z",
+      "stage": "match",
+      "tx": "0x8d6abf8bf5052f94eea92915b77ba80d0cac7fb19130c5b636636b529266d02c",
+      "detail": "amount=211780000000"
+    },
+    {
+      "ts": "2026-08-24T18:00:49.650Z",
+      "stage": "match",
+      "tx": "0x99698d85bdaf0d8af83e3b0115401d817d322edc3e433ca4d7a8768559bd2b1d",
+      "detail": "amount=500000000"
+    },
+    {
+      "ts": "2026-08-24T18:00:50.886Z",
+      "stage": "proved",
+      "tx": "0x99698d85bdaf0d8af83e3b0115401d817d322edc3e433ca4d7a8768559bd2b1d",
+      "detail": "block=11558433 idx=120"
+    },
+    {
+      "ts": "2026-08-24T18:01:19.043Z",
+      "stage": "settled",
+      "tx": "0x99698d85bdaf0d8af83e3b0115401d817d322edc3e433ca4d7a8768559bd2b1d",
+      "detail": "0xe2a1d753d574bb5d11aa2d2a52b3347b4cf83a864ff62e6929165b14a01d6e8d"
+    },
+    {
+      "ts": "2026-08-24T18:16:45.165Z",
+      "stage": "delivered",
+      "tx": "0x99698d85bdaf0d8af83e3b0115401d817d322edc3e433ca4d7a8768559bd2b1d",
+      "detail": "0x0febc805e5dbd659101e475c29d9d0e48b52dcfd8138803290ed86bfcfcb6236"
+    },
+    {
+      "ts": "2026-08-24T18:16:45.166Z",
+      "stage": "match",
+      "tx": "0x4a5cf415f890736831ff91c8288719282e10c4721bc00408888895a252d8c9d8",
+      "detail": "amount=101500000"
+    },
+    {
+      "ts": "2026-08-24T18:16:45.477Z",
+      "stage": "match",
+      "tx": "0x78fb5363bd411747a07cc0db7243655a3b8fab2a5def8b2229416c19c4baba1a",
+      "detail": "amount=5000000000"
+    },
+    {
+      "ts": "2026-08-24T18:17:18.011Z",
+      "stage": "match",
+      "tx": "0xec668fc5e4f607618cd95d8f57023cfaabbe8b2d01a8664883dfc40fc01715bd",
+      "detail": "amount=100000000"
+    },
+    {
+      "ts": "2026-08-24T18:17:19.249Z",
+      "stage": "proved",
+      "tx": "0xec668fc5e4f607618cd95d8f57023cfaabbe8b2d01a8664883dfc40fc01715bd",
+      "detail": "block=11558624 idx=15"
+    },
+    {
+      "ts": "2026-08-24T18:17:48.332Z",
+      "stage": "settled",
+      "tx": "0xec668fc5e4f607618cd95d8f57023cfaabbe8b2d01a8664883dfc40fc01715bd",
+      "detail": "0x64d075acd66c32a554a6ddcb428f5ac0f79699198982161358cc0852365d2b96"
+    },
+    {
+      "ts": "2026-08-24T18:18:02.756Z",
+      "stage": "delivered",
+      "tx": "0xec668fc5e4f607618cd95d8f57023cfaabbe8b2d01a8664883dfc40fc01715bd",
+      "detail": "0xe67ad70befa28252ac1ecbc57f36432d7485404248f2befaf412b9af0a12b1a7"
+    },
+    {
+      "ts": "2026-08-24T18:18:02.756Z",
+      "stage": "match",
+      "tx": "0x9f3611f690c4ee6ea067122c7fba07065be6908ee8431f4e1eb4429545f48e03",
+      "detail": "amount=240820000"
+    },
+    {
+      "ts": "2026-08-24T18:18:03.075Z",
+      "stage": "match",
+      "tx": "0x9f3611f690c4ee6ea067122c7fba07065be6908ee8431f4e1eb4429545f48e03",
+      "detail": "amount=240820000"
+    },
+    {
+      "ts": "2026-08-24T18:18:03.373Z",
+      "stage": "match",
+      "tx": "0x9f3611f690c4ee6ea067122c7fba07065be6908ee8431f4e1eb4429545f48e03",
+      "detail": "amount=240820000"
+    },
+    {
+      "ts": "2026-08-24T18:18:03.690Z",
+      "stage": "match",
+      "tx": "0xebaa2943d562c2e670b57516e59d80784284025525bf886f9f8858746648a86f",
+      "detail": "amount=100000000"
+    },
+    {
+      "ts": "2026-08-24T18:18:05.095Z",
+      "stage": "proved",
+      "tx": "0xebaa2943d562c2e670b57516e59d80784284025525bf886f9f8858746648a86f",
+      "detail": "block=11558606 idx=106"
+    },
+    {
+      "ts": "2026-08-24T18:34:48.920Z",
+      "stage": "rejected",
+      "tx": "0xebaa2943d562c2e670b57516e59d80784284025525bf886f9f8858746648a86f",
+      "detail": "request timeout (code=TIMEOUT, version=6.17.0)"
+    },
+    {
+      "ts": "2026-08-24T18:34:48.920Z",
+      "stage": "match",
+      "tx": "0xaccaa3c719502541a3c6021571ca17e8ff47da206621780ad5037f1092412950",
+      "detail": "amount=506000000"
+    },
+    {
+      "ts": "2026-08-24T18:34:50.839Z",
+      "stage": "proved",
+      "tx": "0xaccaa3c719502541a3c6021571ca17e8ff47da206621780ad5037f1092412950",
+      "detail": "block=11558541 idx=119"
+    },
+    {
+      "ts": "2026-08-24T18:35:19.878Z",
+      "stage": "settled",
+      "tx": "0xaccaa3c719502541a3c6021571ca17e8ff47da206621780ad5037f1092412950",
+      "detail": "0x2a0edb70a2dc4d0a538b6055ab5e4ca271c2d720a2361523640b136f57c7dd14"
+    },
+    {
+      "ts": "2026-08-24T18:35:26.019Z",
+      "stage": "delivered",
+      "tx": "0xaccaa3c719502541a3c6021571ca17e8ff47da206621780ad5037f1092412950",
+      "detail": "0x9e128b7f4693cc6b3d71382518c6200588818653c0664ca3ada600539532f1cb"
+    },
+    {
+      "ts": "2026-08-24T18:35:26.019Z",
+      "stage": "match",
+      "tx": "0xfbfa4e0198cf120312ef38bbdb9dabc4912aab17917a5fd612409fa3a672960a",
+      "detail": "amount=117767229"
+    },
+    {
+      "ts": "2026-08-24T18:52:22.821Z",
+      "stage": "match",
+      "tx": "0x5eddda526cdc5cc460d0ca6f3e76b5b160e435d77f98f7e5139343b111d9a983",
+      "detail": "amount=100000000"
+    },
+    {
+      "ts": "2026-08-24T18:52:23.328Z",
+      "stage": "match",
+      "tx": "0x036daaef60f81a9168a26fc89b43efe5ed1f5129846b62a032c6abd09865d28b",
+      "detail": "amount=123350000"
+    },
+    {
+      "ts": "2026-08-24T18:52:23.690Z",
+      "stage": "match",
+      "tx": "0x036daaef60f81a9168a26fc89b43efe5ed1f5129846b62a032c6abd09865d28b",
+      "detail": "amount=100000000"
+    },
+    {
+      "ts": "2026-08-24T18:52:24.079Z",
+      "stage": "match",
+      "tx": "0xde0f18a354603417189edff939ea5e305e42d24db52c0b248754b76badb87c48",
+      "detail": "amount=100000000"
+    },
+    {
+      "ts": "2026-08-24T18:52:24.403Z",
+      "stage": "match",
+      "tx": "0x76a922f645b796c1445f5ca41b79f54afa68cd2efd6cb88d2174ee0e77f99f17",
+      "detail": "amount=200000000"
+    },
+    {
+      "ts": "2026-08-24T18:52:25.648Z",
+      "stage": "proved",
+      "tx": "0x76a922f645b796c1445f5ca41b79f54afa68cd2efd6cb88d2174ee0e77f99f17",
+      "detail": "block=11558826 idx=11"
+    },
+    {
+      "ts": "2026-08-24T18:52:45.964Z",
+      "stage": "settled",
+      "tx": "0x76a922f645b796c1445f5ca41b79f54afa68cd2efd6cb88d2174ee0e77f99f17",
+      "detail": "0xc135565aa96ceea03a9d7400b369f33b4d5a811b37e97883950680a87e55a9a6"
+    },
+    {
+      "ts": "2026-08-24T18:52:52.190Z",
+      "stage": "delivered",
+      "tx": "0x76a922f645b796c1445f5ca41b79f54afa68cd2efd6cb88d2174ee0e77f99f17",
+      "detail": "0x0037680f0c49cd703c2e68023e37268f51baed925d527fc8e3e846883388e88e"
+    },
+    {
+      "ts": "2026-08-24T18:52:52.190Z",
+      "stage": "match",
+      "tx": "0x55553667c42c72a4c8df8de09bacc92e56b4684fe378768b5d05b9be97d41631",
+      "detail": "amount=200000000"
+    },
+    {
+      "ts": "2026-08-24T18:52:53.443Z",
+      "stage": "proved",
+      "tx": "0x55553667c42c72a4c8df8de09bacc92e56b4684fe378768b5d05b9be97d41631",
+      "detail": "block=11558811 idx=3"
+    },
+    {
+      "ts": "2026-08-24T18:53:17.685Z",
+      "stage": "settled",
+      "tx": "0x55553667c42c72a4c8df8de09bacc92e56b4684fe378768b5d05b9be97d41631",
+      "detail": "0x40b218bd33fa7dbbb99fc6ba65685edd5b8474dea22c9ecc5f14442d3d6d3a0f"
+    },
+    {
+      "ts": "2026-08-24T18:53:28.120Z",
+      "stage": "delivered",
+      "tx": "0x55553667c42c72a4c8df8de09bacc92e56b4684fe378768b5d05b9be97d41631",
+      "detail": "0x4efc2814bc8b539144e00a43f960c803b5b2379147b9042f6743549bc64c0ae8"
+    },
+    {
+      "ts": "2026-08-24T18:53:28.120Z",
+      "stage": "match",
+      "tx": "0x07f396a9cd94c02a374f60b7355a164682b0544d9d38d7b7f725d5c46aa49262",
+      "detail": "amount=188630000"
+    },
+    {
+      "ts": "2026-08-24T18:53:28.425Z",
+      "stage": "match",
+      "tx": "0x07f396a9cd94c02a374f60b7355a164682b0544d9d38d7b7f725d5c46aa49262",
+      "detail": "amount=188630000"
+    },
+    {
+      "ts": "2026-08-24T18:53:28.570Z",
+      "stage": "match",
+      "tx": "0x07f396a9cd94c02a374f60b7355a164682b0544d9d38d7b7f725d5c46aa49262",
+      "detail": "amount=188630000"
+    },
+    {
+      "ts": "2026-08-24T18:53:28.710Z",
+      "stage": "match",
+      "tx": "0x1091efa6987f6dc63971a83711269e0234ba6d03d2bb97a4283a581cd0570b90",
+      "detail": "amount=100000000"
+    },
+    {
+      "ts": "2026-08-24T18:53:28.858Z",
+      "stage": "match",
+      "tx": "0xe8b2991056b8402d2c82bef5278c69bb63d3b18bfca653f0580aaee2b153a41c",
+      "detail": "amount=100000000"
+    },
+    {
+      "ts": "2026-08-24T18:54:00.448Z",
+      "stage": "match",
+      "tx": "0x21286ccacc3bd4cd6bbd3b833f57701cbe56de7c844e6b4d3edb7a0173d28300",
+      "detail": "amount=2200000000"
+    },
+    {
+      "ts": "2026-08-24T19:07:29.813Z",
+      "stage": "match",
+      "tx": "0x0087a54df9ed2a99f519d082f94137495ddc368853601726c4a5182c172231b5",
+      "detail": "amount=100000000"
+    },
+    {
+      "ts": "2026-08-24T19:07:29.963Z",
+      "stage": "match",
+      "tx": "0xdee93539527b2361bf2a9e37055fa968979aa2b16b81e7ab6afe8663eb4e16b4",
+      "detail": "amount=100000000"
+    },
+    {
+      "ts": "2026-08-24T19:23:07.942Z",
+      "stage": "match",
+      "tx": "0xf15fd08f5772ac85f8b587e540b91625f5800e4e01957fa81763fbd70ed55e5f",
+      "detail": "amount=200000000"
+    },
+    {
+      "ts": "2026-08-24T19:23:09.138Z",
+      "stage": "proved",
+      "tx": "0xf15fd08f5772ac85f8b587e540b91625f5800e4e01957fa81763fbd70ed55e5f",
+      "detail": "block=11558982 idx=8"
+    },
+    {
+      "ts": "2026-08-24T19:23:34.133Z",
+      "stage": "settled",
+      "tx": "0xf15fd08f5772ac85f8b587e540b91625f5800e4e01957fa81763fbd70ed55e5f",
+      "detail": "0x8988d5f7d92f3ed77ab80dbeaec7ec72b31c029af56d991d5243cf7e9eb251e9"
+    },
+    {
+      "ts": "2026-08-24T19:23:41.141Z",
+      "stage": "delivered",
+      "tx": "0xf15fd08f5772ac85f8b587e540b91625f5800e4e01957fa81763fbd70ed55e5f",
+      "detail": "0xe14629119c7716a76a95465afea007b54fd8ee1abfdebc9a83b6f859fc4d4996"
+    },
+    {
+      "ts": "2026-08-24T19:39:11.500Z",
+      "stage": "match",
+      "tx": "0x1d97c0546a4fad270f5041d840b5e0f8447cc90304054d169ac57f4b0e7f16e8",
+      "detail": "amount=198000000"
+    },
+    {
+      "ts": "2026-08-24T19:39:12.746Z",
+      "stage": "proved",
+      "tx": "0x1d97c0546a4fad270f5041d840b5e0f8447cc90304054d169ac57f4b0e7f16e8",
+      "detail": "block=11559080 idx=14"
+    },
+    {
+      "ts": "2026-08-24T19:39:46.282Z",
+      "stage": "settled",
+      "tx": "0x1d97c0546a4fad270f5041d840b5e0f8447cc90304054d169ac57f4b0e7f16e8",
+      "detail": "0xf76c9f3774637c1b11f01a899cdf3f9e37755fd1b0d4c51ca39ab009fcfabd55"
+    },
+    {
+      "ts": "2026-08-24T19:39:52.424Z",
+      "stage": "delivered",
+      "tx": "0x1d97c0546a4fad270f5041d840b5e0f8447cc90304054d169ac57f4b0e7f16e8",
+      "detail": "0xd17415ea4a8dd2f760e306da6e9fa5800c42ae6d66840cbcd7b1d1d152680e97"
+    },
+    {
+      "ts": "2026-08-24T19:39:52.424Z",
+      "stage": "match",
+      "tx": "0x4e4f9db99179e3daf9b0ce1d4f84a48c59d7cb1206cfc2d16f56e92ef371f60a",
+      "detail": "amount=100000000"
+    },
+    {
+      "ts": "2026-08-24T19:39:53.867Z",
+      "stage": "proved",
+      "tx": "0x4e4f9db99179e3daf9b0ce1d4f84a48c59d7cb1206cfc2d16f56e92ef371f60a",
+      "detail": "block=11559064 idx=10"
+    },
+    {
+      "ts": "2026-08-24T19:50:20.703Z",
+      "stage": "rejected",
+      "tx": "0x4e4f9db99179e3daf9b0ce1d4f84a48c59d7cb1206cfc2d16f56e92ef371f60a",
+      "detail": "request timeout (code=TIMEOUT, version=6.17.0)"
+    },
+    {
+      "ts": "2026-08-24T19:50:20.703Z",
+      "stage": "match",
+      "tx": "0x9580a7f37154e31e1e392f52e8e52b00ec4ef0dfe6171e7581ec4fe0823e5385",
+      "detail": "amount=100000000"
+    },
+    {
+      "ts": "2026-08-24T19:50:22.383Z",
+      "stage": "proved",
+      "tx": "0x9580a7f37154e31e1e392f52e8e52b00ec4ef0dfe6171e7581ec4fe0823e5385",
+      "detail": "block=11559045 idx=85"
+    },
+    {
+      "ts": "2026-08-24T19:50:35.001Z",
+      "stage": "settled",
+      "tx": "0x9580a7f37154e31e1e392f52e8e52b00ec4ef0dfe6171e7581ec4fe0823e5385",
+      "detail": "0xd82783cd48a6ba92fb4510e0b0e2de70036d55f548ae7f38181dff2b724f79e9"
+    },
+    {
+      "ts": "2026-08-24T19:50:49.898Z",
+      "stage": "delivered",
+      "tx": "0x9580a7f37154e31e1e392f52e8e52b00ec4ef0dfe6171e7581ec4fe0823e5385",
+      "detail": "0x724de0c5e8dcfe1f1964728d373e03e9d3d5312a2b1d26c243056a44b648a7c3"
+    },
+    {
+      "ts": "2026-08-24T19:51:21.909Z",
+      "stage": "match",
+      "tx": "0x7ad97ef920ce048a7e2d99accbee54a2b1807cd469c34d794a6634602d0d483c",
+      "detail": "amount=2000000000"
+    },
+    {
+      "ts": "2026-08-24T19:51:23.143Z",
+      "stage": "proved",
+      "tx": "0x7ad97ef920ce048a7e2d99accbee54a2b1807cd469c34d794a6634602d0d483c",
+      "detail": "block=11559150 idx=1"
+    },
+    {
+      "ts": "2026-08-24T19:51:32.399Z",
+      "stage": "rejected",
+      "tx": "0x7ad97ef920ce048a7e2d99accbee54a2b1807cd469c34d794a6634602d0d483c",
+      "detail": "execution reverted: \"INSUFFICIENT_ESCROW\" (action=\"estimateGas\", data=\"0x08c379a00000000000000000000000000000000000000000000000000000000000000020000000000000000"
+    },
+    {
+      "ts": "2026-08-24T19:51:32.399Z",
+      "stage": "match",
+      "tx": "0xc25fa604ceba4fb66a5b71539af7946dec49ef47747f71e8a3dabe788c2f0e11",
+      "detail": "amount=2332294187"
+    },
+    {
+      "ts": "2026-08-24T20:11:34.271Z",
+      "stage": "match",
+      "tx": "0xac1b8bd42c30538697594665f3f8dc7bd5f99b8b803f165e4ae544602d495763",
+      "detail": "amount=100000000"
+    },
+    {
+      "ts": "2026-08-24T20:28:50.659Z",
+      "stage": "match",
+      "tx": "0x6a79a8961ce4196f3f4f4a5f4ff40899ad76ac86ab0ee24784728e58330459b7",
+      "detail": "amount=100000000"
+    },
+    {
+      "ts": "2026-08-24T20:28:50.802Z",
+      "stage": "match",
+      "tx": "0xa0023dbefb58dcf48e6a1692d7854379b91e5ba0781ba069c2981873c094211a",
+      "detail": "amount=100000000"
+    },
+    {
+      "ts": "2026-08-24T20:28:51.133Z",
+      "stage": "match",
+      "tx": "0xfca1af23b0fc737447e6ff08899c6f63e5ad73ea4ae1cb862142d7d9c2df1372",
+      "detail": "amount=100000000"
+    },
+    {
+      "ts": "2026-08-24T20:28:51.682Z",
+      "stage": "match",
+      "tx": "0xd894b807e814fa00a28f4efef71739adbf59db91dd41e898a611ad89061321be",
+      "detail": "amount=123330000"
+    },
+    {
+      "ts": "2026-08-24T20:28:51.829Z",
+      "stage": "match",
+      "tx": "0xd894b807e814fa00a28f4efef71739adbf59db91dd41e898a611ad89061321be",
+      "detail": "amount=100000000"
+    },
+    {
+      "ts": "2026-08-24T20:28:51.976Z",
+      "stage": "match",
+      "tx": "0x668d95442994a2d49e23c7012ed016b112f59a219b6c30c0b61023cc5a5ff4b3",
+      "detail": "amount=100000000"
+    },
+    {
+      "ts": "2026-08-24T20:28:52.126Z",
+      "stage": "match",
+      "tx": "0xa6d4be2dbdfa127841a9249dc68ed8fb9350e5d60c6a09073ff8a9aadc43cefc",
+      "detail": "amount=100000000"
+    },
+    {
+      "ts": "2026-08-24T20:28:52.439Z",
+      "stage": "match",
+      "tx": "0xfc8d186467862e95515bd0a93dce97c1379e5f3127e2c9975688070d16caad5f",
+      "detail": "amount=100000000"
+    },
+    {
+      "ts": "2026-08-24T20:41:51.489Z",
+      "stage": "match",
+      "tx": "0x60baeeafc1f3fbcd1cb4f118d6dbe09a5788481afadbf47adddb0f4b89555d39",
+      "detail": "amount=103134256230"
+    },
+    {
+      "ts": "2026-08-24T20:41:51.631Z",
+      "stage": "match",
+      "tx": "0x60baeeafc1f3fbcd1cb4f118d6dbe09a5788481afadbf47adddb0f4b89555d39",
+      "detail": "amount=103134256230"
+    },
+    {
+      "ts": "2026-08-24T20:41:51.778Z",
+      "stage": "match",
+      "tx": "0x60baeeafc1f3fbcd1cb4f118d6dbe09a5788481afadbf47adddb0f4b89555d39",
+      "detail": "amount=279300393"
+    },
+    {
+      "ts": "2026-08-24T20:41:52.086Z",
+      "stage": "match",
+      "tx": "0x60baeeafc1f3fbcd1cb4f118d6dbe09a5788481afadbf47adddb0f4b89555d39",
+      "detail": "amount=103444590000"
+    },
+    {
+      "ts": "2026-08-24T20:41:52.469Z",
+      "stage": "match",
+      "tx": "0xe14375a099fce01e020063ccf8d77b0c90b4c9e3c9f16e297c3f43ef81589728",
+      "detail": "amount=4280492459"
+    },
+    {
+      "ts": "2026-08-24T20:41:52.879Z",
+      "stage": "match",
+      "tx": "0x154b3ceaab86ff1b32a9c720fdd9388bbdb90fbf78388823185c4681f3f036fc",
+      "detail": "amount=2617133964"
+    },
+    {
+      "ts": "2026-08-24T20:41:53.205Z",
+      "stage": "match",
+      "tx": "0x8c1b2db3c2f1ebf91fb7795d74d3b0f84fbebfce0c29ca2ba5cd51690356cadd",
+      "detail": "amount=1696564097"
+    },
+    {
+      "ts": "2026-08-24T20:41:53.348Z",
+      "stage": "match",
+      "tx": "0xe1942d6a8de9880bf3206f417dc88e2af46c7da89442b22f0d1d86bb098fb927",
+      "detail": "amount=31659344074"
+    },
+    {
+      "ts": "2026-08-24T20:41:53.657Z",
+      "stage": "match",
+      "tx": "0x4e31e24dfd9345f0dd7baffb9da55527d0123eb29612fdd4fcfa1baddc831be2",
+      "detail": "amount=10986973530"
+    },
+    {
+      "ts": "2026-08-24T20:41:53.799Z",
+      "stage": "match",
+      "tx": "0x93d381e725ea5fe5cc485c1de7c10cd94ce74c9d398cb6891be8eca493a1d1a4",
+      "detail": "amount=37781644063"
+    },
+    {
+      "ts": "2026-08-24T20:41:54.116Z",
+      "stage": "match",
+      "tx": "0x4682166b56e5024f2b3ae8a9605b1d8d10c260fcddff4b60dac824b3ed3cf804",
+      "detail": "amount=12035229858"
+    },
+    {
+      "ts": "2026-08-24T20:41:54.421Z",
+      "stage": "match",
+      "tx": "0x042e0e7599c1a0e34a2579968ad84dc7ed1a00f1bdbc80e1e1be38d2e3c755fb",
+      "detail": "amount=33665927470"
+    },
+    {
+      "ts": "2026-08-24T20:41:54.734Z",
+      "stage": "match",
+      "tx": "0x505c8f605a2868810df5e67b93df24a0c0b3ef74e7650eade63f1fa72de7bed1",
+      "detail": "amount=103444593725"
+    },
+    {
+      "ts": "2026-08-24T20:41:55.053Z",
+      "stage": "match",
+      "tx": "0x89e00bdcd8a4140450ac6fbfaa4a347d1facc7115fcf6fb4dbe0705a6f9d583c",
+      "detail": "amount=100000000"
+    },
+    {
+      "ts": "2026-08-24T20:41:55.194Z",
+      "stage": "match",
+      "tx": "0xae68c4845e0a38777aaa3b1fad89c8e86d105d59d8f2e6e13dc9378753f07ace",
+      "detail": "amount=100000000"
+    },
+    {
+      "ts": "2026-08-24T20:41:55.542Z",
+      "stage": "match",
+      "tx": "0xd4ed8fb3537302397cd79114a45df2d4c52902b7985c11e196b73e61ec05d8be",
+      "detail": "amount=100000000"
+    },
+    {
+      "ts": "2026-08-24T20:47:06.786Z",
+      "stage": "match",
+      "tx": "0xde84df07dad4de97596d16d061bf3f55060398598dec0c3dc060579b2ba7c148",
+      "detail": "amount=1000000000"
+    },
+    {
+      "ts": "2026-08-24T20:47:07.886Z",
+      "stage": "proved",
+      "tx": "0xde84df07dad4de97596d16d061bf3f55060398598dec0c3dc060579b2ba7c148",
+      "detail": "block=11559440 idx=5"
+    },
+    {
+      "ts": "2026-08-24T20:47:32.946Z",
+      "stage": "settled",
+      "tx": "0xde84df07dad4de97596d16d061bf3f55060398598dec0c3dc060579b2ba7c148",
+      "detail": "0xc7b918d7f3aa6c8126905fc23396264aea6ae0f3138c09e81294cdd661dd3c88"
+    },
+    {
+      "ts": "2026-08-24T20:47:39.638Z",
+      "stage": "delivered",
+      "tx": "0xde84df07dad4de97596d16d061bf3f55060398598dec0c3dc060579b2ba7c148",
+      "detail": "0x43c61a854410cf7db635916d6911261976cfc1e663975d6560ec66b9c165c3b8"
+    },
+    {
+      "ts": "2026-08-24T20:49:12.867Z",
+      "stage": "match",
+      "tx": "0xdd7fde9491e80007f6bf080a41b7786e4b2f1524939afe3d78323fd1fb7354c2",
+      "detail": "amount=1000000000"
+    },
+    {
+      "ts": "2026-08-24T20:49:14.171Z",
+      "stage": "proved",
+      "tx": "0xdd7fde9491e80007f6bf080a41b7786e4b2f1524939afe3d78323fd1fb7354c2",
+      "detail": "block=11559446 idx=5"
+    },
+    {
+      "ts": "2026-08-24T20:49:15.881Z",
+      "stage": "rejected",
+      "tx": "0xdd7fde9491e80007f6bf080a41b7786e4b2f1524939afe3d78323fd1fb7354c2",
+      "detail": "execution reverted: \"INSUFFICIENT_ESCROW\" (action=\"estimateGas\", data=\"0x08c379a00000000000000000000000000000000000000000000000000000000000000020000000000000000"
+    },
+    {
+      "ts": "2026-08-24T21:00:35.629Z",
+      "stage": "match",
+      "tx": "0x94e5599d0740328c6d9572a9dbe5c4662983c7466d6ee17c5a3fd4c31dd2308a",
+      "detail": "amount=2107300567"
+    },
+    {
+      "ts": "2026-08-24T21:34:31.466Z",
+      "stage": "match",
+      "tx": "0xa7dbe4a2bc0df8793e220ebb441acf8ca957de5cf6bc466bcb49efb191ab6566",
+      "detail": "amount=28806000000"
+    },
+    {
+      "ts": "2026-08-24T21:34:31.790Z",
+      "stage": "match",
+      "tx": "0xa903b64b61599a5ff39bce8060cd662a80e3a6e3fb8937a53dac38809f5c7182",
+      "detail": "amount=100000000"
+    },
+    {
+      "ts": "2026-08-24T21:34:32.130Z",
+      "stage": "match",
+      "tx": "0x571b57c9d669e4c8009e746ec1cc05ebe179c29bd38f6424b8038f0b84459f7a",
+      "detail": "amount=5000000000"
+    },
+    {
+      "ts": "2026-08-24T21:34:32.284Z",
+      "stage": "match",
+      "tx": "0x6871b2ab1953ccaef77d15c7d9d91cd2ca602e0f05f7e0ff979f0dc7cdb7de92",
+      "detail": "amount=100000000"
+    },
+    {
+      "ts": "2026-08-24T21:54:10.697Z",
+      "stage": "match",
+      "tx": "0x23175d18911c147e92dc5dad7f9836e36dc5ea826a5460542643ba8f94e0bf70",
+      "detail": "amount=10000000000"
+    },
+    {
+      "ts": "2026-08-24T21:54:11.956Z",
+      "stage": "proved",
+      "tx": "0x23175d18911c147e92dc5dad7f9836e36dc5ea826a5460542643ba8f94e0bf70",
+      "detail": "block=11559760 idx=0"
+    },
+    {
+      "ts": "2026-08-24T21:54:34.334Z",
+      "stage": "rejected",
+      "tx": "0x23175d18911c147e92dc5dad7f9836e36dc5ea826a5460542643ba8f94e0bf70",
+      "detail": "execution reverted: \"INSUFFICIENT_ESCROW\" (action=\"estimateGas\", data=\"0x08c379a00000000000000000000000000000000000000000000000000000000000000020000000000000000"
+    },
+    {
+      "ts": "2026-08-24T21:54:34.334Z",
+      "stage": "match",
+      "tx": "0x564cf24d444fdfc4f826e728b6e71311416e340686f9d9649c632ea6b4da8f21",
+      "detail": "amount=107853072"
+    },
+    {
+      "ts": "2026-08-24T21:54:34.639Z",
+      "stage": "match",
+      "tx": "0x564cf24d444fdfc4f826e728b6e71311416e340686f9d9649c632ea6b4da8f21",
+      "detail": "amount=107853072"
+    },
+    {
+      "ts": "2026-08-24T22:11:41.621Z",
+      "stage": "match",
+      "tx": "0xb93f26bd8c270759f4cf12b1afe1949bb24944312b47e80f3fec5e7ce5c61244",
+      "detail": "amount=276730000"
+    },
+    {
+      "ts": "2026-08-24T22:11:41.929Z",
+      "stage": "match",
+      "tx": "0xb93f26bd8c270759f4cf12b1afe1949bb24944312b47e80f3fec5e7ce5c61244",
+      "detail": "amount=276730000"
+    },
+    {
+      "ts": "2026-08-24T22:11:42.074Z",
+      "stage": "match",
+      "tx": "0xb93f26bd8c270759f4cf12b1afe1949bb24944312b47e80f3fec5e7ce5c61244",
+      "detail": "amount=276730000"
+    },
+    {
+      "ts": "2026-08-24T22:11:42.231Z",
+      "stage": "match",
+      "tx": "0x14d65122f15e09614eee3f29ad7deb907db5b56e7cce12fa6728d280803dc606",
+      "detail": "amount=2107300567"
+    },
+    {
+      "ts": "2026-08-24T22:11:42.598Z",
+      "stage": "match",
+      "tx": "0x835b6ba81cee6cdcfe2c288c69ecce944b7f2156f5e37204c72d83e1edf78710",
+      "detail": "amount=541731785"
+    },
+    {
+      "ts": "2026-08-24T22:11:42.943Z",
+      "stage": "match",
+      "tx": "0x311c721d88f8dd3fce45268a080c0767ed75f98173e8d7001d9f22ffbf7c0284",
+      "detail": "amount=100000000"
+    },
+    {
+      "ts": "2026-08-24T22:11:43.281Z",
+      "stage": "match",
+      "tx": "0xbecf737d12303780db501bfe3f817f5f54324ad8b572647ba2e480adbb141318",
+      "detail": "amount=123350000"
+    },
+    {
+      "ts": "2026-08-24T22:11:43.638Z",
+      "stage": "match",
+      "tx": "0xbecf737d12303780db501bfe3f817f5f54324ad8b572647ba2e480adbb141318",
+      "detail": "amount=100000000"
+    },
+    {
+      "ts": "2026-08-24T22:11:44.046Z",
+      "stage": "match",
+      "tx": "0xb6cad621f8c88e554dd833f420f591f6da130197cccf5735a586872f44ac87f9",
+      "detail": "amount=100000000"
+    },
+    {
+      "ts": "2026-08-24T22:27:47.626Z",
+      "stage": "match",
+      "tx": "0xbbe626af4847c2f21d8883bfcc1c36060e3ceeb4d7e778e5225ab28a65bbc6cc",
+      "detail": "amount=394998384"
+    },
+    {
+      "ts": "2026-08-24T22:27:48.894Z",
+      "stage": "proved",
+      "tx": "0xbbe626af4847c2f21d8883bfcc1c36060e3ceeb4d7e778e5225ab28a65bbc6cc",
+      "detail": "block=11559922 idx=7"
+    },
+    {
+      "ts": "2026-08-24T22:28:01.857Z",
+      "stage": "settled",
+      "tx": "0xbbe626af4847c2f21d8883bfcc1c36060e3ceeb4d7e778e5225ab28a65bbc6cc",
+      "detail": "0xd9382412192d9121c31f8650213efe738e325e7b74caf46245ab76397d5a6037"
+    },
+    {
+      "ts": "2026-08-24T22:28:25.433Z",
+      "stage": "delivered",
+      "tx": "0xbbe626af4847c2f21d8883bfcc1c36060e3ceeb4d7e778e5225ab28a65bbc6cc",
+      "detail": "0x2b08d9a1f5270efc2906751f734b416b074cbbb9601c75eb34380320fce2b3ed"
+    },
+    {
+      "ts": "2026-08-24T22:28:25.433Z",
+      "stage": "match",
+      "tx": "0xd30869548987738f5ea4234bbe739b343966c8acf98ca3f0b2d2779a1ff340e6",
+      "detail": "amount=100000000"
+    },
+    {
+      "ts": "2026-08-24T22:28:25.579Z",
+      "stage": "match",
+      "tx": "0x0ad004e8b988995909f5bd9318e8754487a371a9e8a4297a3bf17e0f6000f3eb",
+      "detail": "amount=100000000"
+    },
+    {
+      "ts": "2026-08-24T22:34:08.421Z",
+      "stage": "match",
+      "tx": "0x1569502f3940449f16e68279af70457a8d9e5c2075770c0c01145704f82b964b",
+      "detail": "amount=100000000"
+    },
+    {
+      "ts": "2026-08-24T22:36:13.315Z",
+      "stage": "match",
+      "tx": "0xb8f02c0ecd3c5d30d7ab3fad7e0dd85dd72e8065c2804bfcede7eb2607e237df",
+      "detail": "amount=200000000"
+    },
+    {
+      "ts": "2026-08-24T22:36:14.634Z",
+      "stage": "proved",
+      "tx": "0xb8f02c0ecd3c5d30d7ab3fad7e0dd85dd72e8065c2804bfcede7eb2607e237df",
+      "detail": "block=11559970 idx=13"
+    },
+    {
+      "ts": "2026-08-24T22:36:48.679Z",
+      "stage": "settled",
+      "tx": "0xb8f02c0ecd3c5d30d7ab3fad7e0dd85dd72e8065c2804bfcede7eb2607e237df",
+      "detail": "0xc339bd4561be875bbb8a7edbbfaa37e840674591c4fdedf5c35fd3c4ac7a3914"
+    },
+    {
+      "ts": "2026-08-24T22:37:03.142Z",
+      "stage": "delivered",
+      "tx": "0xb8f02c0ecd3c5d30d7ab3fad7e0dd85dd72e8065c2804bfcede7eb2607e237df",
+      "detail": "0x7dd91912c2f91ace4caf056aa8d5a11217aa57e91bb0fac1dea763c6cb3ac4d3"
+    },
+    {
+      "ts": "2026-08-24T22:37:03.142Z",
+      "stage": "match",
+      "tx": "0xcd71c5bd398e73886ce5a4a9032c181f6e5c68edff653f62f5db17187700766f",
+      "detail": "amount=100000000"
+    },
+    {
+      "ts": "2026-08-24T22:52:33.384Z",
+      "stage": "match",
+      "tx": "0x8eefd351ede2c1a94a4938010cd6503e29e9e24ce0afd657223036f158c45a3b",
+      "detail": "amount=199007921"
+    },
+    {
+      "ts": "2026-08-24T22:52:34.944Z",
+      "stage": "proved",
+      "tx": "0x8eefd351ede2c1a94a4938010cd6503e29e9e24ce0afd657223036f158c45a3b",
+      "detail": "block=11560047 idx=46"
+    },
+    {
+      "ts": "2026-08-24T22:52:36.913Z",
+      "stage": "rejected",
+      "tx": "0x8eefd351ede2c1a94a4938010cd6503e29e9e24ce0afd657223036f158c45a3b",
+      "detail": "execution reverted: \"AMOUNT_TOO_LOW\" (action=\"estimateGas\", data=\"0x08c379a0000000000000000000000000000000000000000000000000000000000000002000000000000000000000"
+    },
+    {
+      "ts": "2026-08-24T22:52:36.913Z",
+      "stage": "match",
+      "tx": "0x1576fe9ddc7c01878ce387470fe9debdf7831f02bf7c1d2472ea7c08aad54695",
+      "detail": "amount=100000000"
+    },
+    {
+      "ts": "2026-08-24T23:25:05.562Z",
+      "stage": "match",
+      "tx": "0xf93375007b60026f2f605b50b830f5ece02f621992ece27e2fc9383203d080f9",
+      "detail": "amount=2107300567"
+    },
+    {
+      "ts": "2026-08-24T23:25:05.883Z",
+      "stage": "match",
+      "tx": "0xc3db41c9cdf6cadb0120f038088cfcc82fa4b7a9005a1b17b8807bb00c6ffc24",
+      "detail": "amount=334000000"
+    },
+    {
+      "ts": "2026-08-24T23:28:13.400Z",
+      "stage": "match",
+      "tx": "0x041d600333389b3a160735d798bff5489d1e9abba0524889a6aad0a08ed4b204",
+      "detail": "amount=178000000"
+    },
+    {
+      "ts": "2026-08-24T23:28:13.710Z",
+      "stage": "match",
+      "tx": "0xfcc170f58fa637c2ce60c8f4126eb2c70303e015b1924e29cdb16cd55ce7b3b6",
+      "detail": "amount=135000000"
+    },
+    {
+      "ts": "2026-08-24T23:28:14.019Z",
+      "stage": "match",
+      "tx": "0xf43a5fe607c5280c3a38ef002cf55f70b4262a5f849e9b6fa306e5a11da400b4",
+      "detail": "amount=156000000"
+    },
+    {
+      "ts": "2026-08-24T23:29:47.951Z",
+      "stage": "match",
+      "tx": "0xe767b2f42445a4bc01d73f3c24252ea1437c216a016df75c9447418e103fc011",
+      "detail": "amount=21233894172"
+    },
+    {
+      "ts": "2026-08-24T23:31:53.023Z",
+      "stage": "match",
+      "tx": "0xd41302f703ea133fab6acac662120c76375b72524d9371189939a951bf76122b",
+      "detail": "amount=9908712109"
+    },
+    {
+      "ts": "2026-08-24T23:31:53.335Z",
+      "stage": "match",
+      "tx": "0x34b8e366de0428718744a75af0223702368ea8002f9f981602674daf9faf052c",
+      "detail": "amount=10641394725"
+    },
+    {
+      "ts": "2026-08-24T23:31:53.688Z",
+      "stage": "match",
+      "tx": "0xfd13b55aa127f4e1b661792a404b2d7526fc51aeaaeda6547b30abf4be22512d",
+      "detail": "amount=39123020316"
+    },
+    {
+      "ts": "2026-08-24T23:31:53.996Z",
+      "stage": "match",
+      "tx": "0x846b3fbfc80c4a86b68ccb44c7f7a6e7e5b8e986484558e1d19ba89fe018a14c",
+      "detail": "amount=20782010355"
+    },
+    {
+      "ts": "2026-08-24T23:40:36.570Z",
+      "stage": "match",
+      "tx": "0x88cb9861a5cdea9f83a6a79a47c56fdf573cf88a5a101985372296aed341ff6f",
+      "detail": "amount=52658000000"
+    },
+    {
+      "ts": "2026-08-24T23:40:36.880Z",
+      "stage": "match",
+      "tx": "0x88cb9861a5cdea9f83a6a79a47c56fdf573cf88a5a101985372296aed341ff6f",
+      "detail": "amount=52658000000"
+    },
+    {
+      "ts": "2026-08-24T23:40:37.187Z",
+      "stage": "match",
+      "tx": "0x88cb9861a5cdea9f83a6a79a47c56fdf573cf88a5a101985372296aed341ff6f",
+      "detail": "amount=52658000000"
+    },
+    {
+      "ts": "2026-08-24T23:45:43.218Z",
+      "stage": "match",
+      "tx": "0x8ca2ccb17abd95309931f82ad849d677eb161a3ad630c29c3965afbe44e3ecaa",
+      "detail": "amount=100000000"
+    },
+    {
+      "ts": "2026-08-24T23:45:43.529Z",
+      "stage": "match",
+      "tx": "0xe5241a05257982b7b189e01961e9f71d58d3b08f13951179894b669f7dd767d0",
+      "detail": "amount=100000000"
+    },
+    {
+      "ts": "2026-08-24T23:48:20.332Z",
+      "stage": "match",
+      "tx": "0xcdc5e45584206cd6ca3ea36db81a8a9e6bddd094d28859eb57627103c922c484",
+      "detail": "amount=100000000"
+    },
+    {
+      "ts": "2026-08-24T23:54:34.226Z",
+      "stage": "match",
+      "tx": "0x473f57bef2158b273b2d88c06624be8959acd6cf62b9a0c8d90ec356fde9250f",
+      "detail": "amount=106892877"
+    },
+    {
+      "ts": "2026-08-25T00:00:20.654Z",
+      "stage": "match",
+      "tx": "0x517231a5f54bc7c424f6b7b390399c8cfa8941c6e513f7ff058ab37f75f38d25",
+      "detail": "amount=300000000"
     }
   ]
 }
