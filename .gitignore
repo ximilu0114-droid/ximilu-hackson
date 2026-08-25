@@ -15,3 +15,6 @@ coverage/
 .DS_Store
 *.log
 deployments/*.secret.json
+
+# next.js build output
+.next/
