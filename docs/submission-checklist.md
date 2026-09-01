@@ -99,7 +99,7 @@ Expected:
 - [x] Fresh proof smoke test prints `"verification": "SUCCESS"`.
 - [x] Unified verifier finishes with `"step": "judge-verify"` and `"status": "SUCCESS"`.
 
-The previous three-gate rehearsal at implementation commit `392562e2da24` completed in 18.84 s. Replace this line after the first committed five-gate run; timings and automatically selected attested transactions are environment-dependent.
+Full five-gate rehearsal at implementation commit `4e66d717c426` on 2026-09-02 completed in 41.17 s. It passed 32 tests, the production build and audit, 62 live cross-chain checks, both Sourcify exact matches, a shared proof for blocks `11615477..11615479`, and a fresh single proof for Sepolia transaction `0x774aecef1aa85bb360f1d4c1f26c9fe46569b93707a09aff1a1429dd7df15ea6` at block `11615479`; timings and automatically selected attested transactions are environment-dependent.
 
 ## Video acceptance
 
