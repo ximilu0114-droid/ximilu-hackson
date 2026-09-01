@@ -27,7 +27,7 @@ The agent watches only attested source blocks, builds a real Attestcoin proof, a
 
 <div class="metric-grid">
 <div><strong>62</strong><span>live cross-chain checks</span></div>
-<div><strong>28</strong><span>automated tests</span></div>
+<div><strong>32</strong><span>automated tests</span></div>
 <div><strong>2</strong><span>public testnets</span></div>
 <div><strong>0</strong><span>trusted payment assertions</span></div>
 </div>
@@ -54,7 +54,7 @@ AttestFlow separates these responsibilities:
 
 | Layer | Responsibility | Trust model |
 |---|---|---|
-| Intent | Natural-language rule → inspectable policy | deterministic parser by default; optional LLM is advisory |
+| Intent | Natural-language rule → reviewable policy draft | fail-closed compiler; explicit activation; optional LLM is advisory |
 | Truth | Source inclusion + continuity | Attestcoin Merkle and continuity proofs |
 | Execution | receipt, policy, replay, payout | deterministic CC3 smart contract |
 | Return | destination-bound result | exact CC3-published payload; explicit testnet adapter boundary |
@@ -154,7 +154,7 @@ On CC3 Testnet, EOA `verifyAndEmitSingle` succeeded while contract-context `veri
 | forged token event | token address, selector, recipient, and amount checked from calldata |
 | destination payload replay | `executedPayloads[payloadHash]` guard |
 | RPC timeout between chains | checkpoint CC3 leg; recover original payload from receipt; finish only missing leg |
-| LLM emits unsafe values | bounded parse; contract remains final enforcement layer |
+| LLM emits unsafe or incomplete values | no money defaults; schema rejection; inactive draft; explicit activation |
 
 The owner controls policy creation, operators, and escrow. That governance trust is explicit: Attestcoin authenticates source facts; it does not decide whether an owner-created business policy is economically sensible.
 
@@ -183,8 +183,8 @@ Current payload integrity anchor:
 ## Engineering acceptance
 
 - **15 contract tests:** valid native/ERC-20 flows, failed receipt, bad proof, proof-index mismatch, replay, policy mismatch, escrow, authorization, and destination validation.
-- **8 agent tests:** protocol-byte decoding, ERC-20 calldata variants, Merkle-index derivation, source IDs, and exact existing-policy reuse.
-- **5 web tests:** exact decimal parsing, native/token selection, safe defaults, precision rejection, and payout bounds.
+- **11 agent tests:** protocol-byte decoding, ERC-20 calldata variants, Merkle-index derivation, source IDs, exact existing-policy reuse, omitted fields, adversarial model JSON, and draft validation.
+- **6 web tests:** exact decimal parsing, native/token selection, fail-closed omissions, precision rejection, payout bounds, model schema checks, and activation validation.
 - **CI:** TypeScript, all tests, production Next.js build, dependency audit.
 - **Supply-chain checks:** Dependabot and CodeQL workflows; zero known production dependency vulnerabilities at the evidence snapshot.
 
@@ -202,7 +202,7 @@ AttestFlow uses natural language to reduce policy-authoring friction and to quer
 - payout ratio;
 - fixed beneficiary and destination.
 
-No model output can bypass the proof, receipt, replay, policy, or escrow checks. This is the core product principle: **agents propose; cryptography and code dispose.**
+Compilation is not authorization. Before any optional model call, the local compiler requires one self-receipt clause that binds the agent wallet, Sepolia source, and exactly one supported asset/amount, plus exactly one payout percentage. Strict model JSON must agree with those locally extracted values. The dashboard stores every compiled rule as an inactive draft, shows the exact money fields, and revalidates them before explicit activation. Model-assisted CLI output similarly remains `REVIEW_REQUIRED` until a later `--activate <rule-id>` command. Even after activation, no model output can bypass the proof, receipt, replay, policy, or escrow checks. This is the core product principle: **agents propose; users authorize policy; cryptography establishes truth; code moves money.**
 
 ## Honest Writability boundary
 

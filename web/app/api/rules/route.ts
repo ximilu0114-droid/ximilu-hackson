@@ -35,12 +35,18 @@ export async function POST(req: Request) {
     id,
     text,
     engine: parsed.engine,
-    active: true,
+    // Natural-language compilation creates a reviewable draft. AI output never
+    // becomes a money-moving policy until the user explicitly activates it.
+    active: false,
     policyId: 0,
     spec: parsed.value,
     createdAt: new Date().toISOString(),
   });
-  state.events.push({ ts: new Date().toISOString(), stage: 'rule-added', detail: `${id}: ${text}` });
+  state.events.push({
+    ts: new Date().toISOString(),
+    stage: 'rule-added',
+    detail: `${id} draft via ${parsed.engine}: ${text}`,
+  });
   writeState(state);
-  return NextResponse.json({ id, rules: state.rules });
+  return NextResponse.json({ id, requiresActivation: true, rules: state.rules });
 }

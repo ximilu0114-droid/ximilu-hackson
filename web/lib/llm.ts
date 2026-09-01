@@ -1,4 +1,10 @@
-import { decimalToUnits, parseRuleText, ParsedSpec, USDC } from './parse';
+import {
+  decimalToUnits,
+  parseRuleText,
+  ParsedSpec,
+  USDC,
+  validateParsedSpec,
+} from './parse';
 
 type EngineResult<T> = { engine: 'llm' | 'builtin'; value: T };
 
@@ -38,40 +44,61 @@ async function chatCompletion(system: string, user: string): Promise<string | nu
 export async function parseRuleWithOptionalLlm(
   text: string,
 ): Promise<EngineResult<ParsedSpec>> {
+  // Establish the explicit, deterministic source of truth before any model call.
+  // The model may explain the mapping, but it may not add or change money fields.
+  const deterministic = parseRuleText(text);
   const content = await chatCompletion(
-    'Extract a cross-chain payment rule. Reply ONLY with JSON: ' +
+    'Extract only fields explicitly present in this Sepolia self-payment rule. Reply ONLY with JSON: ' +
       '{"asset":"USDC"|"ETH","minimumAmount":"decimal string",' +
-      '"payoutPercent":"decimal string"}. Use only USDC or ETH.',
+      '"payoutPercent":"decimal string"}. Use only USDC or ETH. Never invent or default a field.',
     text,
   );
   if (content) {
-    try {
-      const parsed = JSON.parse(content.replace(/```json|```/g, '').trim());
-      const asset = String(parsed.asset).toUpperCase();
-      if (asset !== 'USDC' && asset !== 'ETH') throw new Error('unsupported asset');
-      const native = asset === 'ETH';
-      const minAmount = decimalToUnits(String(parsed.minimumAmount), native ? 18 : 6);
-      const payoutRatioE18 = decimalToUnits(String(parsed.payoutPercent), 16);
-      if (
-        minAmount <= 0n ||
-        payoutRatioE18 <= 0n ||
-        payoutRatioE18 > 1_000_000_000_000_000_000n
-      ) {
-        throw new Error('unsafe LLM policy');
-      }
-      return {
-        engine: 'llm',
-        value: {
-          minAmount: minAmount.toString(),
-          token: native ? null : USDC,
-          payoutRatioE18: payoutRatioE18.toString(),
-        },
-      };
-    } catch {
-      // Invalid model output never enters state; deterministic parser decides.
+    const modelPolicy = parseLlmPolicyContent(content, deterministic);
+    if (modelPolicy) {
+      return { engine: 'llm', value: modelPolicy };
     }
+    // Invalid or disagreeing model output never enters state.
   }
-  return { engine: 'builtin', value: parseRuleText(text) };
+  return { engine: 'builtin', value: deterministic };
+}
+
+/** Strict schema + agreement gate used by adversarial tests and runtime. */
+export function parseLlmPolicyContent(
+  content: string,
+  expected: ParsedSpec,
+): ParsedSpec | null {
+  try {
+    const normalized = content.trim();
+    if (normalized.includes('```')) return null;
+    const parsed = JSON.parse(normalized);
+    if (!parsed || Array.isArray(parsed) || typeof parsed !== 'object') return null;
+    const keys = Object.keys(parsed).sort();
+    const allowedKeys = ['asset', 'minimumAmount', 'payoutPercent'].sort();
+    if (
+      keys.length !== allowedKeys.length ||
+      keys.some((key, index) => key !== allowedKeys[index]) ||
+      typeof parsed.asset !== 'string' ||
+      typeof parsed.minimumAmount !== 'string' ||
+      typeof parsed.payoutPercent !== 'string'
+    ) return null;
+    const asset = parsed.asset.trim().toUpperCase();
+    if (asset !== 'USDC' && asset !== 'ETH') return null;
+    const native = asset === 'ETH';
+    const candidate = validateParsedSpec({
+      minAmount: decimalToUnits(String(parsed.minimumAmount), native ? 18 : 6).toString(),
+      token: native ? null : USDC,
+      payoutRatioE18: decimalToUnits(String(parsed.payoutPercent), 16).toString(),
+    });
+    if (
+      candidate.minAmount !== expected.minAmount ||
+      candidate.payoutRatioE18 !== expected.payoutRatioE18 ||
+      (candidate.token ?? '').toLowerCase() !== (expected.token ?? '').toLowerCase()
+    ) return null;
+    return candidate;
+  } catch {
+    return null;
+  }
 }
 
 export async function answerHistoryWithOptionalLlm(

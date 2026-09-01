@@ -149,7 +149,13 @@ Cross-chain work is not atomic, so the agent treats the two irreversible legs se
 
 The v2 live evidence exercised this path: CC3 settlement finalized before a Sepolia RPC timeout; retry recovered the on-chain payload, did not settle twice, and completed the destination leg.
 
-## 6. Public evidence
+## 6. AI authorization boundary
+
+Natural language is compiled into explicit policy fields, but compilation is not authorization. Before any optional model call, the local compiler requires one self-receipt clause that binds the agent wallet, Sepolia source, and exactly one supported asset/amount, plus exactly one payout ratio. Model JSON must use the exact three-field string schema and equal the locally extracted values; disagreement falls back to the already-validated local result. The dashboard creates every rule as an inactive draft, displays its asset, threshold, and payout ratio, and revalidates the persisted values before activation. In CLI mode, a fully explicit deterministic rule remains reproducible in one invocation; model-assisted output is stored as `REVIEW_REQUIRED` until a separate `--activate <rule-id>` command.
+
+This boundary is independent of the proof gate: even an activated policy cannot cause settlement unless the native BlockProver accepts the Attestcoin proof and the ASC passes receipt, identity, policy, replay, and escrow checks. The threat matrix and adversarial cases are documented in `docs/ai-trust-boundary.md`.
+
+## 7. Public evidence
 
 | Artifact | Value |
 |---|---|
@@ -172,11 +178,11 @@ The v2 live evidence exercised this path: CC3 settlement finalized before a Sepo
 
 The canonical values are in `evidence/live-e2e-v2.json`; judges can inspect the same summary at `/judge`.
 
-## 7. Test coverage and operational findings
+## 8. Test coverage and operational findings
 
 - 15 Hardhat tests cover valid native/ERC-20 settlement, failed receipts, bad proofs, mismatched proof index, replay, policy mismatch, escrow, authorization, and destination validation.
-- 8 agent tests cover encoding-v1 decoding, ERC-20 calldata variants, Merkle-index derivation, source transaction IDs, and fail-closed existing-policy reuse.
-- 5 dashboard parser tests cover exact base-unit conversion, native/token selection, defaults, decimal precision, and payout boundaries.
+- 11 agent tests cover encoding-v1 decoding, ERC-20 calldata variants, Merkle-index derivation, source transaction IDs, exact existing-policy reuse, omitted fields, adversarial model JSON, and activation-time draft validation.
+- 6 dashboard parser tests cover exact base-unit conversion, native/token selection, fail-closed omission handling, decimal precision, payout boundaries, model schema checks, and persisted-draft validation.
 - `npm run ci` also runs TypeScript checking, the production dashboard build, and a production dependency audit.
 
 Measured implementation findings:

@@ -165,12 +165,44 @@ export default function JudgeEvidence() {
         </aside>
       </section>
 
+      <section
+        id="ai-boundary"
+        className="mt-14 scroll-mt-6 rounded-2xl border border-sky-500/20 bg-sky-500/5 p-6"
+      >
+        <p className="text-xs font-semibold uppercase tracking-[0.16em] text-sky-300">
+          AI authorization boundary
+        </p>
+        <h2 className="mt-2 text-2xl font-semibold tracking-tight text-zinc-100">
+          The model can propose fields. It cannot authorize money.
+        </h2>
+        <div className="mt-6 grid gap-4 md:grid-cols-3">
+          {[
+            ['01 · Compile', 'The local gate requires explicit Sepolia, self-payee and one money tuple; model fields must agree.'],
+            ['02 · Review', 'The dashboard saves an inactive draft and exposes exact money fields before activation.'],
+            ['03 · Execute', 'Even an active policy still needs Attestcoin truth and every deterministic ASC gate.'],
+          ].map(([name, detail]) => (
+            <div key={name} className="rounded-xl border border-sky-500/15 bg-black/20 p-4">
+              <p className="text-sm font-semibold text-zinc-200">{name}</p>
+              <p className="mt-2 text-sm leading-6 text-zinc-500">{detail}</p>
+            </div>
+          ))}
+        </div>
+        <a
+          href="https://github.com/ximilu0114-droid/ximilu-hackson/blob/main/docs/ai-trust-boundary.md"
+          target="_blank"
+          rel="noreferrer"
+          className="mt-5 inline-block text-sm font-medium text-sky-300 transition hover:text-sky-200"
+        >
+          Read the threat matrix and adversarial tests ↗
+        </a>
+      </section>
+
       <section id="reproduce" className="mt-14 scroll-mt-6 rounded-2xl border border-zinc-800 bg-black p-6">
         <p className="text-xs font-semibold uppercase tracking-[0.16em] text-zinc-500">
           Reproduce the verdict
         </p>
         <pre className="mt-4 overflow-x-auto text-sm leading-7 text-zinc-300">
-          <code>{`npm ci\nnpm run ci\nnpm run verify:evidence\n# → { "status": "SUCCESS", "checks": 62 }`}</code>
+          <code>{`npm ci\nnpm run judge:verify\n# → { "step": "judge-verify", "status": "SUCCESS" }`}</code>
         </pre>
       </section>
     </main>

@@ -68,7 +68,7 @@ A cross-border freelancer can be paid on the chain where a client already has li
 
 An LLM can understand “release 10% when I receive at least 0.01 ETH,” but it cannot be trusted to assert that the payment happened. AttestFlow separates three responsibilities:
 
-- **Intent:** a natural-language rule becomes a bounded, inspectable policy.
+- **Intent:** a natural-language rule becomes a fail-closed, inspectable draft; its exact money fields must be activated before autonomous execution.
 - **Truth:** the Attestcoin Protocol proves the source transaction and source-chain continuity.
 - **Execution:** the ASC independently checks success, policy match, transaction identity, replay, and escrow solvency before releasing CTC.
 
@@ -108,6 +108,12 @@ InboxDemo.execute(payload, signature) ◄─────────────
 
 See [`docs/integration.md`](docs/integration.md) for byte layouts, threat boundaries, and the exact protocol-to-code mapping.
 
+## AI trust boundary
+
+AI proposes; it never authorizes. Before any optional model call, the local compiler requires an explicit Sepolia self-payment rule with exactly one supported asset/amount and payout percentage. A model response must use the exact three-field string schema and agree byte-for-byte with the locally extracted money fields. The dashboard stores the result as an inactive draft and shows the exact asset, threshold, and payout percentage before activation; activation revalidates persisted values. In CLI mode, deterministic compilation of a fully explicit command remains one-step and reproducible, while model-assisted output is stored as `REVIEW_REQUIRED` until a later `--activate <rule-id>` command.
+
+After activation, neither the parser nor the model can assert that a payment happened. Attestcoin supplies source-chain truth and the ASC remains the only money-moving authority. The adversarial cases and exact decision-rights matrix are in [`docs/ai-trust-boundary.md`](docs/ai-trust-boundary.md).
+
 ## Security properties
 
 The source transaction must pass every gate below in one CC3 transaction:
@@ -134,7 +140,7 @@ cd ximilu-hackson
 npm ci
 
 npm run judge:verify       # recommended: all three gates below in one command
-npm run ci                 # typecheck + 28 tests + web build + production audit
+npm run ci                 # typecheck + 32 tests + web build + production audit
 npm run verify:evidence    # 62 live, cross-chain assertions
 npm run e2e:proof          # fresh real proof + read-only on-chain verification; no gas
 ```
@@ -167,6 +173,12 @@ npm run start --prefix agent -- \
 ```
 
 Use `--tx 0x… --once` with a known, already-attested transaction for a deterministic demo or recovery run. It bypasses only discovery; the real source transaction, proof, CC3 settlement, and destination delivery follow the same path.
+
+When an optional LLM compiles a CLI rule, inspect the logged asset, minimum, and ratio, then activate the stored draft in a separate invocation:
+
+```bash
+npm run start --prefix agent -- --activate r1 --once
+```
 
 ## Deployed artifacts
 

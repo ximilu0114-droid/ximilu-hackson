@@ -57,10 +57,10 @@ docs/        白皮书 PDF 源、集成说明
 npm install            # 根目录安装所有 workspace
 npm run e2e:proof      # Phase 0 端到端证明验证脚本
 npm run typecheck      # tsc --noEmit（根 tsconfig 覆盖 scripts/ 与 agent/src）
-npm run test:agent     # Node test（8 个 Agent/协议编码/策略一致性用例）
-npm run test:web       # Node test（5 个网页规则解析/安全边界用例）
+npm run test:agent     # Node test（11 个 Agent/协议编码/策略/模型对抗用例）
+npm run test:web       # Node test（6 个网页规则解析/激活安全边界用例）
 npm run test:contracts # hardhat test（15 个合约用例）
-npm run ci             # typecheck + 28 tests + web build + production audit
+npm run ci             # typecheck + 32 tests + web build + production audit
 npm run judge:verify   # CI + 62 项 live evidence + fresh Attestcoin proof，一键评委路径
 npm run verify:evidence # 双链重读并验证 62 项 live evidence
 npm run render:demo-video # 从公开 evidence 生成 2:29 / 1080p 视频、字幕与封面
@@ -105,12 +105,12 @@ npm run dev --prefix web
 - **LIVE 运行方式**：`LIVE=1 ASC_ADDRESS=0x4E7410... INBOX_ADDRESS=0x83A0... npm run start --prefix agent -- --rule "…" [--tx 0x...] [--once]`；escrow 会在启动时按需补足。Agent 启动时经 ChainInfo precompile 验证 Sepolia chainId→chainKey 映射。
 
 ### Phase 3 — 前端仪表盘（9/1–9/3）✅ 已完成并硬化
-- **验收**：① ✅ 创建/启停规则（POST /api/rules + toggle）；② ✅ 实时流水（5s 轮询，match→proved→settled→delivered 四段 stepper）；③ ✅ NL 问答查历史（/api/ask，builtin+可选 LLM）；④ ✅ 响应式布局；⑤ ✅ `/judge` 证据页展示三笔链上交易、8 项 invariant、payload anchor 与诚实边界，桌面/390px 移动端实测无溢出及 console 错误。
+- **验收**：① ✅ 创建/审核/启停规则（POST /api/rules + toggle），新规则一律先是 inactive draft，缺少金额或比例 fail closed；② ✅ 实时流水（5s 轮询，match→proved→settled→delivered 四段 stepper）；③ ✅ NL 问答查历史（/api/ask，builtin+可选 LLM）；④ ✅ 响应式布局；⑤ ✅ `/judge` 证据页展示三笔链上交易、8 项 invariant、payload anchor 与诚实边界，桌面/390px 移动端实测无溢出及 console 错误。
 - 运行：`npm run dev --prefix web`（:3100）；生产 `npm run build && npm start --prefix web`。
 - **坑**：动态 GET 路由必须显式 `export const dynamic = 'force-dynamic'`。Next 已升级至 16.3.3，生产依赖审计 0 漏洞。
 
 ### Phase 4 — 提交材料（9/1–9/10）✅ 本地交付物齐全，公开视频 URL 待人工上传
-- **验收**：① ✅ `npm run ci`（typecheck→8 agent tests→5 web tests→15 contract tests→web build→audit）；② ✅ `evidence/live-e2e-v2.json` + `npm run verify:evidence` 62 项 live 双链验真，含 deployed bytecode 对 local build；③ ✅ `docs/attestflow-pitch-deck.pdf`（9 页，最终 PDF 逐页渲染检查）及可编辑 PPTX、`docs/whitepaper.pdf`、`docs/integration.md` 均已完成；④ ✅ `docs/attestflow-demo-review.mp4` 为 2:29 / 1080p 带字幕评审版，实际 verifier 输出入镜；⑤ ✅ `npm run render:demo-video` 可从公开 evidence 复现视频、SRT 与封面；⑥ ✅ `docs/attestflow-logo.png` 方形项目 Logo 已检查全尺寸与 48 px，并接入 Web app icon。最终公开视频上传与匿名访问仍需人工完成。
+- **验收**：① ✅ `npm run ci`（typecheck→11 agent tests→6 web tests→15 contract tests→web build→audit）；② ✅ `evidence/live-e2e-v2.json` + `npm run verify:evidence` 62 项 live 双链验真，含 deployed bytecode 对 local build；③ ✅ `docs/attestflow-pitch-deck.pdf`（9 页，最终 PDF 逐页渲染检查）及可编辑 PPTX、`docs/whitepaper.pdf`、`docs/integration.md` 均已完成；④ ✅ `docs/attestflow-demo-review.mp4` 为 2:29 / 1080p 带字幕评审版，实际 verifier 输出入镜；⑤ ✅ `npm run render:demo-video` 可从公开 evidence 复现视频、SRT 与封面；⑥ ✅ `docs/attestflow-logo.png` 方形项目 Logo 已检查全尺寸与 48 px，并接入 Web app icon。最终公开视频上传与匿名访问仍需人工完成。
 - **实测补充**：Sepolia USDC 真实流量以 transferFrom 为主且大量是金库合约内部转账——发现层必须校验 calldata 而非只看 Transfer 事件。
 
 ### Phase 5 — 评审级打磨与提交（9/1–9/11）🟡 进行中

@@ -9,17 +9,19 @@
  *
  * Usage:
  *   npm --prefix agent run start -- --rule "当我在Sepolia收到≥100 USDC时按10%释放" [--once]
+ *   npm --prefix agent run start -- --activate r1 [--once]  # approve an LLM draft
  */
 import { Wallet, Contract, parseEther, AbiCoder, getAddress } from 'ethers';
 import { loadEnvDotenv, CONFIG } from './config.js';
 import { loadState, saveState, log, recordEvent, AgentState } from './state.js';
-import { parseRule } from './llm.js';
+import { assertSafePolicySpec, parseRule } from './llm.js';
 import { makeClients, assertSepoliaRegistry, agentWallet, getProof, settleOnASC, decodeTxBytes, decodeErc20Call, ensurePolicy, ASC_ABI } from './prover.js';
 import { scanOnce } from './watcher.js';
 import { deliverMessage, INBOX_ABI } from './relayer.js';
 
 interface Args {
   rule?: string;
+  activateRule?: string;
   sourceTx?: string;
   once: boolean;
 }
@@ -27,9 +29,11 @@ interface Args {
 function argParse(): Args {
   const argv = process.argv.slice(2);
   const i = argv.indexOf('--rule');
+  const activateArg = argv.indexOf('--activate');
   const txArg = argv.indexOf('--tx');
   return {
     rule: i >= 0 ? argv[i + 1] : undefined,
+    activateRule: activateArg >= 0 ? argv[activateArg + 1] : undefined,
     sourceTx: txArg >= 0 ? argv[txArg + 1] : undefined,
     once: argv.includes('--once'),
   };
@@ -203,13 +207,34 @@ async function main() {
     if (!state.rules.find((r) => r.text === args.rule)) {
       const parsed = await parseRule(args.rule!, wallet.address);
       const id = 'r' + (state.rules.length + 1);
-      state.rules.push({ id, text: args.rule!, engine: parsed.engine, active: true, policyId: 0, spec: parsed.spec as any, createdAt: new Date().toISOString() });
-      recordEvent(state, { ts: new Date().toISOString(), stage: 'rule-added', detail: `${id}: ${args.rule}` });
-      log(`rule ${id} registered via ${parsed.engine}: min=${parsed.spec.minAmount} token=${parsed.spec.token} ratio=${parsed.spec.payoutRatioE18}`);
+      // The CLI invocation itself approves exact deterministic compilation.
+      // Model-assisted output remains a draft until a later --activate call.
+      const active = parsed.engine === 'builtin';
+      state.rules.push({ id, text: args.rule!, engine: parsed.engine, active, policyId: 0, spec: parsed.spec as any, createdAt: new Date().toISOString() });
+      recordEvent(state, { ts: new Date().toISOString(), stage: 'rule-added', detail: `${id} ${active ? 'active' : 'draft'} via ${parsed.engine}: ${args.rule}` });
+      log(`rule ${id} compiled via ${parsed.engine}: asset=${parsed.spec.token ? 'USDC' : 'ETH'} min=${parsed.spec.minAmount} ratio=${parsed.spec.payoutRatioE18} status=${active ? 'active' : 'REVIEW_REQUIRED'}`);
+      if (!active) log(`review the compiled fields, then rerun with --activate ${id}`);
     }
+  }
+  if (args.activateRule) {
+    const rule = state.rules.find((candidate) => candidate.id === args.activateRule);
+    if (!rule) throw new Error(`RULE_NOT_FOUND:${args.activateRule}`);
+    assertSafePolicySpec(rule.spec);
+    rule.active = true;
+    recordEvent(state, {
+      ts: new Date().toISOString(),
+      stage: 'rule-activated',
+      detail: `${rule.id}: ${rule.text}`,
+    });
+    log(`rule ${rule.id} explicitly activated after review`);
   }
   if (state.rules.length === 0) {
     log('no rules registered; pass --rule "..." — exiting');
+    saveState(state);
+    return;
+  }
+  if (!state.rules.some((rule) => rule.active)) {
+    log('no active rules; review a compiled draft and pass --activate <rule-id> — exiting');
     saveState(state);
     return;
   }

@@ -7,7 +7,7 @@ const npmCommand = process.platform === "win32" ? "npm.cmd" : "npm";
 const steps = [
   {
     id: "ci",
-    label: "typecheck, 28 tests, production build, and production audit",
+    label: "typecheck, 32 tests, production build, and production audit",
     args: ["run", "ci"],
   },
   {

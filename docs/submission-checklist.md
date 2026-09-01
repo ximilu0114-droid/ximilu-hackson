@@ -2,6 +2,8 @@
 
 [Official BUIDL CTC page](https://dorahacks.io/hackathon/buidl-ctc-2026-fall/detail) checked 2026-09-01: **deadline 2026-09-13 23:59 ET** · winners announced **2026-09-20**. Internal target: submit a complete draft by **2026-09-11 ET**, leaving two days for portal or video failures.
 
+> Wrong-link guard: `qvac-unleach-edge-ai-i` is Tether's ended June 2026 QVAC event, not this competition. Before uploading or submitting, confirm the browser URL slug is exactly `buidl-ctc-2026-fall`.
+
 ## Non-negotiable portal fields
 
 - [ ] **Project name:** AttestFlow — Proof-Gated Cross-Chain Payments
@@ -33,7 +35,8 @@
 - [x] `.env` ignored; no testnet private key or seed committed
 - [x] Current ASC and Inbox ABI/deployment snapshots committed
 - [x] ChainInfo, BlockProver, proof encoding, and Writability boundary documented
-- [x] 28 tests: 15 contracts, 8 agent/protocol/policy, and 5 web policy-boundary tests
+- [x] 32 tests: 15 contracts, 11 agent/protocol/policy, and 6 web policy-boundary tests
+- [x] AI trust boundary: missing fields fail closed; dashboard rules begin as reviewable drafts; model-assisted CLI rules require separate activation
 - [x] CI, CodeQL, Dependabot, production build, and dependency audit
 - [x] `/judge` evidence page passes desktop and 390 px mobile QA
 - [x] Machine-checkable live evidence manifest and 62-check verifier
@@ -81,8 +84,8 @@ npm run judge:verify
 Expected:
 
 - [x] TypeScript exits 0.
-- [x] Agent tests: 8 passing.
-- [x] Web policy tests: 5 passing.
+- [x] Agent tests: 11 passing.
+- [x] Web policy tests: 6 passing.
 - [x] Contract tests: 15 passing.
 - [x] Next.js production build exits 0 and includes `/judge`.
 - [x] Production audit reports 0 vulnerabilities at the configured threshold.
@@ -106,6 +109,7 @@ Last rehearsed from a fresh public clone at commit `3d8d0e2` on 2026-09-01: clon
 
 ## Final portal dry run
 
+- [ ] Confirm the DoraHacks URL slug is exactly `buidl-ctc-2026-fall` (never the QVAC URL).
 - [ ] Open every README, PDF, video, source, CC3 explorer, and Etherscan link while signed out.
 - [ ] Download the uploaded PDF once and compare its page count and first/last pages with the repository copy.
 - [ ] Paste the final portal text into a local backup before submission.

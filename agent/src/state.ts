@@ -4,7 +4,15 @@ import { CONFIG } from './config.js';
 
 export interface AgentEvent {
   ts: string;
-  stage: 'rule-added' | 'match' | 'proved' | 'settled' | 'rejected' | 'delivered';
+  stage:
+    | 'rule-added'
+    | 'rule-activated'
+    | 'rule-paused'
+    | 'match'
+    | 'proved'
+    | 'settled'
+    | 'rejected'
+    | 'delivered';
   tx?: string;
   detail?: string;
 }

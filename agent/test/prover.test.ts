@@ -2,7 +2,11 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import { AbiCoder, getAddress } from 'ethers';
 
-import { builtinParse } from '../src/llm.js';
+import {
+  assertSafePolicySpec,
+  builtinParse,
+  parseLlmPolicyContent,
+} from '../src/llm.js';
 import {
   computeTransactionIndex,
   decodeErc20Call,
@@ -63,7 +67,132 @@ test('binds "my payment" rules to the agent wallet and rejects unsafe ratios', (
   assert.equal(parsed.payee, wallet);
   assert.equal(parsed.minAmount, 100_000_000n);
   assert.equal(parsed.payoutRatioE18, 100_000_000_000_000_000n);
-  assert.throws(() => builtinParse('收到 100 USDC 后释放 101%', wallet), /at most 100/);
+  assert.throws(
+    () => builtinParse('当我在 Sepolia 收到 100 USDC 后释放 101%', wallet),
+    /at most 100/,
+  );
+});
+
+test('fails closed when a money field is omitted', () => {
+  assert.throws(
+    () => builtinParse('When I receive a payment on Sepolia, release 10%', wallet),
+    /explicit positive amount/,
+  );
+  assert.throws(
+    () => builtinParse('When I receive 100 USDC on Sepolia', wallet),
+    /explicit payout percentage/,
+  );
+  assert.throws(
+    () => builtinParse('When I receive 100 USDC on Arbitrum, release 10%', wallet),
+    /Sepolia source clause/,
+  );
+  assert.throws(
+    () => builtinParse('When Alice receives 100 USDC on Sepolia, release 10%', wallet),
+    /agent wallet receiving/,
+  );
+  assert.throws(
+    () => builtinParse('When my friend receives 100 USDC on Sepolia, release 10%', wallet),
+    /agent wallet receiving/,
+  );
+  assert.throws(
+    () => builtinParse('When I receive 100 USDC on Arbitrum, release 10% on Sepolia', wallet),
+    /Sepolia source clause/,
+  );
+  assert.throws(
+    () => builtinParse('When I receive 100 USDT on Sepolia, release 10%', wallet),
+    /explicit positive amount/,
+  );
+  assert.throws(
+    () => builtinParse('When I receive 1,2 USDC on Sepolia, release 10%', wallet),
+    /invalid decimal amount/,
+  );
+  assert.throws(
+    () => builtinParse('When I receive 100 USDC or 200 USDC on Sepolia, release 10%', wallet),
+    /exactly one payment amount/,
+  );
+  assert.throws(
+    () => builtinParse('When I receive 100 USDC on Sepolia, release 10% or 20%', wallet),
+    /exactly one payout percentage/,
+  );
+});
+
+test('accepts complete model policy JSON and rejects unsafe or invented fields', () => {
+  const explicitText = 'When I receive 0.01 ETH on Sepolia, release 10%';
+  const valid = parseLlmPolicyContent(
+    '{"asset":"ETH","minimumAmount":"0.01","payoutPercent":"10"}',
+    explicitText,
+    wallet,
+  );
+  assert.ok(valid);
+  assert.equal(valid.token, null);
+  assert.equal(valid.minAmount, 10_000_000_000_000_000n);
+  assert.equal(valid.payoutRatioE18, 100_000_000_000_000_000n);
+  assert.equal(
+    parseLlmPolicyContent(
+      '{"asset":"BTC","minimumAmount":"1","payoutPercent":"10"}',
+      explicitText,
+      wallet,
+    ),
+    null,
+  );
+  assert.equal(
+    parseLlmPolicyContent(
+      '{"asset":"USDC","minimumAmount":"100","payoutPercent":"101"}',
+      explicitText,
+      wallet,
+    ),
+    null,
+  );
+  assert.equal(
+    parseLlmPolicyContent('{"asset":"USDC","minimumAmount":"100"}', explicitText, wallet),
+    null,
+  );
+  assert.equal(
+    parseLlmPolicyContent(
+      '{"asset":"ETH","minimumAmount":"0.02","payoutPercent":"10"}',
+      explicitText,
+      wallet,
+    ),
+    null,
+  );
+  assert.equal(
+    parseLlmPolicyContent(
+      '{"asset":"ETH","minimumAmount":"0.01","payoutPercent":"10","beneficiary":"attacker"}',
+      explicitText,
+      wallet,
+    ),
+    null,
+  );
+  assert.equal(
+    parseLlmPolicyContent(
+      '```json\n{"asset":"ETH","minimumAmount":"0.01","payoutPercent":"10"}\n```',
+      explicitText,
+      wallet,
+    ),
+    null,
+  );
+  assert.equal(
+    parseLlmPolicyContent(
+      '{"asset":"ETH","minimumAmount":"0.01","payoutPercent":"10"}',
+      'watch my Sepolia invoice',
+      wallet,
+    ),
+    null,
+  );
+});
+
+test('revalidates persisted policy drafts before activation', () => {
+  assert.throws(
+    () =>
+      assertSafePolicySpec({
+        sourceChain: 'sepolia',
+        token: null,
+        payee: wallet,
+        minAmount: '10000000000000000',
+        payoutRatioE18: '1000000000000000001',
+      }),
+    /at most 100/,
+  );
 });
 
 test('preserves native ETH as token=null instead of falling back to USDC', () => {

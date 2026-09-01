@@ -33,7 +33,7 @@ The initial product wedge is cross-border freelance escrow. The client pays on t
 
 Attestcoin is load-bearing, not decorative. The project uses the live ChainInfo precompile to validate that Sepolia `chainId 11155111` maps to `chainKey 1`, the hosted ProofBuilder for real proofs, BlockProver `verify()` inside every settlement, `calculateTxIndex()` for proof-bound identity, and protocol encoding v1 for source transaction and receipt checks. Removing Attestcoin removes the only path that can authorize settlement.
 
-AI is deliberately bounded. Natural language reduces policy-authoring friction and supports questions over settlement history. An optional OpenAI-compatible model is disclosed, but the default deterministic parser keeps the demo reproducible. Whether parsing is local or model-assisted, no AI output can bypass proof verification, receipt success, policy matching, replay protection, or escrow solvency.
+AI is deliberately bounded. Natural language reduces policy-authoring friction and supports questions over settlement history. Before any optional model call, the local compiler requires one self-receipt clause that binds the agent wallet, Sepolia source, and exactly one supported asset/amount, plus exactly one payout percentage. Model JSON must use the exact three-field string schema and agree with the locally extracted values. The dashboard saves compiled output as an inactive draft, exposes the exact money fields, and revalidates them before explicit activation; model-assisted CLI output likewise remains `REVIEW_REQUIRED` until a later activation command. No AI output can assert that a payment happened or bypass proof verification, receipt success, policy matching, replay protection, or escrow solvency.
 
 The repository contains a linked live result across two public testnets:
 
@@ -41,7 +41,7 @@ The repository contains a linked live result across two public testnets:
 - Creditcoin CC3 proof-gated settlement: `0xec29d5b4046d5557c014d6720e6d3799ba0f0b41e31a71147240a09b89c2e4c2`
 - Sepolia execution of the same payload: `0xc692a176f78b1541104e9e0a18f9a8404c585b15e9be2c695df3d118796947fb`
 
-`npm run verify:evidence` re-reads both public chains and performs 62 assertions, including chain identity, deployment provenance, policy fields, source receipt, settlement events, both replay guards, cross-chain payload equality, and deployed runtime bytecode equality with the local Solidity build. For the complete evaluator path, `npm run judge:verify` adds all 28 tests, the production build/audit, and a newly generated Attestcoin proof behind one final machine-readable verdict. The repository also ships CI, CodeQL, a nine-slide judge deck, a five-page evidence whitepaper, and a dedicated `/judge` view.
+`npm run verify:evidence` re-reads both public chains and performs 62 assertions, including chain identity, deployment provenance, policy fields, source receipt, settlement events, both replay guards, cross-chain payload equality, and deployed runtime bytecode equality with the local Solidity build. For the complete evaluator path, `npm run judge:verify` adds all 32 tests, the production build/audit, and a newly generated Attestcoin proof behind one final machine-readable verdict. The repository also ships CI, CodeQL, a nine-slide judge deck, a five-page evidence whitepaper, an AI trust-boundary brief, and a dedicated `/judge` view.
 
 ### Honest Writability boundary
 
@@ -70,6 +70,7 @@ AttestFlow uses the live ChainInfo registry, `ProofBuilder`, Merkle and continui
 - Pitch deck: https://github.com/ximilu0114-droid/ximilu-hackson/blob/main/docs/attestflow-pitch-deck.pdf
 - Whitepaper: https://github.com/ximilu0114-droid/ximilu-hackson/blob/main/docs/whitepaper.pdf
 - Integration guide: https://github.com/ximilu0114-droid/ximilu-hackson/blob/main/docs/integration.md
+- AI trust boundary: https://github.com/ximilu0114-droid/ximilu-hackson/blob/main/docs/ai-trust-boundary.md
 - Repository-hosted review cut (download fallback): https://github.com/ximilu0114-droid/ximilu-hackson/raw/refs/heads/main/docs/attestflow-demo-review.mp4
 - Demo video: [FINAL PUBLIC OR UNLISTED STREAMING URL]
 

@@ -23,6 +23,11 @@ interface Rule {
   text: string;
   engine: string;
   active: boolean;
+  spec: {
+    minAmount: string;
+    token: string | null;
+    payoutRatioE18: string;
+  };
 }
 
 const STAGES: Stage[] = ['match', 'proved', 'settled', 'delivered'];
@@ -33,6 +38,13 @@ const STAGE_LABEL: Record<string, string> = {
   rejected: 'Rejected',
   delivered: 'Delivered',
 };
+
+function formatUnits(value: string, decimals: number): string {
+  const padded = value.padStart(decimals + 1, '0');
+  const whole = padded.slice(0, -decimals) || '0';
+  const fraction = padded.slice(-decimals).replace(/0+$/, '').slice(0, 6);
+  return fraction ? `${whole}.${fraction}` : whole;
+}
 
 export default function Dashboard() {
   const [ev, setEv] = useState<EventsResp | null>(null);
@@ -163,22 +175,23 @@ export default function Dashboard() {
               disabled={busy || !ruleText.trim()}
               className="mt-3 w-full rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold disabled:opacity-40 hover:bg-emerald-500"
             >
-              Register rule
+              Compile policy draft
             </button>
             {ruleError && <p className="mt-2 text-xs text-rose-400">{ruleError}</p>}
             <p className="mt-2 text-xs text-zinc-500">
-              Deterministic by default; optional disclosed LLM output is schema-checked and bounded.
+              Every rule starts inactive. Review the compiled money fields, then activate it explicitly.
             </p>
           </Card>
 
-          <Card title={`Active rules (${rules.length})`}>
+          <Card title={`Policy drafts & active rules (${rules.length})`}>
             <ul className="space-y-3">
               {rules.map((r) => (
-                <li key={r.id} className="flex items-start justify-between gap-3 rounded-lg bg-zinc-900 p-3">
+                <li key={r.id} className="rounded-lg bg-zinc-900 p-3">
+                  <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0">
                     <p className="truncate text-sm">{r.text}</p>
                     <p className="text-xs text-zinc-500">
-                      {r.id} · {r.engine}
+                      {r.id} · {r.engine} · {r.active ? 'active' : 'review required'}
                     </p>
                   </div>
                   <button
@@ -187,8 +200,27 @@ export default function Dashboard() {
                       r.active ? 'bg-emerald-900/70 text-emerald-300' : 'bg-zinc-700 text-zinc-300'
                     }`}
                   >
-                    {r.active ? 'ON' : 'OFF'}
+                    {r.active ? 'Pause' : 'Activate'}
                   </button>
+                  </div>
+                  <div className="mt-3 grid grid-cols-3 gap-2 border-t border-zinc-800 pt-3 text-[11px]">
+                    <div>
+                      <p className="text-zinc-600">Asset</p>
+                      <p className="mt-0.5 text-zinc-300">{r.spec.token ? 'USDC' : 'ETH'}</p>
+                    </div>
+                    <div>
+                      <p className="text-zinc-600">Minimum</p>
+                      <p className="mt-0.5 truncate text-zinc-300">
+                        {formatUnits(r.spec.minAmount, r.spec.token ? 6 : 18)}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-zinc-600">Release</p>
+                      <p className="mt-0.5 text-zinc-300">
+                        {formatUnits(r.spec.payoutRatioE18, 16)}%
+                      </p>
+                    </div>
+                  </div>
                 </li>
               ))}
               {rules.length === 0 && <li className="text-sm text-zinc-500">No rules yet.</li>}
