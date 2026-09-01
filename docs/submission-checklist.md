@@ -93,7 +93,7 @@ Expected:
 - [x] Fresh proof smoke test prints `"verification": "SUCCESS"`.
 - [x] Unified verifier finishes with `"step": "judge-verify"` and `"status": "SUCCESS"`.
 
-Last rehearsed from a fresh public clone at commit `3d8d0e2` on 2026-09-01: clone 5.1 s, `npm ci` 10.8 s, and the unified `judge:verify` 29.7 s. Its three gates all returned `SUCCESS`, including a fresh proof for Sepolia block `11609889`; timings are environment-dependent.
+Last full rehearsal from the committed implementation at `392562e2da24` on 2026-09-02: unified `judge:verify` finished in 18.84 s and all three gates returned `SUCCESS`. The run included 32 passing tests, 0 production vulnerabilities, 62 live cross-chain checks, and a fresh CC3-verified proof for Sepolia transaction `0xe9ac1f2d0f5550428a98f08ac4a4b9371198dc5671d74ce461c64b7614e76494` at block `11614269`; timings and the automatically selected attested transaction are environment-dependent.
 
 ## Video acceptance
 
