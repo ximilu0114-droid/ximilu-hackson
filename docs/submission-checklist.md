@@ -14,7 +14,8 @@
 - [ ] **Public GitHub URL:** `https://github.com/ximilu0114-droid/ximilu-hackson`
 - [x] **Local judge deck:** `docs/attestflow-pitch-deck.pdf` plus editable `docs/attestflow-pitch-deck.pptx`; nine slides, final PDF render checked page by page
 - [ ] **Deck/Whitepaper portal URL:** use the public pitch-deck PDF first; keep `docs/whitepaper.pdf` as the technical backup
-- [ ] **Demo video URL:** approve or re-narrate the checked 2:29 review cut, upload Unlisted/Public, verify signed-out access
+- [x] **Copy-ready video upload pack:** `docs/video-upload-copy.md` contains title, description, chapters, tags, thumbnail, disclosures and integrity hashes
+- [ ] **Demo video URL:** use `docs/video-upload-copy.md`, approve or re-narrate the checked 2:29 review cut, upload Unlisted/Public, verify signed-out access
 - [ ] **Attestcoin integration summary:** link `docs/integration.md`
 - [ ] **Team identity:** real first/last name, email, country of residence, citizenship, role, short bio; Telegram/X/LinkedIn if requested
 - [ ] **Originality declaration:** confirm the submission is original and disclose reused open-source dependencies
@@ -38,6 +39,7 @@
 - [x] Machine-checkable live evidence manifest and 62-check verifier
 - [x] 2:29 / 1080p local review cut, captions, poster, and reproducible renderer
 - [x] Square project logo plus Next.js app icon
+- [x] Copy-ready video upload metadata, chapters, captions, thumbnail and integrity manifest
 - [x] Push the final hardening commit and confirm GitHub Actions is green
 - [ ] Replace any final video placeholder with the tested video URL
 - [x] Confirm repository visibility is Public while signed out
@@ -116,7 +118,7 @@ Last rehearsed from a fresh public clone at commit `3d8d0e2` on 2026-09-01: clon
 The repository cannot safely infer or submit these:
 
 1. real member identity, nationality/citizenship, and eligibility attestations;
-2. approval of the checked narration (or a human re-record), public video upload, and signed-out URL test;
+2. approval of the checked narration (or a human re-record), upload using `docs/video-upload-copy.md`, and signed-out URL test;
 3. GitHub repository rename/About/topics/social-preview settings;
 4. the final DoraHacks submission click.
 
