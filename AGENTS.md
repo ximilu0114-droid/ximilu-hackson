@@ -109,12 +109,12 @@ npm run dev --prefix web
 - **坑**：动态 GET 路由必须显式 `export const dynamic = 'force-dynamic'`。Next 已升级至 16.3.3，生产依赖审计 0 漏洞。
 
 ### Phase 4 — 提交材料（9/1–9/10）✅ 本地交付物齐全，公开视频 URL 待人工上传
-- **验收**：① ✅ `npm run ci`（typecheck→8 agent tests→5 web tests→15 contract tests→web build→audit）；② ✅ `evidence/live-e2e-v2.json` + `npm run verify:evidence` 62 项 live 双链验真，含 deployed bytecode 对 local build；③ ✅ `docs/whitepaper.pdf` 与 `docs/integration.md` 已按 v2 证据更新；④ ✅ `docs/attestflow-demo-review.mp4` 为 2:29 / 1080p 带字幕评审版，实际 verifier 输出入镜；⑤ ✅ `npm run render:demo-video` 可从公开 evidence 复现视频、SRT 与封面。最终公开视频上传与匿名访问仍需人工完成。
+- **验收**：① ✅ `npm run ci`（typecheck→8 agent tests→5 web tests→15 contract tests→web build→audit）；② ✅ `evidence/live-e2e-v2.json` + `npm run verify:evidence` 62 项 live 双链验真，含 deployed bytecode 对 local build；③ ✅ `docs/attestflow-pitch-deck.pdf`（9 页，最终 PDF 逐页渲染检查）及可编辑 PPTX、`docs/whitepaper.pdf`、`docs/integration.md` 均已完成；④ ✅ `docs/attestflow-demo-review.mp4` 为 2:29 / 1080p 带字幕评审版，实际 verifier 输出入镜；⑤ ✅ `npm run render:demo-video` 可从公开 evidence 复现视频、SRT 与封面。最终公开视频上传与匿名访问仍需人工完成。
 - **实测补充**：Sepolia USDC 真实流量以 transferFrom 为主且大量是金库合约内部转账——发现层必须校验 calldata 而非只看 Transfer 事件。
 
 ### Phase 5 — 评审级打磨与提交（9/1–9/11）🟡 进行中
 - **9/11 ET 前完整提交**，不等待 9/13 23:59 ET deadline。提交前对照 `docs/submission-checklist.md` 逐项勾选。
-- 已完成：关键 replay 漏洞修复、v2 重部署与双链 evidence、断点恢复、`/judge`、CI/CodeQL/Dependabot、SECURITY/LICENSE、文档与可重放 verifier。
+- 已完成：关键 replay 漏洞修复、v2 重部署与双链 evidence、断点恢复、`/judge`、评委版 Pitch Deck、CI/CodeQL/Dependabot、SECURITY/LICENSE、文档与可重放 verifier。
 - 人工待办：① 审定当前合成旁白（或重录人声），上传 Demo 视频并匿名测试 URL；② 填 DoraHacks 真实姓名/邮箱/国籍与 eligibility；③ 全部外链匿名复查；④ 点击提交并复查 portal。
 
 ## 工作纪律

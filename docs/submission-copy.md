@@ -41,7 +41,7 @@ The repository contains a linked live result across two public testnets:
 - Creditcoin CC3 proof-gated settlement: `0xec29d5b4046d5557c014d6720e6d3799ba0f0b41e31a71147240a09b89c2e4c2`
 - Sepolia execution of the same payload: `0xc692a176f78b1541104e9e0a18f9a8404c585b15e9be2c695df3d118796947fb`
 
-`npm run verify:evidence` re-reads both public chains and performs 62 assertions, including chain identity, deployment provenance, policy fields, source receipt, settlement events, both replay guards, cross-chain payload equality, and deployed runtime bytecode equality with the local Solidity build. The repository also ships 28 automated tests, CI, CodeQL, a production build, a five-page evidence whitepaper, and a dedicated `/judge` view.
+`npm run verify:evidence` re-reads both public chains and performs 62 assertions, including chain identity, deployment provenance, policy fields, source receipt, settlement events, both replay guards, cross-chain payload equality, and deployed runtime bytecode equality with the local Solidity build. The repository also ships 28 automated tests, CI, CodeQL, a production build, a nine-slide judge deck, a five-page evidence whitepaper, and a dedicated `/judge` view.
 
 ### Honest Writability boundary
 
@@ -66,8 +66,9 @@ AttestFlow uses the live ChainInfo registry, `ProofBuilder`, Merkle and continui
 - Repository: https://github.com/ximilu0114-droid/ximilu-hackson
 - ASC on CC3: https://creditcoin-testnet.blockscout.com/address/0x4E7410Ebf41C213378E1D8aA4423323303086bF6
 - InboxDemo on Sepolia: https://sepolia.etherscan.io/address/0x83A0b8D26Dd28094eE0CA74E57e79028194f868E
-- Whitepaper: `docs/whitepaper.pdf` in the repository
-- Integration guide: `docs/integration.md` in the repository
+- Pitch deck: https://github.com/ximilu0114-droid/ximilu-hackson/blob/main/docs/attestflow-pitch-deck.pdf
+- Whitepaper: https://github.com/ximilu0114-droid/ximilu-hackson/blob/main/docs/whitepaper.pdf
+- Integration guide: https://github.com/ximilu0114-droid/ximilu-hackson/blob/main/docs/integration.md
 - Demo video: [FINAL PUBLIC OR UNLISTED VIDEO URL]
 
 ## Third-party service disclosure

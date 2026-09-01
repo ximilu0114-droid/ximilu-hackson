@@ -1,6 +1,6 @@
 # Submission Checklist — BUIDL CTC 2026 Fall
 
-Official page checked 2026-09-01: **deadline 2026-09-13 23:59 ET** · winners announced **2026-09-20**. Internal target: submit a complete draft by **2026-09-11 ET**, leaving two days for portal or video failures.
+[Official BUIDL CTC page](https://dorahacks.io/hackathon/buidl-ctc-2026-fall/detail) checked 2026-09-01: **deadline 2026-09-13 23:59 ET** · winners announced **2026-09-20**. Internal target: submit a complete draft by **2026-09-11 ET**, leaving two days for portal or video failures.
 
 ## Non-negotiable portal fields
 
@@ -10,7 +10,8 @@ Official page checked 2026-09-01: **deadline 2026-09-13 23:59 ET** · winners an
 - [ ] **Long description:** adapt README sections “Why this needs Attestcoin,” “Integration depth,” and “Honest boundary.”
 - [x] **Copy-ready portal text:** `docs/submission-copy.md` (replace only team and video placeholders)
 - [ ] **Public GitHub URL:** `https://github.com/ximilu0114-droid/ximilu-hackson`
-- [ ] **Whitepaper/Deck PDF:** `docs/whitepaper.pdf`
+- [x] **Local judge deck:** `docs/attestflow-pitch-deck.pdf` plus editable `docs/attestflow-pitch-deck.pptx`; nine slides, final PDF render checked page by page
+- [ ] **Deck/Whitepaper portal URL:** use the public pitch-deck PDF first; keep `docs/whitepaper.pdf` as the technical backup
 - [ ] **Demo video URL:** approve or re-narrate the checked 2:29 review cut, upload Unlisted/Public, verify signed-out access
 - [ ] **Attestcoin integration summary:** link `docs/integration.md`
 - [ ] **Team identity:** real first/last name, email, country of residence, citizenship, role, short bio; Telegram/X/LinkedIn if requested

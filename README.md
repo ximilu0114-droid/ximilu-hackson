@@ -29,6 +29,8 @@ npm run verify:evidence
 
 For a visual evidence brief, run the dashboard and open [`http://localhost:3100/judge`](http://localhost:3100/judge).
 
+For the fastest judge-ready narrative, open the **[nine-slide pitch deck](docs/attestflow-pitch-deck.pdf)**. Its editable source is [`docs/attestflow-pitch-deck.pptx`](docs/attestflow-pitch-deck.pptx); the [evidence whitepaper](docs/whitepaper.pdf) and [integration guide](docs/integration.md) provide the technical deep dive.
+
 ### 2:29 demo cut
 
 The repository includes a judge-facing 1080p review cut with burned-in captions: [`docs/attestflow-demo-review.mp4`](docs/attestflow-demo-review.mp4). It shows the product before 0:40, the current public transactions, the proof/security boundary, the honest Writability limitation, and an actual 62-check verifier run.
@@ -165,7 +167,7 @@ agent/       rule parser, attested-window watcher, proof/settlement/recovery loo
 web/         Next.js dashboard plus the /judge evidence brief
 scripts/     proof smoke test, evidence verifier, and deterministic video renderer
 evidence/    immutable cross-chain evidence manifests and factual demo fixture
-docs/        whitepaper, integration deep-dive, demo cut, script, submission checklist
+docs/        pitch deck, whitepaper, integration deep-dive, demo cut, submission kit
 ```
 
 Copy-ready DoraHacks text is in [`docs/submission-copy.md`](docs/submission-copy.md). Only the team identity and final public video URL remain intentionally blank.
