@@ -31,7 +31,7 @@ npm run verify:evidence
 # → { "status": "SUCCESS", "checks": 62 }
 ```
 
-A fresh anonymous clone rehearsal on 2026-09-01 at commit `e4e5cb6` passed the full CI, the 62-check live verifier, and a newly generated Attestcoin proof. Clone, install, CI, evidence verification, and proof verification completed in about 43 seconds total on the rehearsal host; network and machine timings will vary.
+A fresh anonymous clone rehearsal on 2026-09-01 at commit `3d8d0e2` passed the unified verifier, including the full CI, the 62-check live verifier, and a newly generated Attestcoin proof. Clone, install, and `judge:verify` completed in about 46 seconds total on the rehearsal host; network and machine timings will vary.
 
 For the complete evaluator path after installation, one command runs every local gate, re-reads both public chains, and generates a fresh Attestcoin proof:
 

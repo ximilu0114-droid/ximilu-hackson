@@ -85,7 +85,7 @@ Expected:
 - [x] Fresh proof smoke test prints `"verification": "SUCCESS"`.
 - [x] Unified verifier finishes with `"step": "judge-verify"` and `"status": "SUCCESS"`.
 
-Last rehearsed from a fresh public clone at commit `e4e5cb6` on 2026-09-01: clone 3.4 s, `npm ci` 11.2 s, `npm run ci` 14.9 s, `verify:evidence` 3.3 s, and `e2e:proof` 10.5 s. All commands exited 0; timings are environment-dependent.
+Last rehearsed from a fresh public clone at commit `3d8d0e2` on 2026-09-01: clone 5.1 s, `npm ci` 10.8 s, and the unified `judge:verify` 29.7 s. Its three gates all returned `SUCCESS`, including a fresh proof for Sepolia block `11609889`; timings are environment-dependent.
 
 ## Video acceptance
 
