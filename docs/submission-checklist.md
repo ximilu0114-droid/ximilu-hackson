@@ -5,6 +5,8 @@
 ## Non-negotiable portal fields
 
 - [ ] **Project name:** AttestFlow — Proof-Gated Cross-Chain Payments
+- [x] **Local project logo:** `docs/attestflow-logo.png` · square PNG · checked at full size and 48 px
+- [ ] **Project logo upload:** use `docs/attestflow-logo.png` in the DoraHacks project profile
 - [ ] **Project sector:** AI
 - [ ] **One-line description:** “A natural-language agent that proves Sepolia payments through Attestcoin, settles deterministic escrow on Creditcoin, and returns the exact settlement payload cross-chain.”
 - [ ] **Long description:** adapt README sections “Why this needs Attestcoin,” “Integration depth,” and “Honest boundary.”
@@ -35,6 +37,7 @@
 - [x] `/judge` evidence page passes desktop and 390 px mobile QA
 - [x] Machine-checkable live evidence manifest and 62-check verifier
 - [x] 2:29 / 1080p local review cut, captions, poster, and reproducible renderer
+- [x] Square project logo plus Next.js app icon
 - [x] Push the final hardening commit and confirm GitHub Actions is green
 - [ ] Replace any final video placeholder with the tested video URL
 - [x] Confirm repository visibility is Public while signed out

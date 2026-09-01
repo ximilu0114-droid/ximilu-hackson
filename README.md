@@ -1,5 +1,9 @@
 # AttestFlow — Proof-Gated Cross-Chain Payments
 
+<p align="center">
+  <img src="docs/attestflow-logo.png" alt="AttestFlow project logo" width="128" />
+</p>
+
 > A natural-language payment agent that observes Ethereum Sepolia, proves the source transaction through Attestcoin, settles escrow on Creditcoin CC3, and carries the exact settlement result back to Sepolia.
 
 **BUIDL CTC 2026 Fall · AI track**

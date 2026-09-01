@@ -110,7 +110,7 @@ npm run dev --prefix web
 - **坑**：动态 GET 路由必须显式 `export const dynamic = 'force-dynamic'`。Next 已升级至 16.3.3，生产依赖审计 0 漏洞。
 
 ### Phase 4 — 提交材料（9/1–9/10）✅ 本地交付物齐全，公开视频 URL 待人工上传
-- **验收**：① ✅ `npm run ci`（typecheck→8 agent tests→5 web tests→15 contract tests→web build→audit）；② ✅ `evidence/live-e2e-v2.json` + `npm run verify:evidence` 62 项 live 双链验真，含 deployed bytecode 对 local build；③ ✅ `docs/attestflow-pitch-deck.pdf`（9 页，最终 PDF 逐页渲染检查）及可编辑 PPTX、`docs/whitepaper.pdf`、`docs/integration.md` 均已完成；④ ✅ `docs/attestflow-demo-review.mp4` 为 2:29 / 1080p 带字幕评审版，实际 verifier 输出入镜；⑤ ✅ `npm run render:demo-video` 可从公开 evidence 复现视频、SRT 与封面。最终公开视频上传与匿名访问仍需人工完成。
+- **验收**：① ✅ `npm run ci`（typecheck→8 agent tests→5 web tests→15 contract tests→web build→audit）；② ✅ `evidence/live-e2e-v2.json` + `npm run verify:evidence` 62 项 live 双链验真，含 deployed bytecode 对 local build；③ ✅ `docs/attestflow-pitch-deck.pdf`（9 页，最终 PDF 逐页渲染检查）及可编辑 PPTX、`docs/whitepaper.pdf`、`docs/integration.md` 均已完成；④ ✅ `docs/attestflow-demo-review.mp4` 为 2:29 / 1080p 带字幕评审版，实际 verifier 输出入镜；⑤ ✅ `npm run render:demo-video` 可从公开 evidence 复现视频、SRT 与封面；⑥ ✅ `docs/attestflow-logo.png` 方形项目 Logo 已检查全尺寸与 48 px，并接入 Web app icon。最终公开视频上传与匿名访问仍需人工完成。
 - **实测补充**：Sepolia USDC 真实流量以 transferFrom 为主且大量是金库合约内部转账——发现层必须校验 calldata 而非只看 Transfer 事件。
 
 ### Phase 5 — 评审级打磨与提交（9/1–9/11）🟡 进行中
