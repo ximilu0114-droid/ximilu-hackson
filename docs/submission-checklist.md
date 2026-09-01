@@ -70,9 +70,7 @@ Run from a clean clone or a temporary checkout:
 
 ```bash
 npm ci
-npm run ci
-npm run verify:evidence
-npm run e2e:proof
+npm run judge:verify
 ```
 
 Expected:
@@ -85,6 +83,7 @@ Expected:
 - [x] Production audit reports 0 vulnerabilities at the configured threshold.
 - [x] Evidence verifier prints `"status": "SUCCESS"` and `"checks": 62`.
 - [x] Fresh proof smoke test prints `"verification": "SUCCESS"`.
+- [x] Unified verifier finishes with `"step": "judge-verify"` and `"status": "SUCCESS"`.
 
 Last rehearsed from a fresh public clone at commit `e4e5cb6` on 2026-09-01: clone 3.4 s, `npm ci` 11.2 s, `npm run ci` 14.9 s, `verify:evidence` 3.3 s, and `e2e:proof` 10.5 s. All commands exited 0; timings are environment-dependent.
 

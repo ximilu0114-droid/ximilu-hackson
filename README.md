@@ -33,6 +33,13 @@ npm run verify:evidence
 
 A fresh anonymous clone rehearsal on 2026-09-01 at commit `e4e5cb6` passed the full CI, the 62-check live verifier, and a newly generated Attestcoin proof. Clone, install, CI, evidence verification, and proof verification completed in about 43 seconds total on the rehearsal host; network and machine timings will vary.
 
+For the complete evaluator path after installation, one command runs every local gate, re-reads both public chains, and generates a fresh Attestcoin proof:
+
+```bash
+npm run judge:verify
+# final verdict → { "step": "judge-verify", "status": "SUCCESS", ... }
+```
+
 For a visual evidence brief, run the dashboard and open [`http://localhost:3100/judge`](http://localhost:3100/judge).
 
 For the fastest judge-ready narrative, open the **[nine-slide pitch deck](docs/attestflow-pitch-deck.pdf)**. Its editable source is [`docs/attestflow-pitch-deck.pptx`](docs/attestflow-pitch-deck.pptx); the [evidence whitepaper](docs/whitepaper.pdf) and [integration guide](docs/integration.md) provide the technical deep dive.
@@ -122,6 +129,7 @@ git clone https://github.com/ximilu0114-droid/ximilu-hackson.git
 cd ximilu-hackson
 npm ci
 
+npm run judge:verify       # recommended: all three gates below in one command
 npm run ci                 # typecheck + 28 tests + web build + production audit
 npm run verify:evidence    # 62 live, cross-chain assertions
 npm run e2e:proof          # fresh real proof + read-only on-chain verification; no gas

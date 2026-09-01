@@ -41,7 +41,7 @@ The repository contains a linked live result across two public testnets:
 - Creditcoin CC3 proof-gated settlement: `0xec29d5b4046d5557c014d6720e6d3799ba0f0b41e31a71147240a09b89c2e4c2`
 - Sepolia execution of the same payload: `0xc692a176f78b1541104e9e0a18f9a8404c585b15e9be2c695df3d118796947fb`
 
-`npm run verify:evidence` re-reads both public chains and performs 62 assertions, including chain identity, deployment provenance, policy fields, source receipt, settlement events, both replay guards, cross-chain payload equality, and deployed runtime bytecode equality with the local Solidity build. The repository also ships 28 automated tests, CI, CodeQL, a production build, a nine-slide judge deck, a five-page evidence whitepaper, and a dedicated `/judge` view.
+`npm run verify:evidence` re-reads both public chains and performs 62 assertions, including chain identity, deployment provenance, policy fields, source receipt, settlement events, both replay guards, cross-chain payload equality, and deployed runtime bytecode equality with the local Solidity build. For the complete evaluator path, `npm run judge:verify` adds all 28 tests, the production build/audit, and a newly generated Attestcoin proof behind one final machine-readable verdict. The repository also ships CI, CodeQL, a nine-slide judge deck, a five-page evidence whitepaper, and a dedicated `/judge` view.
 
 ### Honest Writability boundary
 

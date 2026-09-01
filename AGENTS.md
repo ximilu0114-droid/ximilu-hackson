@@ -61,6 +61,7 @@ npm run test:agent     # Node test（8 个 Agent/协议编码/策略一致性用
 npm run test:web       # Node test（5 个网页规则解析/安全边界用例）
 npm run test:contracts # hardhat test（15 个合约用例）
 npm run ci             # typecheck + 28 tests + web build + production audit
+npm run judge:verify   # CI + 62 项 live evidence + fresh Attestcoin proof，一键评委路径
 npm run verify:evidence # 双链重读并验证 62 项 live evidence
 npm run render:demo-video # 从公开 evidence 生成 2:29 / 1080p 视频、字幕与封面
 npm run e2e:settle     # Phase 1 dry E2E（无需 gas）
