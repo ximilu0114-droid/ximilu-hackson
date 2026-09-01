@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 2,
+  "capturedAt": "2026-09-01T00:24:03Z",
+  "source": {
+    "network": "Ethereum Sepolia",
+    "chainId": 11155111,
+    "chainKey": 1,
+    "txHash": "0x6ac68ba923494389999206236504123521d8ecdb9463f60aa52da47d59d555e7",
+    "blockNumber": 11608703,
+    "txIndex": 69,
+    "payer": "0x1c9B3f887fDe9eB05553195FE0d1AB044144C8A8",
+    "payee": "0x4dAC2a94AAa8A038632264090048F955F184ac2c",
+    "asset": "native ETH",
+    "amountWei": "10000000000000000"
+  },
+  "settlement": {
+    "network": "Creditcoin CC3 Testnet",
+    "chainId": 102031,
+    "contract": "0x4E7410Ebf41C213378E1D8aA4423323303086bF6",
+    "deploymentTxHash": "0x782d27be9fbb2ba515d77e0e6f4987f3810eb297cd4f189ec72b08cb7ffca6c6",
+    "txHash": "0xec29d5b4046d5557c014d6720e6d3799ba0f0b41e31a71147240a09b89c2e4c2",
+    "blockNumber": 5408811,
+    "policyId": "0",
+    "sourceTxId": "0x780a2c1665d5c3b62f3326cf745659376f3f566dd0b3ad645e16c44f2f28fd1a",
+    "releasedWei": "1000000000000000"
+  },
+  "message": {
+    "destChainKey": "1",
+    "destContract": "0x83A0b8D26Dd28094eE0CA74E57e79028194f868E",
+    "payloadHash": "0x4845f5ca486987ddb30d486e58f36ed0cebbf5e514d20783d220b06f0d523faa"
+  },
+  "delivery": {
+    "network": "Ethereum Sepolia",
+    "chainId": 11155111,
+    "contract": "0x83A0b8D26Dd28094eE0CA74E57e79028194f868E",
+    "txHash": "0xc692a176f78b1541104e9e0a18f9a8404c585b15e9be2c695df3d118796947fb",
+    "blockNumber": 11609168
+  },
+  "recoveryEvidence": {
+    "scenario": "CC3 settlement succeeded before a Sepolia RPC timeout; a retry recovered the exact MessagePublished payload and completed only the missing destination leg.",
+    "settlementWasNotRepeated": true
+  }
+}

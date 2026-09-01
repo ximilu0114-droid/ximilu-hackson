@@ -1,80 +1,120 @@
-# Demo Video Script (2:30)
+# Demo Video Runbook — 2:30
 
-> Recording setup: 1440×900 or 1920×1080, terminal font ~16pt, dashboard at localhost:3100,
-> pre-open tabs: Creditcoin explorer + Sepolia Etherscan. Record with QuickTime (⌘⌥N → select area).
-> Do a dry rehearsal first — every command below is verified and fast.
+Goal: make a judge understand the user value in 15 seconds, see a real product by 35 seconds, and independently trust the cross-chain claim by 1:50.
 
-## 0. Cold open (0:00–0:15) — dashboard
+Record at 1920×1080 or 1440×900. Use a 16–18 pt terminal font and hide bookmarks, notifications, wallet balances, `.env`, and all secrets. Pre-open:
 
-**Say:** "Freelancers wait days for cross-border payments to clear. AttestFlow settles them in one transaction — with cryptographic proof, on Creditcoin."
+1. `http://localhost:3100`
+2. `http://localhost:3100/judge`
+3. the three transaction links from the judge page
+4. a terminal at the repository root
 
-**Show:** dashboard `localhost:3100`. Point at the LIVE badge and the pipeline feed (settled rows from earlier runs).
+## 0:00–0:15 — outcome first
 
-## 1. The rule (0:15–0:40) — natural language
+**Show:** `/judge`, top section and three-chain cards.
 
-**Say:** "The user's intent is one sentence."
+**Say:**
+
+> “AttestFlow turns one natural-language payment rule into a cryptographically proof-gated settlement. This is one real 0.01 ETH payment on Sepolia, one Attestcoin-verified release on Creditcoin, and the exact settlement payload executed back on Sepolia.”
+
+Pause briefly over each linked transaction card.
+
+## 0:15–0:38 — the product
+
+**Show:** main dashboard. Create or point to:
+
+> “When I receive at least 0.01 ETH on Sepolia, release 10%.”
+
+Point to the active rule, then the `match → proved → settled → delivered` stepper.
+
+**Say:**
+
+> “The agent translates intent into an inspectable policy, watches only blocks already attested by Creditcoin, builds the proof, settles escrow, and delivers the result. The model is never trusted to say a payment happened.”
+
+## 0:38–1:10 — why the proof is real
+
+**Show:** CC3 settlement transaction `0xec29d5b4046d5557c014d6720e6d3799ba0f0b41e31a71147240a09b89c2e4c2`, then the security-invariants list on `/judge`.
+
+**Say:**
+
+> “Inside this CC3 transaction, the native BlockProver verifies the Merkle and continuity proofs. The contract derives the transaction index from the proof itself, checks the attested receipt status, recipient, amount, policy, replay state, and escrow before releasing 0.001 CTC.”
+
+Point specifically to **Index binding** and **Source success**. These are differentiators, not generic smart-contract checks.
+
+## 1:10–1:32 — the loop closes
+
+**Show:** Sepolia `MessageExecuted` transaction `0xc692a176f78b1541104e9e0a18f9a8404c585b15e9be2c695df3d118796947fb`, then the payload hash card.
+
+**Say:**
+
+> “The exact bytes published by the CC3 settlement are signed, delivered, and replay-checked on Sepolia. The payload hash is identical on both chains.”
+
+Then point to **Honest boundary**.
+
+> “Official Writability contracts are not on this testnet, so this leg uses one authorized relayer and does not pretend to have attestor-quorum security.”
+
+## 1:32–1:58 — let the repository prove it
+
+**Show:** terminal; run this before recording once to warm RPC connections, then run it again on camera:
 
 ```bash
-npm run start --prefix agent -- --rule "当我在 Sepolia 收到 ≥100 USDC 时，按 10% 释放" --once
+npm run verify:evidence
 ```
 
-**Show:** the agent logs: rule parsed (min=100 USDC, ratio 10%) → matches → proof → settle → delivered.
-**Say:** "No API keys, no human. The agent found a real USDC payment in the attested window, generated an inclusion proof, and settled it on Creditcoin."
+Let the final JSON remain on screen.
 
-## 2. The proof is real (0:40–1:10) — explorer
+**Say:**
 
-**Show:** open the CC3 explorer settlement tx from the log (e.g. `0x9c8caf6b…`).
-Point at: `PaymentSettled` event, gas ~190k, block on CC3 testnet.
+> “This verifier re-reads both public chains, performs 62 assertions, checks both replay guards, compares the cross-chain payload, and confirms that deployed bytecode matches this source build.”
 
-**Say:** "This settlement could not happen without a valid Merkle and continuity proof — the Attestcoin precompile at 0x0FD2 verifies them inside the transaction. And because the precompile proves inclusion but not success, the contract decodes the attested receipt and rejects failed transactions — there's a test for exactly that attack."
+## 1:58–2:18 — resilience, not a happy-path toy
 
-## 3. The loop closes (1:10–1:35) — writability
+**Show:** `/judge` crash-recovery invariant, or briefly open `docs/integration.md` section 5.
 
-**Show:** Sepolia Etherscan tx `0xd6abf721…` — InboxDemo `MessageExecuted`.
+**Say:**
 
-**Say:** "The settlement result travels back as a signed message and executes on Sepolia — the same publish, sign, deliver, validate semantics as Attestcoin writability. Official Outbox/Inbox aren't on testnet yet, so we run the identical four steps with a validating inbox — and the swap is a drop-in when they ship."
+> “During this live run, CC3 finalized and the Sepolia RPC timed out. On restart, the agent recovered the original published payload from chain logs and completed only the missing destination leg—without a second settlement.”
 
-## 4. It watches live (1:35–2:05) — the money moment
+## 2:18–2:30 — close
 
-**Say:** "Now watch it react to a brand-new payment in real time."
+**Show:** repository README quickstart and CI badge.
 
-Terminal 1:
-```bash
-LIVE=1 ASC_ADDRESS=0x0cFd2f6eBA1B2B8Af9C5a49c886b8F950594374F \
-INBOX_ADDRESS=0x83A0b8D26Dd28094eE0CA74E57e79028194f868E \
-npm run start --prefix agent
-```
+**Say:**
 
-Terminal 2 (send ≥100 USDC to any fresh address — e.g. from another funded testnet wallet):
-```bash
-# any real USDC transfer works; the agent picks it up within ~30s
-```
+> “Natural language for intent, Attestcoin for truth, and deterministic contracts for money. AttestFlow is open source, testnet-deployed, and independently reproducible.”
 
-**Show:** agent log: `match → LIVE settle mined → settled+delivered`, then dashboard auto-refreshing with the new pipeline row (match→proved→settled→delivered stepper turning green).
-
-**Say:** "Payment in, settlement out, message delivered — nobody touched a keyboard."
-
-## 5. Why it matters (2:05–2:30)
-
-**Show:** README quickstart section scrolling.
-
-**Say:** "AttestFlow = Attestcoin proofs for truth, a smart-contract spine for trust, and an AI agent for autonomy. Everything is open source, reproducible from the README in under 30 minutes, and every claim is a transaction hash you can click."
+End on the three linked transactions, not on a terminal.
 
 ---
 
-### Pre-flight checklist for recording day
-- [ ] `npm run e2e:proof` passes (prover service healthy)
-- [ ] Dashboard `npm run dev --prefix web` shows LIVE badge + history
-- [ ] Agent wallet has ≥400 CTC (escrow auto-top-up to 500) and ≥0.02 Sepolia ETH
-- [ ] A USDC transfer ≥100 USDC happened recently (agent scans last 400 attested blocks)
-- [ ] Explorer tabs pre-loaded with the evidence txs
-- [ ] Clean demo state (start scanning from current height, no backlog):
-  ```bash
-  H=$(curl -s "https://prover.cc3-testnet.creditcoin.network/api/v1/attested-height/1" | python3 -c "import json,sys;print(json.load(sys.stdin)['attestedHeight'])")
-  python3 -c "
-  import json
-  s = json.load(open('agent/state.json'))
-  s['lastHeight'] = $H; s['events'] = []; s['settledTx'] = {}; s['deliveries'] = {}
-  json.dump(s, open('agent/state.json','w'), indent=2)
-  "
-  ```
+## Optional live-agent insert
+
+If the video may be 3 minutes, add a 20-second terminal clip. Use the current deployment and a fresh temporary state file so the repository's real dashboard state is untouched:
+
+```bash
+STATE_FILE=/tmp/attestflow-video-state.json \
+LOG_FILE=/tmp/attestflow-video.log \
+LIVE=1 \
+ASC_ADDRESS=0x4E7410Ebf41C213378E1D8aA4423323303086bF6 \
+INBOX_ADDRESS=0x83A0b8D26Dd28094eE0CA74E57e79028194f868E \
+npm run start --prefix agent -- \
+  --rule "当我在 Sepolia 收到 ≥0.01 ETH 时，按 10% 释放" \
+  --tx 0x6ac68ba923494389999206236504123521d8ecdb9463f60aa52da47d59d555e7 \
+  --once
+```
+
+This requires the same testnet-only agent wallet used as the recorded payee. It rebuilds the real proof, observes the on-chain replay guard, recovers the CC3 receipt payload, and confirms the already-executed destination leg. It does not spend gas or create a duplicate settlement.
+
+For a brand-new settlement, send a qualifying payment to the demo wallet at least one attestation cycle before recording, then pass its hash through `--tx`. Do not wait for a just-mined transaction during the recording.
+
+## Recording-day acceptance
+
+- [ ] `npm ci`, `npm run ci`, and `npm run verify:evidence` pass.
+- [ ] Dashboard renders at desktop width; `/judge` shows 62 live checks.
+- [ ] All three explorer pages load and show successful transactions.
+- [ ] Demo video contains no private key, seed, `.env`, personal wallet, or notification.
+- [ ] Writability limitation is spoken once, clearly and without euphemism.
+- [ ] Narration says “proof of inclusion and continuity,” then separately says the ASC checks receipt success.
+- [ ] Final export is 1080p, readable at 1× speed, and under the portal limit.
+- [ ] Upload is Unlisted or Public, opens while signed out, and has captions.
+- [ ] Replace the README video placeholder/link only after the final URL works.

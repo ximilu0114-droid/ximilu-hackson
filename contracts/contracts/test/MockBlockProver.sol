@@ -18,6 +18,15 @@ contract MockBlockProver {
         RESULT = initialResult;
     }
 
+    function calculateTxIndex(
+        IBlockProver.MerkleProof calldata merkleProof
+    ) external pure returns (uint64 index) {
+        require(merkleProof.siblings.length <= 64, 'PROOF_TOO_DEEP');
+        for (uint256 i = 0; i < merkleProof.siblings.length; ++i) {
+            if (merkleProof.siblings[i].isLeft) index |= uint64(1 << i);
+        }
+    }
+
     function verify(
         uint64,
         uint64,

@@ -35,6 +35,8 @@ contract AttestFlowASC {
         address payee; // watched recipient on the source chain
         uint256 minAmount; // in token base units
         address beneficiary; // who receives escrowed CTC upon settlement
+        uint64 destChainKey; // destination chain for the writability message
+        address destContract; // destination Inbox/application contract
         uint256 payoutRatioE18; // CTC wei released per 1 whole token unit
         bool active;
     }
@@ -140,10 +142,15 @@ contract AttestFlowASC {
         address payee,
         uint256 minAmount,
         address beneficiary,
+        uint64 destChainKey,
+        address destContract,
         uint256 payoutRatioE18
     ) external onlyOwner returns (uint256 policyId) {
         require(payee != address(0), 'ZERO_PAYEE');
         require(beneficiary != address(0), 'ZERO_BENEFICIARY');
+        require(destContract != address(0), 'ZERO_DESTINATION');
+        require(tokenDecimals <= 77, 'DECIMALS_TOO_LARGE');
+        require(payoutRatioE18 > 0, 'ZERO_PAYOUT_RATIO');
 
         bytes32 id = keccak256(abi.encodePacked(chainKey, payee, token));
         require(policyIdByPayee[id] == 0, 'POLICY_EXISTS');
@@ -155,6 +162,8 @@ contract AttestFlowASC {
             payee: payee,
             minAmount: minAmount,
             beneficiary: beneficiary,
+            destChainKey: destChainKey,
+            destContract: destContract,
             payoutRatioE18: payoutRatioE18,
             active: true
         });
@@ -226,8 +235,16 @@ contract AttestFlowASC {
         );
         require(verified, 'PROOF_INVALID');
 
+        // `verify()` does not accept txIndex. Bind the operator-provided value
+        // to the verified Merkle path so the same proof cannot be replayed by
+        // changing txIndex and therefore changing the replay-protection key.
+        uint64 proofTxIndex = BLOCK_PROVER.calculateTxIndex(merkleProof);
+        require(proofTxIndex == txIndex, 'TX_INDEX_MISMATCH');
+
         // 2) Replay protection — each source tx settles exactly once.
-        bytes32 sourceTxId = keccak256(abi.encodePacked(chainKey, height, txIndex));
+        bytes32 sourceTxId = keccak256(
+            abi.encodePacked(chainKey, height, proofTxIndex)
+        );
         require(!settledTxs[sourceTxId], 'ALREADY_SETTLED');
         settledTxs[sourceTxId] = true;
 
@@ -264,14 +281,14 @@ contract AttestFlowASC {
             p.beneficiary,
             released,
             height,
-            txIndex
+            proofTxIndex
         );
 
         // Writability step 1: publish settlement result for the destination
         // chain relayer network (payload consumed by the beneficiary-side app).
         emit MessagePublished(
-            chainKey, // dest = the source chain in our payment loop-back design
-            tv.from, // destination app entry: the payer's address on dest chain
+            p.destChainKey,
+            p.destContract,
             abi.encode(policyId, sourceTxId, amount, released)
         );
     }

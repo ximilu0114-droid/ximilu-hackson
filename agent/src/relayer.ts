@@ -18,8 +18,9 @@ import { CONFIG } from './config.js';
 import { log } from './state.js';
 
 export const INBOX_ABI = [
-  'event MessageExecuted(bytes32 indexed payloadHash, address indexed executor)',
+  'event MessageExecuted(bytes32 indexed payloadHash, address indexed executor, uint256 policyId, uint256 released)',
   'function execute(bytes payload, bytes signature) external',
+  'function executedPayloads(bytes32) view returns (bool)',
 ];
 
 export async function deliverMessage(
@@ -36,6 +37,21 @@ export async function deliverMessage(
   if (!CONFIG.liveMode || !CONFIG.inboxAddress || !inbox) {
     log(`DRY deliver: payloadHash=${payloadHash} sig=${sig.slice(0, 20)}... — live Inbox delivery skipped (unfunded)`);
     return { txHash: '', dry: true };
+  }
+
+  if (await inbox.executedPayloads(payloadHash)) {
+    const provider: any = inbox.runner?.provider;
+    const latest = await provider.getBlockNumber();
+    const fromBlock = Math.max(0, latest - CONFIG.recoveryBlockWindow);
+    const logs = await inbox.queryFilter(
+      inbox.filters.MessageExecuted(payloadHash),
+      fromBlock,
+      'latest',
+    );
+    const existing: any = logs.at(-1);
+    const txHash = existing?.transactionHash ?? '';
+    log(`RECOVER destination execution: ${txHash || payloadHash}`);
+    return { txHash, dry: false };
   }
   const tx = await (inbox as any).connect(signer).execute(payload, sig);
   const rcpt = await tx.wait();

@@ -1,51 +1,105 @@
 # Submission Checklist — BUIDL CTC 2026 Fall
 
-Deadline: **2026-09-06 23:59 ET** · Winners: 2026-09-18 · Submit early (target 9/4).
+Official page checked 2026-09-01: **deadline 2026-09-13 23:59 ET** · winners announced **2026-09-20**. Internal target: submit a complete draft by **2026-09-11 ET**, leaving two days for portal or video failures.
 
-## DoraHacks form fields
+## Non-negotiable portal fields
 
-- [ ] **Project name**: AttestFlow — Cross-Chain Verified Payment Engine
-- [ ] **Project sector (track)**: AI
-- [ ] **Description**: see README intro (copy 2–3 paragraphs)
-- [ ] **Attestcoin Protocol Integration Summary**: point to `docs/integration.md`; one-line: "Readability (ProofBuilder + 0x0FD2 precompile verified in-ASC, receipt-status enforced) + Writability four-step adapter (MessagePublished → signed delivery → validating InboxDemo), ChainInfo discovery, prover REST."
-- [ ] **GitHub repo URL**: `<public repo>` (must be public; README is the entry point)
-- [ ] **Deck/Whitepaper PDF**: `docs/whitepaper.pdf`
-- [ ] **Demo video URL** (YouTube unlisted): `<record from docs/demo-script.md>`
-- [ ] **Team info** (per member): first/last name, email, Telegram (opt), X (opt), LinkedIn (opt), bio, role, country of residence + citizenship
-- [ ] Eligibility confirmed (no criminal record etc.)
+- [ ] **Project name:** AttestFlow — Proof-Gated Cross-Chain Payments
+- [ ] **Project sector:** AI
+- [ ] **One-line description:** “A natural-language agent that proves Sepolia payments through Attestcoin, settles deterministic escrow on Creditcoin, and returns the exact settlement payload cross-chain.”
+- [ ] **Long description:** adapt README sections “Why this needs Attestcoin,” “Integration depth,” and “Honest boundary.”
+- [ ] **Public GitHub URL:** `https://github.com/ximilu0114-droid/ximilu-hackson`
+- [ ] **Whitepaper/Deck PDF:** `docs/whitepaper.pdf`
+- [ ] **Demo video URL:** record from `docs/demo-script.md`, upload Unlisted/Public, verify signed-out access
+- [ ] **Attestcoin integration summary:** link `docs/integration.md`
+- [ ] **Team identity:** real first/last name, email, country of residence, citizenship, role, short bio; Telegram/X/LinkedIn if requested
+- [ ] **Originality declaration:** confirm the submission is original and disclose reused open-source dependencies
+- [ ] **Eligibility:** personally confirm every legal/eligibility statement before checking it
+- [ ] **Third-party services:** disclose hosted prover, public RPCs, explorers, and optional OpenAI-compatible endpoint
 
-## Repo readiness
+## Suggested integration summary
 
-- [x] README with repro steps (validated: fresh clone → tests + live proof in <2 min)
-- [x] Open-source license (MIT)
-- [x] No secrets in git (`.env` gitignored; wallet is testnet-only)
-- [x] Third-party disclosure section in README (LLM optional, prover service, public RPCs)
-- [x] Deployed addresses + ABI snapshots in `deployments/`
-- [ ] **Push to GitHub** (needs remote):
-  ```bash
-  git remote add origin git@github.com:<user>/attestflow.git
-  git push -u origin main --tags
-  ```
+> AttestFlow uses the live ChainInfo registry, ProofBuilder, Merkle and continuity proofs, the native BlockProver `verify()` and `calculateTxIndex()`, and protocol encoding v1 inside a deployed CC3 ASC. The ASC independently enforces receipt success, proof-index binding, policy match, replay protection, escrow, and a destination-bound payload. Because official Writability Outbox/Inbox contracts are not deployed on the target testnet, the return leg is explicitly labeled as a four-stage adapter using one authorized relayer rather than an attestor quorum.
 
-## Demo video (2:30)
+## Repository readiness
 
-- [ ] Record per `docs/demo-script.md` (all commands verified; checklist inside)
-- [ ] Upload YouTube (unlisted) → paste URL into README `DEMO_VIDEO_URL` badge → commit + push
+- [x] English README with verified commands and judge-first evidence
+- [x] MIT license and security policy
+- [x] `.env` ignored; no testnet private key or seed committed
+- [x] Current ASC and Inbox ABI/deployment snapshots committed
+- [x] ChainInfo, BlockProver, proof encoding, and Writability boundary documented
+- [x] 28 tests: 15 contracts, 8 agent/protocol/policy, and 5 web policy-boundary tests
+- [x] CI, CodeQL, Dependabot, production build, and dependency audit
+- [x] `/judge` evidence page passes desktop and 390 px mobile QA
+- [x] Machine-checkable live evidence manifest and 62-check verifier
+- [ ] Push the final hardening commit and confirm GitHub Actions is green
+- [ ] Replace any final video placeholder with the tested video URL
+- [ ] Confirm repository visibility is Public while signed out
 
-## Evidence index (clickable hashes for judges)
+## Evidence index
 
-| What | Hash |
+| Claim | Public artifact |
 |---|---|
-| Settlement (CC3) | `0x9c8caf6ba81abd605c485d1e0ab732cb307dfb7b15794c719606abba710d25b6` |
-| Writability delivery (Sepolia) | `0xd6abf72128f57c52cbd95ec3a9a197fdabedd3747b43729628795d03035e9389` |
-| Clean-round settlement (CC3) | `0xb6867873835193e253963709696405c0ef43d13f94950ecbea5f81dacb76549e` |
-| Clean-round delivery (Sepolia) | `0xe01193bb449f7e9bb774727d929795b9037a4ed91959026887fe3754f9ad49cc` |
-| ASC contract | `0x0cFd2f6eBA1B2B8Af9C5a49c886b8F950594374F` |
-| InboxDemo contract | `0x83A0b8D26Dd28094eE0CA74E57e79028194f868E` |
+| Source payment · Sepolia | `0x6ac68ba923494389999206236504123521d8ecdb9463f60aa52da47d59d555e7` |
+| Source block / index / status | `11608703 / 69 / 1` |
+| ASC deployment · CC3 | `0x4E7410Ebf41C213378E1D8aA4423323303086bF6` |
+| ASC deployment tx | `0x782d27be9fbb2ba515d77e0e6f4987f3810eb297cd4f189ec72b08cb7ffca6c6` |
+| Proof-gated settlement · CC3 | `0xec29d5b4046d5557c014d6720e6d3799ba0f0b41e31a71147240a09b89c2e4c2` |
+| Proof-derived sourceTxId | `0x780a2c1665d5c3b62f3326cf745659376f3f566dd0b3ad645e16c44f2f28fd1a` |
+| Published/executed payload hash | `0x4845f5ca486987ddb30d486e58f36ed0cebbf5e514d20783d220b06f0d523faa` |
+| InboxDemo · Sepolia | `0x83A0b8D26Dd28094eE0CA74E57e79028194f868E` |
+| Destination execution · Sepolia | `0xc692a176f78b1541104e9e0a18f9a8404c585b15e9be2c695df3d118796947fb` |
+| Canonical manifest | `evidence/live-e2e-v2.json` |
 
-## Final sanity before submit
+## Judge-path rehearsal
 
-- [ ] `npm install && npm run typecheck && npm run test:contracts` green on fresh clone
-- [ ] `npm run e2e:proof` → SUCCESS
-- [ ] README badge URLs work (video + explorer links)
-- [ ] All third-party services disclosed
+Run from a clean clone or a temporary checkout:
+
+```bash
+npm ci
+npm run ci
+npm run verify:evidence
+npm run e2e:proof
+```
+
+Expected:
+
+- [ ] TypeScript exits 0.
+- [ ] Agent tests: 8 passing.
+- [ ] Web policy tests: 5 passing.
+- [ ] Contract tests: 15 passing.
+- [ ] Next.js production build exits 0 and includes `/judge`.
+- [ ] Production audit reports 0 vulnerabilities at the configured threshold.
+- [ ] Evidence verifier prints `"status": "SUCCESS"` and `"checks": 62`.
+- [ ] Fresh proof smoke test prints `"verification": "SUCCESS"`.
+
+## Video acceptance
+
+- [ ] Outcome and three public transaction links appear in the first 15 seconds.
+- [ ] Product dashboard appears before 0:40.
+- [ ] Narration distinguishes inclusion/continuity from receipt success.
+- [ ] Proof-derived transaction index and replay defense are named.
+- [ ] Honest Writability boundary is stated.
+- [ ] `npm run verify:evidence` finishes on camera.
+- [ ] No secrets, personal notifications, or private-wallet information appear.
+- [ ] Captions checked; transaction hashes remain readable at 1080p.
+- [ ] Video opens in a private browser window without authentication.
+
+## Final portal dry run
+
+- [ ] Open every README, PDF, video, source, CC3 explorer, and Etherscan link while signed out.
+- [ ] Download the uploaded PDF once and compare its page count and first/last pages with the repository copy.
+- [ ] Paste the final portal text into a local backup before submission.
+- [ ] Screenshot the completed portal fields before clicking Submit.
+- [ ] Submit by 2026-09-11 ET; confirm the submission appears in the project dashboard.
+- [ ] Re-open the submission after confirmation and ensure links were not truncated.
+
+## Human-only blockers
+
+The repository cannot safely infer or submit these:
+
+1. real member identity, nationality/citizenship, and eligibility attestations;
+2. final voice/video recording and public video URL;
+3. the final DoraHacks submission click.
+
+Do not mark the project complete until all three are confirmed.

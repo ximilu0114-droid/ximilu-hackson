@@ -1,153 +1,167 @@
-# AttestFlow — Cross-Chain Verified Payment Engine
+# AttestFlow — Proof-Gated Cross-Chain Payments
 
-> **AI agent that watches real payments on Ethereum Sepolia, proves them on Creditcoin with the Attestcoin Protocol, and settles automatically — then sends a verified message back.**
+> A natural-language payment agent that observes Ethereum Sepolia, proves the source transaction through Attestcoin, settles escrow on Creditcoin CC3, and carries the exact settlement result back to Sepolia.
 
-BUIDL CTC 2026 Fall submission (Track: **AI**).
+**BUIDL CTC 2026 Fall · AI track**
 
-[![Demo video](https://img.shields.io/badge/demo-video-blue)](DEMO_VIDEO_URL)
-[![ASC on CC3 testnet](https://img.shields.io/badge/ASC-0x0cFd...374F-green)](https://explorer.cc3-testnet.creditcoin.network/address/0x0cFd2f6eBA1B2B8Af9C5a49c886b8F950594374F)
+[![CI](https://github.com/ximilu0114-droid/ximilu-hackson/actions/workflows/ci.yml/badge.svg)](https://github.com/ximilu0114-droid/ximilu-hackson/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![ASC on CC3](https://img.shields.io/badge/CC3_ASC-0x4E74...6bF6-22c55e)](https://explorer.cc3-testnet.creditcoin.network/address/0x4E7410Ebf41C213378E1D8aA4423323303086bF6)
 
-## What it does
+## The 30-second judge path
 
-A freelancer invoices a client in USDC on Ethereum Sepolia. The client pays. AttestFlow then — with **zero human intervention**:
+AttestFlow is not a mocked bridge animation. Its current evidence is a single, linked transaction story across two public testnets:
 
-```
-Sepolia (source)                     Creditcoin CC3 (settlement)
-────────────────                     ───────────────────────────
-USDC transfer ≥ threshold
-        │
-        ▼
-Agent watches the attested window
-        │  1. inclusion proof via hosted prover
-        │  2. BlockProver precompile 0x0FD2 verify()
-        ▼
-        └────────────────────────►  AttestFlowASC.settle()
-                                       ├─ cryptographic verification
-                                       ├─ receipt status == 1 check
-                                       ├─ replay + policy match
-                                       ├─ release escrowed CTC
-                                       └─ emit MessagePublished
-                                            │
-        ┌───────────────────────────────────┘
-        ▼  3. relayer signs payload (writability semantics)
-Sepolia InboxDemo.execute(payload, sig)
-        └─ verifies signer, executes → MessageExecuted event
-```
-
-**Live evidence (all on public testnets):**
-
-| Step | Artifact |
+| Stage | Public evidence |
 |---|---|
-| Source payment (real third-party USDC transfer) | `0x39091951e67085ba72f8047576c18d7a0c8e43ec155856db86e51a97fbad8d84` (Sepolia) |
-| On-chain settlement on CC3 | [`0x9c8caf6ba81abd605c485d1e0ab732cb307dfb7b15794c719606abba710d25b6`](https://explorer.cc3-testnet.creditcoin.network/tx/0x9c8caf6ba81abd605c485d1e0ab732cb307dfb7b15794c719606abba710d25b6) |
-| Verified message executed back on Sepolia | [`0xd6abf72128f57c52cbd95ec3a9a197fdabedd3747b43729628795d03035e9389`](https://sepolia.etherscan.io/tx/0xd6abf72128f57c52cbd95ec3a9a197fdabedd3747b43729628795d03035e9389) |
+| Client pays `0.01 ETH` on Sepolia | [`0x6ac68b…55e7`](https://sepolia.etherscan.io/tx/0x6ac68ba923494389999206236504123521d8ecdb9463f60aa52da47d59d555e7) |
+| Attestcoin proof gates settlement on CC3 | [`0xec29d5…e4c2`](https://explorer.cc3-testnet.creditcoin.network/tx/0xec29d5b4046d5557c014d6720e6d3799ba0f0b41e31a71147240a09b89c2e4c2) |
+| The exact published payload executes on Sepolia | [`0xc692a1…47fb`](https://sepolia.etherscan.io/tx/0xc692a176f78b1541104e9e0a18f9a8404c585b15e9be2c695df3d118796947fb) |
 
-## Attestcoin Protocol integration
+The repository includes a machine-checkable evidence manifest. It re-reads both chains, validates 62 assertions, checks both replay guards, compares the CC3 and Sepolia payload hashes, and proves that deployed runtime bytecode matches the local Solidity build:
 
-| Capability | How we use it |
+```bash
+npm ci
+npm run verify:evidence
+# → { "status": "SUCCESS", "checks": 62 }
+```
+
+For a visual evidence brief, run the dashboard and open [`http://localhost:3100/judge`](http://localhost:3100/judge).
+
+## Why this needs Attestcoin
+
+An LLM can understand “release 10% when I receive at least 0.01 ETH,” but it cannot be trusted to assert that the payment happened. AttestFlow separates three responsibilities:
+
+- **Intent:** a natural-language rule becomes a bounded, inspectable policy.
+- **Truth:** the Attestcoin Protocol proves the source transaction and source-chain continuity.
+- **Execution:** the ASC independently checks success, policy match, transaction identity, replay, and escrow solvency before releasing CTC.
+
+```text
+Ethereum Sepolia                          Creditcoin CC3 Testnet
+─────────────────                         ──────────────────────
+client payment
+      │
+      ├─ agent scans only attested height
+      ├─ ProofBuilder: Merkle + continuity proof
+      │                                      │
+      └─────────────────────────────────────►│ AttestFlowASC.settle()
+                                             │  0x0FD2 verify()
+                                             │  calculateTxIndex()
+                                             │  receipt status == 1
+                                             │  policy + replay + escrow
+                                             │  release CTC
+                                             │  emit MessagePublished
+                                             └──────────────┐
+                                                            │ exact payload
+Ethereum Sepolia                                           │
+─────────────────                                           │
+InboxDemo.execute(payload, signature) ◄─────────────────────┘
+      └─ signature + replay validation → MessageExecuted
+```
+
+## Attestcoin integration depth
+
+| Protocol surface | Production use in this repository |
 |---|---|
-| **Readability — transaction proving** | `@gluwa/usc-sdk` `ProofBuilder` (hosted prover) generates Merkle + continuity proofs for real Sepolia txs; `AttestFlowASC` verifies them **on-chain** via the `0x0FD2` precompile (`verify()`), synchronously inside `settle()`. |
-| **Security beyond the precompile** | The precompile proves *inclusion*, not success. The ASC decodes the attested bytes (encoding v1: `(uint8, bytes[])`, receipt chunk carries `status`) and **rejects `status != 1`**, replays, and non-matching policies. Covered by dedicated tests. |
-| **Writability — message passing** | Official Outbox/Inbox are **not yet deployed on testnet** (docs: "undergoing 3rd party testing and audits"). We implemented the identical four-step semantics: ASC emits `MessagePublished` → relayer signs → `InboxDemo` on Sepolia validates the signature and executes. The swap to official contracts is a drop-in once they ship (see `docs/integration.md`). |
-| **ChainInfo precompile** | `PrecompileChainInfoProvider` resolves `chainKey` (Sepolia = `1` on CC3 testnet) at runtime; prover REST gives attested height. |
+| **ChainInfo precompile (`0x0FD3`)** | The agent fails closed unless the live CC3 registry maps Ethereum Sepolia (`chainId 11155111`) to configured `chainKey 1`; the proof smoke test also discovers the chain at runtime. |
+| **ProofBuilder** | Builds real Merkle and continuity proofs through the official hosted prover. The watcher scans only the attested window; `waitUntilHeightAttested` remains available for a specified fresh transaction. |
+| **BlockProver (`0x0FD2`)** | `AttestFlowASC.settle()` calls `verify()` synchronously. A settlement cannot be created from an agent assertion alone. |
+| **Protocol transaction encoding v1** | The ASC decodes attested transaction fields and the receipt. It supports native ETH plus ERC-20 `transfer` and `transferFrom`. |
+| **Proof-derived transaction identity** | The ASC calls `calculateTxIndex()` and rejects a caller-supplied index that differs from the Merkle path, closing an otherwise exploitable replay-key gap. |
+| **Writability semantics** | Until official Outbox/Inbox contracts are deployed on this testnet, the ASC publishes the destination-bound payload and an explicit adapter performs sign → deliver → validate against `InboxDemo`. |
 
-**Key empirical finding** (documented for the judges): on CC3 testnet, **contract-context calls to `verifyAndEmit()` revert**, while `verify()` (read-only) works from contracts and EOAs alike. Our ASC therefore uses synchronous `verify()` and emits its own events — cryptographically identical guarantees, single event source.
+See [`docs/integration.md`](docs/integration.md) for byte layouts, threat boundaries, and the exact protocol-to-code mapping.
 
-## Quickstart (from zero)
+## Security properties
 
-Requirements: Node ≥ 20, npm. No API keys needed for the default (deterministic) mode.
+The source transaction must pass every gate below in one CC3 transaction:
+
+1. valid Attestcoin inclusion and continuity proof;
+2. proof-derived transaction index equals the supplied index;
+3. attested receipt status equals `1` (the precompile alone does not check success);
+4. decoded recipient, asset, calldata, and amount match the stored policy;
+5. the proof-derived source transaction ID is unused;
+6. the policy fixes the beneficiary and destination contract;
+7. escrow covers the deterministic payout.
+
+The destination Inbox separately verifies the authorized signature and rejects payload replay. The agent checkpoints immediately after the irreversible CC3 leg; if destination RPC access fails, a restart recovers the original `MessagePublished` payload from chain logs and completes only the missing leg. The v2 live run exercised this recovery path.
+
+## Reproduce locally
+
+Requirements: Node.js 20+ and npm. The default tests and public evidence verifier need no wallet or API key.
 
 ```bash
-git clone <this repo> && cd attestflow
-npm install                 # installs all workspaces
+git clone https://github.com/ximilu0114-droid/ximilu-hackson.git
+cd ximilu-hackson
+npm ci
 
-cp .env.example .env        # then set AGENT_PRIVATE_KEY (any fresh testnet wallet)
-#   fund it: CC3 testnet CTC via Discord #token-faucet (/faucet address:0x…)
-#            Sepolia ETH via https://cloud.google.com/application/web3/faucet/ethereum/sepolia
+npm run ci                 # typecheck + 28 tests + web build + production audit
+npm run verify:evidence    # 62 live, cross-chain assertions
+npm run e2e:proof          # fresh real proof + read-only on-chain verification; no gas
 ```
 
-### 1. Prove a real Sepolia transaction on CC3 (no gas needed)
+### Run the dashboard
 
 ```bash
-npm run e2e:proof
-# → picks a recent attested Sepolia tx, generates a proof, verifies on-chain
-#   {"verification": "SUCCESS", "txHash": "0x…", "blockNumber": …}
+npm run dev --prefix web
+# product UI:     http://localhost:3100
+# judge evidence: http://localhost:3100/judge
 ```
 
-### 2. Full settlement loop
+### Run the autonomous agent
+
+Copy `.env.example` to `.env` and use a fresh, testnet-only wallet. Dry mode performs discovery, proof generation, source decoding, policy validation, and a signed return payload without spending gas:
 
 ```bash
-# dry run (no gas): real payment, real proof, local decode + policy simulation
-npm run e2e:settle
-
-# live (funded wallet): real settlement on CC3 testnet
-npm run e2e:settle:live --prefix contracts
-#   env: ASC_ADDRESS=0x0cFd2f6eBA1B2B8Af9C5a49c886b8F950594374F
+npm run start --prefix agent -- \
+  --rule "当我在 Sepolia 收到 ≥0.01 ETH 时，按 10% 释放" --once
 ```
 
-### 3. Autonomous agent (natural-language rule → watch → settle → deliver)
+Live mode additionally needs funded CC3 CTC and Sepolia ETH:
 
 ```bash
-# dry (default): everything except on-chain settlement
-npm run start --prefix agent -- --rule "当我在 Sepolia 收到 ≥100 USDC 时，按 10% 释放" --once
-
-# live: full autonomous loop with on-chain settlement + writability delivery
-LIVE=1 ASC_ADDRESS=0x0cFd2f6eBA1B2B8Af9C5a49c886b8F950594374F \
+LIVE=1 \
+ASC_ADDRESS=0x4E7410Ebf41C213378E1D8aA4423323303086bF6 \
 INBOX_ADDRESS=0x83A0b8D26Dd28094eE0CA74E57e79028194f868E \
-npm run start --prefix agent -- --rule "当我在 Sepolia 收到 ≥100 USDC 时，按 10% 释放" --once
+npm run start --prefix agent -- \
+  --rule "When I receive at least 0.01 ETH on Sepolia, release 10%"
 ```
 
-The agent is crash-safe: cursor + per-tx dedupe live in `agent/state.json`; kill it (Ctrl-C) and rerun — it resumes without double-settling.
-
-### 4. Dashboard
-
-```bash
-npm run dev --prefix web     # http://localhost:3100
-# register rules, watch the match→proved→settled→delivered pipeline (5s polling),
-# ask settlement history in natural language
-```
-
-### 5. Tests
-
-```bash
-npm run test:contracts       # 14 Hardhat tests incl. status!=1 / replay / bad-proof paths
-npm run typecheck
-```
+Use `--tx 0x… --once` with a known, already-attested transaction for a deterministic demo or recovery run. It bypasses only discovery; the real source transaction, proof, CC3 settlement, and destination delivery follow the same path.
 
 ## Deployed artifacts
 
-| Item | Address / value |
+| Artifact | Address |
 |---|---|
-| AttestFlowASC (CC3 testnet) | `0x0cFd2f6eBA1B2B8Af9C5a49c886b8F950594374F` |
-| InboxDemo (Sepolia) | `0x83A0b8D26Dd28094eE0CA74E57e79028194f868E` |
-| BlockProver precompile | `0x0000000000000000000000000000000000000FD2` (native) |
-| ABI snapshots | `deployments/*.json` |
+| AttestFlowASC · CC3 Testnet | [`0x4E7410Ebf41C213378E1D8aA4423323303086bF6`](https://explorer.cc3-testnet.creditcoin.network/address/0x4E7410Ebf41C213378E1D8aA4423323303086bF6) |
+| InboxDemo · Ethereum Sepolia | [`0x83A0b8D26Dd28094eE0CA74E57e79028194f868E`](https://sepolia.etherscan.io/address/0x83A0b8D26Dd28094eE0CA74E57e79028194f868E) |
+| BlockProver precompile | `0x0000000000000000000000000000000000000FD2` |
+| ChainInfo precompile | `0x0000000000000000000000000000000000000FD3` |
 
-## Architecture
+ABI snapshots live in [`deployments/`](deployments/); the evidence record is source-controlled at [`evidence/live-e2e-v2.json`](evidence/live-e2e-v2.json).
 
-```
-contracts/   Solidity: AttestFlowASC (settlement), InboxDemo (dest-side receiver), MockBlockProver (tests)
-agent/       TypeScript agent: NL rule parsing, attested-window watcher, proof generation,
-             on-chain settle, writability relayer; JSON state for crash recovery
-web/         Next.js 14 + Tailwind dashboard (rules, pipeline stepper, NL Q&A)
-docs/        whitepaper, integration deep-dive, demo script
-scripts/     e2e-proof.ts (Phase-0 acceptance)
+## Repository map
+
+```text
+contracts/   ASC, destination Inbox, mocks, deployment and live E2E scripts
+agent/       rule parser, attested-window watcher, proof/settlement/recovery loop
+web/         Next.js dashboard plus the /judge evidence brief
+scripts/     proof smoke test and public live-evidence verifier
+evidence/    immutable cross-chain evidence manifests
+docs/        whitepaper, integration deep-dive, demo script, submission checklist
 ```
 
 ## Third-party services disclosure
 
-- **QVAC**: not used. All AI inference is either deterministic (builtin parser/QA) or delegated to the LLM below.
-- **LLM API (optional)**: if `OPENAI_API_KEY` is set, rule parsing and dashboard Q&A upgrade to an OpenAI-compatible chat completion endpoint. **Every demo in this repo runs fully without it** — the builtin deterministic engine is the default and was used for all recorded results.
-- **Hosted prover** `https://prover.cc3-testnet.creditcoin.network`: official Creditcoin proof-builder service (part of the Attestcoin Protocol toolchain).
-- **Public RPCs**: `ethereum-sepolia-rpc.publicnode.com`, `rpc.cc3-testnet.creditcoin.network`.
-- **Etherscan/Creditcoin explorer**: linked for evidence only.
+- **Attestcoin hosted prover:** `https://prover.cc3-testnet.creditcoin.network`.
+- **Public RPC endpoints:** `ethereum-sepolia-rpc.publicnode.com` and `rpc.cc3-testnet.creditcoin.network` by default; both are configurable.
+- **Optional LLM:** setting `OPENAI_API_KEY` enables an OpenAI-compatible parsing/Q&A endpoint. It is never trusted for proof verification or settlement. All core flows and recorded evidence work with the deterministic local parser.
+- **Explorers:** Etherscan and the Creditcoin explorer are evidence links only.
 
-## Honest limitations
+## Honest boundary
 
-1. Writability uses our four-step adapter (ASC event → signed relayer → validating Inbox) because official contracts are not live on testnet yet; the interface mirrors the documented protocol so the swap is trivial.
-2. The relayer signature in `InboxDemo` stands in for the attestor quorum (single authorized key). Quorum validation drops in with the official Inbox.
-3. `verifyAndEmit()` is avoided inside the ASC due to the contract-context revert on CC3 testnet (see above); `verify()` provides identical verification.
+Creditcoin's official Writability Outbox/Inbox contracts are not available on the target testnet at the time of submission. The return leg therefore demonstrates the documented publish → sign → deliver → validate interface with one authorized relayer, not an attestor quorum. The limitation is explicit in the UI, whitepaper, and integration guide; the Readability settlement leg is fully verified by the native Attestcoin precompile.
 
 ## License
 
-MIT
+MIT — see [`LICENSE`](LICENSE).

@@ -187,7 +187,17 @@ async function mainInner(): Promise<void> {
     // Simulate policy match + payout exactly like settle() would
     const [owner, , beneficiary] = await ethers.getSigners();
     await owner.sendTransaction({ to: ascAddress, value: ethers.parseEther('10') });
-    await asc.createPolicy(SEPOLIA_CHAIN_KEY, payment.token, payment.decimals, payment.payee, payment.amount, beneficiary.address, ratio);
+    await asc.createPolicy(
+      SEPOLIA_CHAIN_KEY,
+      payment.token,
+      payment.decimals,
+      payment.payee,
+      payment.amount,
+      beneficiary.address,
+      SEPOLIA_CHAIN_KEY,
+      beneficiary.address,
+      ratio,
+    );
     const released = (payment.amount * ratio) / 10n ** BigInt(payment.decimals);
 
     console.log('[5] Decoded attested tx:', JSON.stringify({
@@ -213,12 +223,25 @@ async function mainInner(): Promise<void> {
   const owner = (await ethers.getSigners())[0];
   const operator = owner;
   const beneficiary = owner;
+  const destination = process.env.INBOX_ADDRESS ?? beneficiary.address;
   const beneficiaryBefore = await ethers.provider.getBalance(beneficiary.address);
 
   // Idempotent setup: reuse policy, top up escrow only as needed.
   let policyId = Number(await asc.findPolicy(SEPOLIA_CHAIN_KEY, payment.payee, payment.token));
   if (policyId < 0) {
-    await (await asc.createPolicy(SEPOLIA_CHAIN_KEY, payment.token, payment.decimals, payment.payee, payment.amount, beneficiary.address, ratio)).wait();
+    await (
+      await asc.createPolicy(
+        SEPOLIA_CHAIN_KEY,
+        payment.token,
+        payment.decimals,
+        payment.payee,
+        payment.amount,
+        beneficiary.address,
+        SEPOLIA_CHAIN_KEY,
+        destination,
+        ratio,
+      )
+    ).wait();
     policyId = Number(await asc.findPolicy(SEPOLIA_CHAIN_KEY, payment.payee, payment.token));
     console.log(`[5] policy #${policyId} created`);
   } else {

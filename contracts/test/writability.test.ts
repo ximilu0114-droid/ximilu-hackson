@@ -59,7 +59,17 @@ describe('InboxDemo + writability leg', function () {
     const ASC = await ethers.getContractFactory('AttestFlowASC');
     const asc = await ASC.deploy();
     await (await ethers.getSigners())[0].sendTransaction({ to: await asc.getAddress(), value: ethers.parseEther('1') });
-    await asc.createPolicy(1, ethers.ZeroAddress, 18, payee.address, 1, beneficiary.address, ethers.parseEther('1'));
+    await asc.createPolicy(
+      1,
+      ethers.ZeroAddress,
+      18,
+      payee.address,
+      1,
+      beneficiary.address,
+      1,
+      beneficiary.address,
+      ethers.parseEther('1'),
+    );
 
     const txBytes = coder.encode(['uint8', 'bytes[]'], [
       2,
@@ -70,8 +80,18 @@ describe('InboxDemo + writability leg', function () {
       ],
     ]);
 
+    const sourceTxId = ethers.solidityPackedKeccak256(
+      ['uint64', 'uint64', 'uint64'],
+      [1, 11550869n, 0n],
+    );
+    const payload = coder.encode(
+      ['uint256', 'bytes32', 'uint256', 'uint256'],
+      [0, sourceTxId, ethers.parseEther('1'), ethers.parseEther('1')],
+    );
     await expect(
       asc.settle(0, 1, 11550869n, 0n, txBytes, { root: B32(1), siblings: [] }, { lowerEndpointDigest: B32(2), roots: [] }),
-    ).to.emit(asc, 'MessagePublished');
+    )
+      .to.emit(asc, 'MessagePublished')
+      .withArgs(1, beneficiary.address, payload);
   });
 });

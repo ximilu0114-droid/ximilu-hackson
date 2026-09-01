@@ -1,12 +1,12 @@
 {
   "name": "AttestFlowASC",
-  "address": "0x0cFd2f6eBA1B2B8Af9C5a49c886b8F950594374F",
+  "address": "0x4E7410Ebf41C213378E1D8aA4423323303086bF6",
   "deployer": "0x4dAC2a94AAa8A038632264090048F955F184ac2c",
-  "txHash": "0x3b661c7db049fd22623bb8a8705e3c13495bee085efbd9a7b4a1ded888c78eec",
-  "blockNumber": 5363545,
+  "txHash": "0x782d27be9fbb2ba515d77e0e6f4987f3810eb297cd4f189ec72b08cb7ffca6c6",
+  "blockNumber": 5408474,
   "chainId": 102031,
   "network": "cc3-testnet",
-  "deployedAt": "2026-08-24T03:12:46.899Z",
+  "deployedAt": "2026-08-31T22:39:01.285Z",
   "abi": [
     {
       "type": "constructor",
@@ -162,6 +162,14 @@
               "name": "beneficiary"
             },
             {
+              "type": "uint64",
+              "name": "destChainKey"
+            },
+            {
+              "type": "address",
+              "name": "destContract"
+            },
+            {
               "type": "uint256",
               "name": "payoutRatioE18"
             },
@@ -233,6 +241,14 @@
         {
           "type": "address",
           "name": "beneficiary"
+        },
+        {
+          "type": "uint64",
+          "name": "destChainKey"
+        },
+        {
+          "type": "address",
+          "name": "destContract"
         },
         {
           "type": "uint256",
@@ -397,6 +413,14 @@
             {
               "type": "address",
               "name": "beneficiary"
+            },
+            {
+              "type": "uint64",
+              "name": "destChainKey"
+            },
+            {
+              "type": "address",
+              "name": "destContract"
             },
             {
               "type": "uint256",

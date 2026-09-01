@@ -30,6 +30,8 @@ export const CONFIG = {
   sepoliaChainKey: 1,
   minUsdcBaseUnits: 100_000_000n,
   scanBlocks: Number(process.env.SCAN_BLOCKS ?? 400),
+  nativeScanBlocks: Number(process.env.NATIVE_SCAN_BLOCKS ?? 32),
+  recoveryBlockWindow: Number(process.env.RECOVERY_BLOCK_WINDOW ?? 20_000),
   pollMs: Number(process.env.POLL_MS ?? 30_000),
   stateFile: process.env.STATE_FILE ?? path.join(REPO_ROOT, 'agent/state.json'),
   logFile: process.env.LOG_FILE ?? path.join(REPO_ROOT, 'agent/agent.log'),

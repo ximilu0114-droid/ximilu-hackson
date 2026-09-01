@@ -10,24 +10,27 @@
  * Usage:
  *   npm --prefix agent run start -- --rule "当我在Sepolia收到≥100 USDC时按10%释放" [--once]
  */
-import { Wallet, Contract, parseEther } from 'ethers';
+import { Wallet, Contract, parseEther, AbiCoder, getAddress } from 'ethers';
 import { loadEnvDotenv, CONFIG } from './config.js';
 import { loadState, saveState, log, recordEvent, AgentState } from './state.js';
 import { parseRule } from './llm.js';
-import { makeClients, agentWallet, getProof, settleOnASC, decodeTxBytes, decodeErc20Call, ensurePolicy, ASC_ABI } from './prover.js';
+import { makeClients, assertSepoliaRegistry, agentWallet, getProof, settleOnASC, decodeTxBytes, decodeErc20Call, ensurePolicy, ASC_ABI } from './prover.js';
 import { scanOnce } from './watcher.js';
 import { deliverMessage, INBOX_ABI } from './relayer.js';
 
 interface Args {
   rule?: string;
+  sourceTx?: string;
   once: boolean;
 }
 
 function argParse(): Args {
   const argv = process.argv.slice(2);
   const i = argv.indexOf('--rule');
+  const txArg = argv.indexOf('--tx');
   return {
     rule: i >= 0 ? argv[i + 1] : undefined,
+    sourceTx: txArg >= 0 ? argv[txArg + 1] : undefined,
     once: argv.includes('--once'),
   };
 }
@@ -37,6 +40,35 @@ interface MatchResult {
   ruleId: string;
   payee: string;
   amount: bigint;
+}
+
+/** Deterministically match one known, already-attested source transaction. */
+async function matchKnownTransaction(
+  txHash: string,
+  rule: AgentState['rules'][number],
+  sepolia: any,
+  agentAddress: string,
+): Promise<MatchResult> {
+  if (!/^0x[0-9a-fA-F]{64}$/.test(txHash)) throw new Error('INVALID_TX_HASH');
+  const tx = await sepolia.getTransaction(txHash);
+  if (!tx || !tx.to) throw new Error('SOURCE_TX_NOT_FOUND_OR_CREATION');
+  const payee = getAddress(rule.spec.payee ?? agentAddress);
+  let amount: bigint;
+  if (rule.spec.token) {
+    if (tx.to.toLowerCase() !== String(rule.spec.token).toLowerCase()) {
+      throw new Error('SOURCE_TX_TOKEN_MISMATCH');
+    }
+    const call = decodeErc20Call(tx.data);
+    if (!call || getAddress(call.recipient) !== payee) {
+      throw new Error('SOURCE_TX_PAYEE_MISMATCH');
+    }
+    amount = call.amount;
+  } else {
+    if (getAddress(tx.to) !== payee) throw new Error('SOURCE_TX_PAYEE_MISMATCH');
+    amount = tx.value;
+  }
+  if (amount < BigInt(rule.spec.minAmount)) throw new Error('SOURCE_TX_AMOUNT_TOO_LOW');
+  return { txHash, ruleId: rule.id, payee, amount };
 }
 
 /** Full pipeline for one matched payment: prefilter → proof → settle → deliver. */
@@ -51,21 +83,38 @@ async function processMatch(
 ): Promise<void> {
   const rule = state.rules.find((r) => r.id === m.ruleId)!;
   const spec: any = rule.spec;
-  recordEvent(state, { ts: new Date().toISOString(), stage: 'match', tx: m.txHash, detail: `amount=${m.amount}` });
 
   // pre-filter: underlying calldata must pay the payee via transfer/transferFrom
   const tx = await sepolia.getTransaction(m.txHash);
-  if (!tx || tx.to === null) return;
-  if (spec.token && tx.to.toLowerCase() !== String(spec.token).toLowerCase()) return;
+  if (!tx || tx.to === null) throw new Error('MATCH_TX_MISSING_OR_CREATION');
+  if (spec.token && tx.to.toLowerCase() !== String(spec.token).toLowerCase()) {
+    throw new Error('MATCH_TOKEN_MISMATCH');
+  }
   const call = decodeErc20Call(tx.data);
-  if (spec.token && (!call || call.recipient.toLowerCase() !== m.payee.toLowerCase())) return;
+  if (spec.token && (!call || call.recipient.toLowerCase() !== m.payee.toLowerCase())) {
+    throw new Error('MATCH_CALLDATA_RECIPIENT_MISMATCH');
+  }
+  if (spec.token && call!.amount !== m.amount) {
+    throw new Error('MATCH_EVENT_CALLDATA_AMOUNT_MISMATCH');
+  }
+  if (!spec.token && (tx.to.toLowerCase() !== m.payee.toLowerCase() || tx.value !== m.amount)) {
+    throw new Error('MATCH_NATIVE_PAYMENT_MISMATCH');
+  }
+  const matchedAmount = spec.token ? call!.amount : m.amount;
 
-  log(`match: rule=${m.ruleId} tx=${m.txHash} amount=${m.amount}`);
+  recordEvent(state, {
+    ts: new Date().toISOString(),
+    stage: 'match',
+    tx: m.txHash,
+    detail: `amount=${matchedAmount}`,
+  });
+
+  log(`match: rule=${m.ruleId} tx=${m.txHash} amount=${matchedAmount}`);
 
   // LIVE: pre-flight escrow solvency — top up before attempting settlement
   if (asc) {
     const decimals = spec.token ? 6n : 18n;
-    const released = (m.amount * BigInt(spec.payoutRatioE18)) / 10n ** decimals;
+    const released = (matchedAmount * BigInt(spec.payoutRatioE18)) / 10n ** decimals;
     const esc: bigint = await asc.escrowBalance();
     if (esc < released) {
       const topUp = released * 2n - esc;
@@ -81,7 +130,13 @@ async function processMatch(
   // LIVE: find-or-create the ASC policy for this payee
   let policyId = 0;
   if (asc) {
-    policyId = await ensurePolicy(asc, wallet.address, spec, m.payee);
+    policyId = await ensurePolicy(
+      asc,
+      wallet.address,
+      spec,
+      m.payee,
+      CONFIG.inboxAddress,
+    );
   }
 
   // on-chain settle (live) or local decode validation (dry)
@@ -94,26 +149,50 @@ async function processMatch(
   if (!res.dry && !res.txHash) return;
   state.settledTx[m.txHash] = res.dry ? `dry@${new Date().toISOString()}` : res.txHash;
   recordEvent(state, { ts: new Date().toISOString(), stage: 'settled', tx: m.txHash, detail: res.dry ? 'dry-run' : res.txHash });
+  saveState(state); // checkpoint the irreversible CC3 side before destination I/O
 
   // writability leg: payload mirrors ASC MessagePublished encoding
   const decimals = spec.token ? 6n : 18n;
-  const released = (m.amount * BigInt(spec.payoutRatioE18)) / 10n ** decimals;
-  const payload = (
-    await import('ethers')
-  ).AbiCoder.defaultAbiCoder().encode(
-    ['uint256', 'bytes32', 'uint256', 'uint256'],
-    [policyId, ('0x' + '0'.repeat(64)).slice(0, 66), m.amount, released],
-  );
+  const released = (matchedAmount * BigInt(spec.payoutRatioE18)) / 10n ** decimals;
+  const payload =
+    res.messagePayload ??
+    AbiCoder.defaultAbiCoder().encode(
+      ['uint256', 'bytes32', 'uint256', 'uint256'],
+      [policyId, res.sourceTxId, matchedAmount, released],
+    );
+  const [payloadPolicyId, payloadSourceTxId, payloadAmount, payloadReleased] =
+    AbiCoder.defaultAbiCoder().decode(
+      ['uint256', 'bytes32', 'uint256', 'uint256'],
+      payload,
+    );
+  if (
+    payloadPolicyId !== BigInt(policyId) ||
+    String(payloadSourceTxId).toLowerCase() !== res.sourceTxId.toLowerCase() ||
+    payloadAmount !== matchedAmount ||
+    payloadReleased !== released
+  ) {
+    throw new Error('MESSAGE_PAYLOAD_DOES_NOT_MATCH_SETTLEMENT');
+  }
   const delivery = await deliverMessage(payload, wallet, inbox);
   state.deliveries[m.txHash] = delivery.dry ? `dry-sig` : delivery.txHash;
   recordEvent(state, { ts: new Date().toISOString(), stage: 'delivered', tx: m.txHash, detail: delivery.dry ? 'dry-sig' : delivery.txHash });
+  saveState(state);
   log(`settled+delivered: ${m.txHash} release≈${released}`);
 }
 
 async function main() {
   loadEnvDotenv();
   const args = argParse();
+  if (
+    CONFIG.liveMode &&
+    (!CONFIG.privateKey || !CONFIG.ascAddress || !CONFIG.inboxAddress)
+  ) {
+    throw new Error(
+      'LIVE=1 requires AGENT_PRIVATE_KEY, ASC_ADDRESS and INBOX_ADDRESS',
+    );
+  }
   const { sepolia, cc3 } = await makeClients();
+  await assertSepoliaRegistry(cc3);
   const wallet = new Wallet(CONFIG.privateKey || '0x' + '11'.repeat(32), sepolia);
   const state: AgentState = loadState();
 
@@ -156,6 +235,28 @@ async function main() {
     }
   }
 
+  // Deterministic demo/recovery path: process one known attested payment.
+  // It still fetches the real source tx, builds the real proof and executes the
+  // same processMatch pipeline; only discovery-by-scanning is bypassed.
+  if (args.sourceTx) {
+    if (state.settledTx[args.sourceTx] && state.deliveries[args.sourceTx]) {
+      log(`source tx already processed: ${args.sourceTx}`);
+    } else {
+      const activeRule = state.rules.find((r) => r.active);
+      if (!activeRule) throw new Error('NO_ACTIVE_RULE');
+      const match = await matchKnownTransaction(
+        args.sourceTx,
+        activeRule,
+        sepolia,
+        wallet.address,
+      );
+      await processMatch(match, state, sepolia, cc3, asc, inbox, wallet);
+    }
+    saveState(state);
+    log('agent stopped');
+    return;
+  }
+
   // [2] Autonomous loop with crash recovery
   let running = true;
   process.on('SIGINT', () => {
@@ -168,7 +269,7 @@ async function main() {
       const matches = await scanOnce(sepolia, state, state.rules.filter((r) => r.active) as any, wallet.address);
 
       for (const m of matches) {
-        if (state.settledTx[m.txHash]) continue; // dedupe across restarts
+        if (state.settledTx[m.txHash] && state.deliveries[m.txHash]) continue;
         try {
           await processMatch(m, state, sepolia, cc3, asc, inbox, wallet);
         } catch (e: any) {
@@ -176,7 +277,9 @@ async function main() {
           const msg = String(e?.message ?? e).slice(0, 160);
           log(`match ${m.txHash} failed: ${msg}`);
           const already = msg.includes('ALREADY_SETTLED');
-          state.settledTx[m.txHash] = already ? 'already-settled' : 'error:' + msg.slice(0, 60);
+          if (!/^0x[0-9a-fA-F]{64}$/.test(state.settledTx[m.txHash] ?? '')) {
+            state.settledTx[m.txHash] = already ? 'already-settled' : 'error:' + msg.slice(0, 60);
+          }
           recordEvent(state, {
             ts: new Date().toISOString(),
             stage: already ? 'settled' : 'rejected',

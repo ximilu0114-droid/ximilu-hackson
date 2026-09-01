@@ -25,6 +25,12 @@ interface IBlockProver {
         bytes32[] roots;
     }
 
+    /// @notice Derive the transaction's block index from Merkle-path laterality.
+    /// This binds the caller-supplied index to the proof verified below.
+    function calculateTxIndex(
+        MerkleProof calldata merkleProof
+    ) external view returns (uint64);
+
     /// @notice Read-only verification of a single transaction proof.
     function verify(
         uint64 chainKey,

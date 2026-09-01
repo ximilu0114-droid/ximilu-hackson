@@ -9,7 +9,7 @@ BUIDL CTC 2026 Fall 黑客松参赛项目（DoraHacks，主办方 Creditcoin/Cre
 
 ## 比赛硬性约束（违反即废）
 
-- **截止：2026-09-06 23:59 ET**（注意 ET 时区）。9/18 公布获奖。
+- **截止：2026-09-13 23:59 ET**（官方页面于 2026-09-01 已更新；注意 ET 时区）。9/20 公布获奖。内部目标 9/11 ET 完整提交，预留两天缓冲。
 - 必须**有意义地集成 Attestcoin Protocol**，“集成深度”是核心评分项 → 同时用 Readability + Writability 才有竞争力。
 - 必须部署在测试网：Creditcoin **CC3 Testnet**，源链用 **Ethereum Sepolia**。
 - 提交物清单：公开 GitHub 仓库（含 README 复现步骤）、白皮书/Deck PDF、Demo 视频、Attestcoin 集成说明、团队成员真实信息（姓名/邮箱/国籍）、原创声明。
@@ -57,7 +57,11 @@ docs/        白皮书 PDF 源、集成说明
 npm install            # 根目录安装所有 workspace
 npm run e2e:proof      # Phase 0 端到端证明验证脚本
 npm run typecheck      # tsc --noEmit（根 tsconfig 覆盖 scripts/ 与 agent/src）
-npm run test:contracts # hardhat test（14 个用例）
+npm run test:agent     # Node test（8 个 Agent/协议编码/策略一致性用例）
+npm run test:web       # Node test（5 个网页规则解析/安全边界用例）
+npm run test:contracts # hardhat test（15 个合约用例）
+npm run ci             # typecheck + 28 tests + web build + production audit
+npm run verify:evidence # 双链重读并验证 62 项 live evidence
 npm run e2e:settle     # Phase 1 dry E2E（无需 gas）
 # 部署 + live 结算（需 CC3 测试币后执行）：
 npm run deploy:testnet --prefix contracts
@@ -85,30 +89,32 @@ npm run dev --prefix web
 - Sepolia USDC 上 transferFrom(0x23b872dd) 比 transfer 常见得多，ASC 两种 selector 都支持。
 - txBytes 布局（encoding v1）：`(uint8 txType, bytes[] chunks)`；chunk[0] 所有类型通用 `(uint64,uint64,address,bool,address,uint256,bytes)`；**最后一块是 receipt 含 status**——ASC 靠这个自查交易成败。
 
-### Phase 1 — ASC 合约最小闭环（8/26–8/28）✅ 全部达成（含 live）
+### Phase 1 — ASC 合约最小闭环（8/26–8/28）✅ 全部达成（含 v2 live）
 - ASC 合约：验证通过后自动执行业务逻辑（铸造凭证 + 释放资产）。
-- **验收**：① ✅ 合约部署到 CC3 Testnet `0x0cFd2f6eBA1B2B8Af9C5a49c886b8F950594374F`（ABI 固化 `deployments/`）；② ✅ 端到端 live：真实 Sepolia USDC 支付 → proof → ASC 链上验证+结算，例：settle `0x643fb17d...`（释放 1.99 CTC）；③ ✅ Hardhat 测试 14/14 含 status!=0x1 拒绝路径。
+- **验收**：① ✅ v2 合约部署到 CC3 Testnet `0x4E7410Ebf41C213378E1D8aA4423323303086bF6`（ABI 固化 `deployments/`）；② ✅ 端到端 live：真实 Sepolia 原生 ETH 支付 `0x6ac68b...` → proof → ASC 结算 `0xec29d5...`（释放 0.001 CTC）；③ ✅ Hardhat 测试 15/15，含 status!=0x1、proof-derived txIndex、replay、policy 与 escrow 拒绝路径。
 - **关键实测**：CC3 testnet 上**合约上下文调用 `verifyAndEmit()` 会裸 revert（EOA 直调正常）**；合约内改用只读 `verify()` 同步验证，事件由 ASC 自发（PaymentSettled/MessagePublished），密码学等价。
+- **v2 安全修复**：`verify()` 不接收 txIndex，不能信任 operator 传入值；ASC 现调用 `calculateTxIndex(merkleProof)` 并要求相等，再用 proof-derived index 生成 replay key。
 
 ### Phase 2 — Agent 服务 + Writability + LLM 规则解析（8/29–8/31）✅ 全部达成（含 live）
 - 自然语言规则 → 结构化策略配置 JSON（builtin 确定性解析器 + 可选 LLM，需披露）；Agent 循环：监听 → 等 attestation → proof → 验证 → 执行。
 - Writability：**官方 Outbox/Inbox 尚未上 testnet**（文档明示审计中）→ ASC 发 `MessagePublished` 事件 + agent relayer 四步语义适配层（sign→deliver）+ Sepolia `InboxDemo` 验签执行合约。提交材料须如实披露此差异。
-- **验收**：① ✅ 中文规则输入后全流程无人干预跑通（`npm run start --prefix agent -- --rule "…" --once`），日志在 `agent/agent.log`；② ✅ live 双链证据：CC3 settle `0x9c8caf6b...` → Sepolia InboxDemo `MessageExecuted` `0xd6abf721...`；③ ✅ 崩溃重启恢复：state.json 游标 + txHash 去重，已实测。
-- **部署地址**：ASC `0x0cFd2f6eBA1B2B8Af9C5a49c886b8F950594374F`（CC3）；InboxDemo `0x83A0b8D26Dd28094eE0CA74E57e79028194f868E`（Sepolia）。
-- **LIVE 运行方式**：`LIVE=1 ASC_ADDRESS=0x0cFd… INBOX_ADDRESS=0x83A0… npm run start --prefix agent -- --rule "…" [--once]`；escrow 会在启动时自动补足到 500 CTC。
+- **验收**：① ✅ 中文/英文 ETH 与 USDC 规则输入后全流程无人干预；② ✅ v2 双链证据：CC3 settle `0xec29d5...` → Sepolia InboxDemo `MessageExecuted` `0xc692a1...`，两链 payload hash 完全相等；③ ✅ CC3 已 final 后 Sepolia RPC timeout 的真实恢复：重启从 settlement receipt 提取原始 payload，只补 destination leg，不二次 settle。
+- **部署地址**：ASC `0x4E7410Ebf41C213378E1D8aA4423323303086bF6`（CC3）；InboxDemo `0x83A0b8D26Dd28094eE0CA74E57e79028194f868E`（Sepolia）。
+- **LIVE 运行方式**：`LIVE=1 ASC_ADDRESS=0x4E7410... INBOX_ADDRESS=0x83A0... npm run start --prefix agent -- --rule "…" [--tx 0x...] [--once]`；escrow 会在启动时按需补足。Agent 启动时经 ChainInfo precompile 验证 Sepolia chainId→chainKey 映射。
 
-### Phase 3 — 前端仪表盘（9/1–9/3）✅ 已完成
-- **验收**：① ✅ 创建/启停规则（POST /api/rules + toggle）；② ✅ 实时流水（5s 轮询，match→proved→settled→delivered 四段 stepper）；③ ✅ NL 问答查历史（/api/ask，builtin+可选 LLM）；④ 响应式布局 grid（lg 断点两栏）。
+### Phase 3 — 前端仪表盘（9/1–9/3）✅ 已完成并硬化
+- **验收**：① ✅ 创建/启停规则（POST /api/rules + toggle）；② ✅ 实时流水（5s 轮询，match→proved→settled→delivered 四段 stepper）；③ ✅ NL 问答查历史（/api/ask，builtin+可选 LLM）；④ ✅ 响应式布局；⑤ ✅ `/judge` 证据页展示三笔链上交易、8 项 invariant、payload anchor 与诚实边界，桌面/390px 移动端实测无溢出及 console 错误。
 - 运行：`npm run dev --prefix web`（:3100）；生产 `npm run build && npm start --prefix web`。
-- **坑**：Next 14 会把不带 `request` 的 GET 路由当静态缓存 → 两个 GET 路由已加 `export const dynamic = 'force-dynamic'`，新增路由记得加。
+- **坑**：动态 GET 路由必须显式 `export const dynamic = 'force-dynamic'`。Next 已升级至 16.3.3，生产依赖审计 0 漏洞。
 
-### Phase 4 — 提交材料（9/4–9/5）✅ 材料齐，视频待录
-- **验收**：① ✅ 新 clone 复现实测 <2 分钟（install→14 tests→e2e:proof SUCCESS）；② ✅ `docs/whitepaper.pdf`（pandoc→Chrome headless 生成，样式 `docs/pdf-style.css`）；③ ⏳ Demo 视频按 `docs/demo-script.md` 录制（命令全部验证过）；④ ✅ `docs/integration.md` 集成深度说明。
+### Phase 4 — 提交材料（9/1–9/10）🟡 代码与证据齐，视频待录
+- **验收**：① ✅ `npm run ci`（typecheck→8 agent tests→5 web tests→15 contract tests→web build→audit）；② ✅ `evidence/live-e2e-v2.json` + `npm run verify:evidence` 62 项 live 双链验真，含 deployed bytecode 对 local build；③ ✅ `docs/whitepaper.pdf` 与 `docs/integration.md` 已按 v2 证据更新；④ ⏳ Demo 视频按 `docs/demo-script.md` 录制。
 - **实测补充**：Sepolia USDC 真实流量以 transferFrom 为主且大量是金库合约内部转账——发现层必须校验 calldata 而非只看 Transfer 事件。
 
-### Phase 5 — 缓冲与提交（9/5）
-- **9/5 提交完毕，绝不卡 9/6 deadline**。提交前对照 `docs/submission-checklist.md` 逐项勾选。
-- 待办：① GitHub 建公开仓库并推送（`git remote add origin … && git push -u origin main --tags`）；② 录 Demo 视频（2:30，脚本在 docs/demo-script.md）；③ DoraHacks 表单（团队信息需真实姓名/邮箱/国籍）。
+### Phase 5 — 评审级打磨与提交（9/1–9/11）🟡 进行中
+- **9/11 ET 前完整提交**，不等待 9/13 23:59 ET deadline。提交前对照 `docs/submission-checklist.md` 逐项勾选。
+- 已完成：关键 replay 漏洞修复、v2 重部署与双链 evidence、断点恢复、`/judge`、CI/CodeQL/Dependabot、SECURITY/LICENSE、文档与可重放 verifier。
+- 人工待办：① 录并上传 Demo 视频；② 填 DoraHacks 真实姓名/邮箱/国籍与 eligibility；③ 最终 push 后确认 GitHub Actions green、仓库公开、全部链接可匿名访问；④ 点击提交并复查 portal。
 
 ## 工作纪律
 

@@ -1,17 +1,19 @@
-import { JsonRpcProvider, Wallet, AbiCoder, Contract } from 'ethers';
-import { proofProvider } from '@gluwa/usc-sdk';
+import { JsonRpcProvider, Wallet, AbiCoder, Contract, getAddress, solidityPackedKeccak256 } from 'ethers';
+import { chainInfo, proofProvider } from '@gluwa/usc-sdk';
 import { CONFIG } from './config.js';
 import { log } from './state.js';
 
 export const ASC_ABI = [
-  'event PaymentSettled(uint256 indexed policyId, bytes32 indexed sourceTxId, address payer, address token, uint256 amount, address beneficiary, uint256 releasedAmount, uint64 srcHeight, uint64 srcTxIndex)',
+  'event PaymentSettled(uint256 indexed policyId, bytes32 indexed sourceTxId, address indexed payer, address token, uint256 amount, address beneficiary, uint256 releasedAmount, uint64 srcHeight, uint64 srcTxIndex)',
   'event MessagePublished(uint64 destChainKey, address destContract, bytes payload)',
   'function settle(uint256 policyId, uint64 chainKey, uint64 height, uint64 txIndex, bytes encodedTransaction, (bytes32,(bytes32,bool)[]) merkleProof, (bytes32,bytes32[]) continuityProof) external',
   'function previewTx(bytes) view returns ((address from,address to,bool toIsNull,uint256 value,bytes data,bool receiptStatus))',
   'function findPolicy(uint64 chainKey, address payee, address token) view returns (int256)',
-  'function createPolicy(uint64 chainKey, address token, uint8 tokenDecimals, address payee, uint256 minAmount, address beneficiary, uint256 payoutRatioE18) returns (uint256)',
+  'function getPolicy(uint256 policyId) view returns ((uint64 chainKey,address token,uint8 tokenDecimals,address payee,uint256 minAmount,address beneficiary,uint64 destChainKey,address destContract,uint256 payoutRatioE18,bool active))',
+  'function createPolicy(uint64 chainKey, address token, uint8 tokenDecimals, address payee, uint256 minAmount, address beneficiary, uint64 destChainKey, address destContract, uint256 payoutRatioE18) returns (uint256)',
   'function setOperator(address operator, bool enabled) external',
   'function operators(address) view returns (bool)',
+  'function settledTxs(bytes32) view returns (bool)',
   'function escrowBalance() view returns (uint256)',
   'function owner() view returns (address)',
 ];
@@ -20,6 +22,26 @@ export async function makeClients() {
   const sepolia = new JsonRpcProvider(CONFIG.sepoliaRpc);
   const cc3 = new JsonRpcProvider(CONFIG.cc3Rpc);
   return { sepolia, cc3 };
+}
+
+/**
+ * Fail closed if the CC3 ChainInfo registry no longer maps our configured
+ * source to Ethereum Sepolia. chainKey is a protocol identifier, not an EVM
+ * chain id, so silently assuming the mapping would be unsafe.
+ */
+export async function assertSepoliaRegistry(cc3: JsonRpcProvider): Promise<void> {
+  const registry = new chainInfo.PrecompileChainInfoProvider(cc3);
+  const supported = await registry.getSupportedChains();
+  const sepolia = supported.find((entry) => Number(entry.chainId) === 11155111);
+  if (!sepolia) throw new Error('CHAININFO_SEPOLIA_NOT_SUPPORTED');
+  if (Number(sepolia.chainKey) !== CONFIG.sepoliaChainKey) {
+    throw new Error(
+      `CHAININFO_MAPPING_CHANGED: expected=${CONFIG.sepoliaChainKey} actual=${sepolia.chainKey}`,
+    );
+  }
+  log(
+    `ChainInfo verified: Sepolia chainId=11155111 chainKey=${sepolia.chainKey} encoding=${sepolia.chainEncoding}`,
+  );
 }
 
 export function agentWallet(provider: any): Wallet {
@@ -92,6 +114,30 @@ export function decodeErc20Call(data: string): { recipient: string; amount: bigi
   return null;
 }
 
+/** Derive the transaction index encoded by Merkle-path left/right bits. */
+export function computeTransactionIndex(merkleProof: {
+  siblings?: Array<{ isLeft: boolean }>;
+}): bigint {
+  const siblings = merkleProof.siblings ?? [];
+  if (siblings.length > 64) throw new Error('Merkle proof is deeper than uint64');
+  return siblings.reduce(
+    (index, sibling, level) =>
+      sibling.isLeft ? index | (1n << BigInt(level)) : index,
+    0n,
+  );
+}
+
+export function sourceTransactionId(
+  chainKey: bigint | number,
+  height: bigint | number,
+  txIndex: bigint | number,
+): string {
+  return solidityPackedKeccak256(
+    ['uint64', 'uint64', 'uint64'],
+    [chainKey, height, txIndex],
+  );
+}
+
 /**
  * Find or create the ASC policy for a matched payment.
  * Returns policyId; agent wallet acts as owner/beneficiary in demo mode.
@@ -99,21 +145,45 @@ export function decodeErc20Call(data: string): { recipient: string; amount: bigi
 export async function ensurePolicy(
   asc: Contract,
   signerAddress: string,
-  spec: { token: string | null; minAmount: bigint; payoutRatioE18: bigint },
-  payee: string
+  spec: {
+    token: string | null;
+    minAmount: bigint | string;
+    payoutRatioE18: bigint | string;
+  },
+  payee: string,
+  destContract: string,
 ): Promise<number> {
   const token = spec.token ?? '0x0000000000000000000000000000000000000000';
+  const minAmount = BigInt(spec.minAmount);
+  const payoutRatioE18 = BigInt(spec.payoutRatioE18);
   const existing = Number(await asc.findPolicy(CONFIG.sepoliaChainKey, payee, token));
-  if (existing >= 0) return existing;
   const decimals = spec.token ? 6 : 18;
+  if (existing >= 0) {
+    const policy: any = await asc.getPolicy(existing);
+    const matches =
+      BigInt(policy.chainKey) === BigInt(CONFIG.sepoliaChainKey) &&
+      getAddress(policy.token) === getAddress(token) &&
+      Number(policy.tokenDecimals) === decimals &&
+      getAddress(policy.payee) === getAddress(payee) &&
+      BigInt(policy.minAmount) === minAmount &&
+      getAddress(policy.beneficiary) === getAddress(signerAddress) &&
+      BigInt(policy.destChainKey) === BigInt(CONFIG.sepoliaChainKey) &&
+      getAddress(policy.destContract) === getAddress(destContract) &&
+      BigInt(policy.payoutRatioE18) === payoutRatioE18 &&
+      Boolean(policy.active);
+    if (!matches) throw new Error('EXISTING_POLICY_DOES_NOT_MATCH_RULE');
+    return existing;
+  }
   const tx = await asc.createPolicy(
     CONFIG.sepoliaChainKey,
     token,
     decimals,
     payee,
-    spec.minAmount,
+    minAmount,
     signerAddress,
-    spec.payoutRatioE18,
+    CONFIG.sepoliaChainKey,
+    destContract,
+    payoutRatioE18,
   );
   await tx.wait();
   log(`policy created on ASC for payee ${payee}`);
@@ -131,19 +201,86 @@ export async function settleOnASC(
   asc: Contract | null,
   policyId: number,
   proof: any
-): Promise<{ txHash: string; dry: boolean; rejected?: boolean }> {
+): Promise<{
+  txHash: string;
+  dry: boolean;
+  sourceTxId: string;
+  messagePayload?: string;
+  rejected?: boolean;
+}> {
   const tv = decodeTxBytes(proof.txBytes);
+  const proofTxIndex = computeTransactionIndex(proof.merkleProof);
+  if (proofTxIndex !== BigInt(proof.txIndex)) {
+    throw new Error(
+      `proof txIndex mismatch: service=${proof.txIndex} merkle=${proofTxIndex}`,
+    );
+  }
+  const sourceTxId = sourceTransactionId(
+    proof.chainKey,
+    proof.headerNumber,
+    proofTxIndex,
+  );
   // The precompile proves inclusion only; success is OUR responsibility.
   if (!tv.success) {
     log(`REJECT ${proof.txHash}: attested receipt status != 1 (failed source tx)`);
-    return { txHash: '', dry: true, rejected: true };
+    return { txHash: '', dry: true, sourceTxId, rejected: true };
   }
 
   if (!asc) {
     log(
       `DRY settle: sourceTx=${proof.txHash} status=${tv.success} to=${tv.to} dataLen=${tv.data.length} — live settle skipped (unfunded)`,
     );
-    return { txHash: '', dry: true };
+    return { txHash: '', dry: true, sourceTxId };
+  }
+
+  const extractPublishedPayload = async (
+    receipt: any,
+  ): Promise<{ messagePayload: string; emittedSourceTxId: string }> => {
+    let messagePayload: string | undefined;
+    let emittedSourceTxId: string | undefined;
+    for (const eventLog of receipt.logs) {
+      try {
+        const parsed = asc.interface.parseLog(eventLog);
+        if (parsed?.name === 'MessagePublished') {
+          messagePayload = parsed.args.payload;
+        }
+        if (parsed?.name === 'PaymentSettled') {
+          emittedSourceTxId = parsed.args.sourceTxId;
+        }
+      } catch {
+        // Receipt may include unrelated precompile/system logs.
+      }
+    }
+    if (!messagePayload) throw new Error('settlement receipt missing MessagePublished');
+    if (emittedSourceTxId?.toLowerCase() !== sourceTxId.toLowerCase()) {
+      throw new Error('PaymentSettled sourceTxId does not match verified proof');
+    }
+    return { messagePayload, emittedSourceTxId };
+  };
+
+  // Crash/retry path: the settlement may already be final on CC3 while the
+  // destination delivery or local state checkpoint timed out. Recover the
+  // exact published payload instead of trying to settle the proof again.
+  if (await asc.settledTxs(sourceTxId)) {
+    const provider: any = asc.runner?.provider;
+    const latest = await provider.getBlockNumber();
+    const fromBlock = Math.max(0, latest - CONFIG.recoveryBlockWindow);
+    const logs = await asc.queryFilter(
+      asc.filters.PaymentSettled(BigInt(policyId), sourceTxId),
+      fromBlock,
+      'latest',
+    );
+    const settlementLog: any = logs.at(-1);
+    if (!settlementLog) throw new Error('settled source has no PaymentSettled log');
+    const receipt = await provider.getTransactionReceipt(settlementLog.transactionHash);
+    const { messagePayload } = await extractPublishedPayload(receipt);
+    log(`RECOVER settlement receipt: ${settlementLog.transactionHash}`);
+    return {
+      txHash: settlementLog.transactionHash,
+      dry: false,
+      sourceTxId,
+      messagePayload,
+    };
   }
   const tx = await asc.settle(
     policyId,
@@ -156,6 +293,7 @@ export async function settleOnASC(
     [proof.continuityProof.lowerEndpointDigest, proof.continuityProof.roots],
   );
   const rcpt = await tx.wait();
+  const { messagePayload } = await extractPublishedPayload(rcpt);
   log(`LIVE settle mined: ${rcpt.hash} gas=${rcpt.gasUsed?.toString()}`);
-  return { txHash: rcpt.hash, dry: false };
+  return { txHash: rcpt.hash, dry: false, sourceTxId, messagePayload };
 }

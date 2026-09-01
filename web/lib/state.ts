@@ -30,23 +30,35 @@ const EMPTY: AgentState = { lastHeight: 0, settledTx: {}, rules: [], deliveries:
 
 /** agent/state.json lives in the workspace sibling of web/ */
 function statePath(): string {
-  const candidates = [
-    process.env.AGENT_STATE_FILE,
-    path.resolve(process.cwd(), '..', 'agent', 'state.json'),
-    path.resolve(process.cwd(), 'agent', 'state.json'),
-  ].filter(Boolean) as string[];
-  for (const p of candidates) if (fs.existsSync(p)) return p;
-  return candidates[0];
+  if (process.env.AGENT_STATE_FILE) {
+    return path.resolve(process.env.AGENT_STATE_FILE);
+  }
+  return path.resolve(process.cwd(), '..', 'agent', 'state.json');
 }
 
 export function readState(): AgentState {
   try {
-    return { ...EMPTY, ...JSON.parse(fs.readFileSync(statePath(), 'utf8')) };
+    return {
+      ...EMPTY,
+      ...JSON.parse(
+        fs.readFileSync(/* turbopackIgnore: true */ statePath(), 'utf8'),
+      ),
+    };
   } catch {
     return { ...EMPTY };
   }
 }
 
 export function writeState(s: AgentState): void {
-  fs.writeFileSync(statePath(), JSON.stringify(s, null, 2));
+  const target = statePath();
+  fs.mkdirSync(path.dirname(target), { recursive: true });
+  const temporary = target + '.tmp';
+  fs.writeFileSync(
+    /* turbopackIgnore: true */ temporary,
+    JSON.stringify(s, null, 2),
+  );
+  fs.renameSync(
+    /* turbopackIgnore: true */ temporary,
+    /* turbopackIgnore: true */ target,
+  );
 }

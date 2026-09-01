@@ -66,7 +66,7 @@ describe('AttestFlowASC', function () {
   let owner: any, agent: any, payee: any, beneficiary: any, stranger: any;
 
   const proofArgs = {
-    merkleProof: { root: B32(0xa), siblings: [{ hash: B32(0xb), isLeft: true }] },
+    merkleProof: { root: B32(0xa), siblings: [{ hash: B32(0xb), isLeft: false }] },
     continuityProof: { lowerEndpointDigest: B32(0xc), roots: [B32(0xd)] },
   };
 
@@ -91,7 +91,17 @@ describe('AttestFlowASC', function () {
     // fund escrow with 10 native CTC
     await owner.sendTransaction({ to: await asc.getAddress(), value: ethers.parseEther('10') });
 
-    await asc.createPolicy(CHAIN_KEY, TOKEN, 6, payee.address, MIN_AMOUNT, beneficiary.address, RATIO_E18);
+    await asc.createPolicy(
+      CHAIN_KEY,
+      TOKEN,
+      6,
+      payee.address,
+      MIN_AMOUNT,
+      beneficiary.address,
+      CHAIN_KEY,
+      beneficiary.address,
+      RATIO_E18,
+    );
     await asc.setOperator(agent.address, true);
   });
 
@@ -170,6 +180,12 @@ describe('AttestFlowASC', function () {
     await expect(settleCall(txBytes)).to.be.revertedWith('ALREADY_SETTLED');
   });
 
+  it('REJECTS replaying a proof under a caller-invented transaction index', async function () {
+    const txBytes = encodeTx({ from: stranger.address, to: TOKEN, data: erc20TransferData(payee.address, 120_000_000n) });
+    await settleCall(txBytes);
+    await expect(settleCall(txBytes, 0, HEIGHT, 1n)).to.be.revertedWith('TX_INDEX_MISMATCH');
+  });
+
   it('REJECTS payments below policy minimum', async function () {
     const txBytes = encodeTx({ from: stranger.address, to: TOKEN, data: erc20TransferData(payee.address, 99_999_999n) });
     await expect(settleCall(txBytes)).to.be.revertedWith('AMOUNT_TOO_LOW');
@@ -185,7 +201,17 @@ describe('AttestFlowASC', function () {
   });
 
   it('settles a NATIVE currency payment when policy token == address(0)', async function () {
-    await asc.createPolicy(CHAIN_KEY, ZeroAddress, 18, payee.address, ethers.parseEther('1'), beneficiary.address, ethers.parseEther('1'));
+    await asc.createPolicy(
+      CHAIN_KEY,
+      ZeroAddress,
+      18,
+      payee.address,
+      ethers.parseEther('1'),
+      beneficiary.address,
+      CHAIN_KEY,
+      beneficiary.address,
+      ethers.parseEther('1'),
+    );
     const txBytes = encodeTx({ from: stranger.address, to: payee.address, value: ethers.parseEther('2') });
     const beforeB = await ethers.provider.getBalance(beneficiary.address);
     await settleCall(txBytes, 1);
@@ -205,16 +231,46 @@ describe('AttestFlowASC', function () {
       asc.connect(stranger).settle(0, CHAIN_KEY, HEIGHT, TX_INDEX, txBytes, proofArgs.merkleProof, proofArgs.continuityProof),
     ).to.be.revertedWith('NOT_OPERATOR');
     await expect(
-      asc.connect(stranger).createPolicy(1, ZeroAddress, 18, payee.address, 1, beneficiary.address, 1),
+      asc.connect(stranger).createPolicy(
+        1,
+        ZeroAddress,
+        18,
+        payee.address,
+        1,
+        beneficiary.address,
+        CHAIN_KEY,
+        beneficiary.address,
+        1,
+      ),
     ).to.be.revertedWith('NOT_OWNER');
   });
 
   it('rejects duplicate policies and inactive policies', async function () {
     await expect(
-      asc.createPolicy(CHAIN_KEY, TOKEN, 6, payee.address, MIN_AMOUNT, beneficiary.address, RATIO_E18),
+      asc.createPolicy(
+        CHAIN_KEY,
+        TOKEN,
+        6,
+        payee.address,
+        MIN_AMOUNT,
+        beneficiary.address,
+        CHAIN_KEY,
+        beneficiary.address,
+        RATIO_E18,
+      ),
     ).to.be.revertedWith('POLICY_EXISTS');
 
-    await asc.createPolicy(CHAIN_KEY, ZeroAddress, 18, payee.address, 1, beneficiary.address, 1); // id=1
+    await asc.createPolicy(
+      CHAIN_KEY,
+      ZeroAddress,
+      18,
+      payee.address,
+      1,
+      beneficiary.address,
+      CHAIN_KEY,
+      beneficiary.address,
+      1,
+    ); // id=1
     await asc.setPolicyActive(1, false);
     const txBytes = encodeTx({ from: stranger.address, to: payee.address, value: 123n });
     await expect(settleCall(txBytes, 1)).to.be.revertedWith('POLICY_INACTIVE');

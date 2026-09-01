@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
+import Link from 'next/link';
 
 type Stage = 'match' | 'proved' | 'settled' | 'rejected' | 'delivered';
 
@@ -37,9 +38,11 @@ export default function Dashboard() {
   const [ev, setEv] = useState<EventsResp | null>(null);
   const [rules, setRules] = useState<Rule[]>([]);
   const [ruleText, setRuleText] = useState('');
+  const [ruleError, setRuleError] = useState('');
   const [busy, setBusy] = useState(false);
   const [question, setQuestion] = useState('');
   const [answer, setAnswer] = useState('');
+  const [answerEngine, setAnswerEngine] = useState('');
   const feedRef = useRef<HTMLDivElement>(null);
 
   const refresh = useCallback(async () => {
@@ -64,14 +67,22 @@ export default function Dashboard() {
   async function createRule() {
     if (!ruleText.trim()) return;
     setBusy(true);
-    await fetch('/api/rules', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ text: ruleText }),
-    });
-    setRuleText('');
-    await refresh();
-    setBusy(false);
+    setRuleError('');
+    try {
+      const response = await fetch('/api/rules', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text: ruleText }),
+      });
+      const body = await response.json();
+      if (!response.ok) throw new Error(body.error ?? 'Could not register rule');
+      setRuleText('');
+      await refresh();
+    } catch (error: any) {
+      setRuleError(error?.message ?? 'Could not register rule');
+    } finally {
+      setBusy(false);
+    }
   }
 
   async function toggleRule(id: string) {
@@ -86,12 +97,18 @@ export default function Dashboard() {
   async function ask() {
     if (!question.trim()) return;
     setAnswer('thinking…');
-    const res = await fetch('/api/ask', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ question }),
-    }).then((x) => x.json());
-    setAnswer(res.answer);
+    setAnswerEngine('');
+    try {
+      const res = await fetch('/api/ask', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ question }),
+      }).then((x) => x.json());
+      setAnswer(res.answer);
+      setAnswerEngine(res.engine ?? '');
+    } catch {
+      setAnswer('Query failed. Check the dashboard server and try again.');
+    }
   }
 
   return (
@@ -105,6 +122,12 @@ export default function Dashboard() {
           </p>
         </div>
         <div className="flex items-center gap-3 text-xs">
+          <Link
+            href="/judge"
+            className="rounded-full border border-emerald-700/60 bg-emerald-950/40 px-3 py-1 font-semibold text-emerald-300 hover:border-emerald-500"
+          >
+            Judge evidence
+          </Link>
           <span className="rounded-full bg-zinc-800 px-3 py-1">height #{ev?.lastHeight ?? '—'}</span>
           <span
             className={`rounded-full px-3 py-1 ${
@@ -142,8 +165,9 @@ export default function Dashboard() {
             >
               Register rule
             </button>
+            {ruleError && <p className="mt-2 text-xs text-rose-400">{ruleError}</p>}
             <p className="mt-2 text-xs text-zinc-500">
-              Parsed deterministically on-device; optional LLM engine disclosed in submission.
+              Deterministic by default; optional disclosed LLM output is schema-checked and bounded.
             </p>
           </Card>
 
@@ -185,7 +209,14 @@ export default function Dashboard() {
               </button>
             </div>
             {answer && (
-              <pre className="mt-3 whitespace-pre-wrap rounded-lg bg-zinc-900 p-3 text-xs text-zinc-300">{answer}</pre>
+              <div className="mt-3 rounded-lg bg-zinc-900 p-3">
+                {answerEngine && (
+                  <p className="mb-2 text-[10px] uppercase tracking-wider text-zinc-600">
+                    {answerEngine} answer
+                  </p>
+                )}
+                <pre className="whitespace-pre-wrap text-xs text-zinc-300">{answer}</pre>
+              </div>
             )}
           </Card>
         </section>
