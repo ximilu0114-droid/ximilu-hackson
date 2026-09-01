@@ -8,6 +8,7 @@ Official page checked 2026-09-01: **deadline 2026-09-13 23:59 ET** · winners an
 - [ ] **Project sector:** AI
 - [ ] **One-line description:** “A natural-language agent that proves Sepolia payments through Attestcoin, settles deterministic escrow on Creditcoin, and returns the exact settlement payload cross-chain.”
 - [ ] **Long description:** adapt README sections “Why this needs Attestcoin,” “Integration depth,” and “Honest boundary.”
+- [x] **Copy-ready portal text:** `docs/submission-copy.md` (replace only team and video placeholders)
 - [ ] **Public GitHub URL:** `https://github.com/ximilu0114-droid/ximilu-hackson`
 - [ ] **Whitepaper/Deck PDF:** `docs/whitepaper.pdf`
 - [ ] **Demo video URL:** record from `docs/demo-script.md`, upload Unlisted/Public, verify signed-out access
@@ -32,9 +33,9 @@ Official page checked 2026-09-01: **deadline 2026-09-13 23:59 ET** · winners an
 - [x] CI, CodeQL, Dependabot, production build, and dependency audit
 - [x] `/judge` evidence page passes desktop and 390 px mobile QA
 - [x] Machine-checkable live evidence manifest and 62-check verifier
-- [ ] Push the final hardening commit and confirm GitHub Actions is green
+- [x] Push the final hardening commit and confirm GitHub Actions is green
 - [ ] Replace any final video placeholder with the tested video URL
-- [ ] Confirm repository visibility is Public while signed out
+- [x] Confirm repository visibility is Public while signed out
 
 ## Evidence index
 

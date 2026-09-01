@@ -74,6 +74,11 @@ export default function JudgeEvidence() {
           CC3 action, then carries the exact on-chain result back to the source
           chain. Every hash below is public, final on testnet and re-verifiable.
         </p>
+        <p className="mt-4 max-w-3xl text-sm leading-7 text-zinc-500">
+          The first use case is cross-border freelance escrow: the client pays
+          where liquidity already exists, while Creditcoin releases only after
+          the exact external payment is cryptographically proven.
+        </p>
       </section>
 
       <section className="grid gap-4 lg:grid-cols-3">

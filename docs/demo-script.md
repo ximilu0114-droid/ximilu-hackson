@@ -15,7 +15,7 @@ Record at 1920×1080 or 1440×900. Use a 16–18 pt terminal font and hide bookm
 
 **Say:**
 
-> “AttestFlow turns one natural-language payment rule into a cryptographically proof-gated settlement. This is one real 0.01 ETH payment on Sepolia, one Attestcoin-verified release on Creditcoin, and the exact settlement payload executed back on Sepolia.”
+> “AttestFlow gives a cross-border freelancer automatic escrow without trusting a payment oracle. This is one real 0.01 ETH payment on Sepolia, one Attestcoin-verified release on Creditcoin, and the exact settlement payload executed back on Sepolia.”
 
 Pause briefly over each linked transaction card.
 

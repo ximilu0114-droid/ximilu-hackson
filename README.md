@@ -5,6 +5,7 @@
 **BUIDL CTC 2026 Fall · AI track**
 
 [![CI](https://github.com/ximilu0114-droid/ximilu-hackson/actions/workflows/ci.yml/badge.svg)](https://github.com/ximilu0114-droid/ximilu-hackson/actions/workflows/ci.yml)
+[![CodeQL](https://github.com/ximilu0114-droid/ximilu-hackson/actions/workflows/codeql.yml/badge.svg)](https://github.com/ximilu0114-droid/ximilu-hackson/actions/workflows/codeql.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![ASC on CC3](https://img.shields.io/badge/CC3_ASC-0x4E74...6bF6-22c55e)](https://explorer.cc3-testnet.creditcoin.network/address/0x4E7410Ebf41C213378E1D8aA4423323303086bF6)
 
@@ -27,6 +28,10 @@ npm run verify:evidence
 ```
 
 For a visual evidence brief, run the dashboard and open [`http://localhost:3100/judge`](http://localhost:3100/judge).
+
+## Real-world wedge
+
+A cross-border freelancer can be paid on the chain where a client already has liquidity while a pre-funded Creditcoin escrow releases automatically only after that exact payment is proven. No operator, indexer, or LLM gets to assert that money arrived. The same proof-gated primitive can power marketplace escrow, invoice factoring, treasury automation, and agent-to-agent commerce.
 
 ## Why this needs Attestcoin
 
@@ -150,6 +155,8 @@ scripts/     proof smoke test and public live-evidence verifier
 evidence/    immutable cross-chain evidence manifests
 docs/        whitepaper, integration deep-dive, demo script, submission checklist
 ```
+
+Copy-ready DoraHacks text is in [`docs/submission-copy.md`](docs/submission-copy.md). Only the team identity and final public video URL remain intentionally blank.
 
 ## Third-party services disclosure
 
