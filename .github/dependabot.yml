@@ -17,6 +17,10 @@ updates:
     # intentionally pinned for CC3 compatibility; security updates are not
     # affected by version-update ignore rules.
     ignore:
+      - dependency-name: "hardhat"
+        update-types:
+          - version-update:semver-minor
+          - version-update:semver-patch
       - dependency-name: "*"
         update-types:
           - version-update:semver-major
