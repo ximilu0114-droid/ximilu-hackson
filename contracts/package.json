@@ -21,7 +21,7 @@
     "@typechain/hardhat": "^9.0.0",
     "@types/chai": "^4.2.0",
     "@types/mocha": ">=9.1.0",
-    "chai": "^4.2.0",
+    "chai": "^6.2.2",
     "dotenv": "^16.4.5",
     "hardhat": "2.26.5",
     "solidity-coverage": "^0.8.1",
