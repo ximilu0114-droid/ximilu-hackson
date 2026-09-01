@@ -39,6 +39,16 @@
 - [ ] Replace any final video placeholder with the tested video URL
 - [x] Confirm repository visibility is Public while signed out
 
+## GitHub presentation settings
+
+The public audit found that GitHub currently shows `No description, website, or topics provided` and the repository name is still `ximilu-hackson`. Before sharing the final portal URL:
+
+- [ ] **Repository name:** rename to `attestflow` or `attestflow-buidl-ctc`, then update the canonical URLs in the submission copy
+- [ ] **About description:** `Proof-gated cross-chain payments for autonomous agents, powered by Attestcoin on Creditcoin CC3.`
+- [ ] **Topics:** `attestcoin`, `creditcoin`, `cross-chain`, `autonomous-agents`, `payments`, `solidity`, `typescript`, `sepolia`
+- [ ] **Social preview:** upload `docs/attestflow-demo-poster.png`
+- [ ] Confirm the renamed repository, badges, PDF, MP4 fallback, and all explorer links while signed out
+
 ## Evidence index
 
 | Claim | Public artifact |
@@ -67,14 +77,16 @@ npm run e2e:proof
 
 Expected:
 
-- [ ] TypeScript exits 0.
-- [ ] Agent tests: 8 passing.
-- [ ] Web policy tests: 5 passing.
-- [ ] Contract tests: 15 passing.
-- [ ] Next.js production build exits 0 and includes `/judge`.
-- [ ] Production audit reports 0 vulnerabilities at the configured threshold.
-- [ ] Evidence verifier prints `"status": "SUCCESS"` and `"checks": 62`.
-- [ ] Fresh proof smoke test prints `"verification": "SUCCESS"`.
+- [x] TypeScript exits 0.
+- [x] Agent tests: 8 passing.
+- [x] Web policy tests: 5 passing.
+- [x] Contract tests: 15 passing.
+- [x] Next.js production build exits 0 and includes `/judge`.
+- [x] Production audit reports 0 vulnerabilities at the configured threshold.
+- [x] Evidence verifier prints `"status": "SUCCESS"` and `"checks": 62`.
+- [x] Fresh proof smoke test prints `"verification": "SUCCESS"`.
+
+Last rehearsed from a fresh public clone at commit `e4e5cb6` on 2026-09-01: clone 3.4 s, `npm ci` 11.2 s, `npm run ci` 14.9 s, `verify:evidence` 3.3 s, and `e2e:proof` 10.5 s. All commands exited 0; timings are environment-dependent.
 
 ## Video acceptance
 
@@ -103,6 +115,7 @@ The repository cannot safely infer or submit these:
 
 1. real member identity, nationality/citizenship, and eligibility attestations;
 2. approval of the checked narration (or a human re-record), public video upload, and signed-out URL test;
-3. the final DoraHacks submission click.
+3. GitHub repository rename/About/topics/social-preview settings;
+4. the final DoraHacks submission click.
 
-Do not mark the project complete until all three are confirmed.
+Do not mark the project complete until all four are confirmed.

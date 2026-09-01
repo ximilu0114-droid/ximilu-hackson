@@ -19,6 +19,10 @@ AttestFlow is not a mocked bridge animation. Its current evidence is a single, l
 | Attestcoin proof gates settlement on CC3 | [`0xec29d5…e4c2`](https://creditcoin-testnet.blockscout.com/tx/0xec29d5b4046d5557c014d6720e6d3799ba0f0b41e31a71147240a09b89c2e4c2) |
 | The exact published payload executes on Sepolia | [`0xc692a1…47fb`](https://sepolia.etherscan.io/tx/0xc692a176f78b1541104e9e0a18f9a8404c585b15e9be2c695df3d118796947fb) |
 
+[![Watch or download the 2:29 AttestFlow judge demo](docs/attestflow-demo-poster.png)](https://github.com/ximilu0114-droid/ximilu-hackson/raw/refs/heads/main/docs/attestflow-demo-review.mp4)
+
+Click the poster for the public 2:29 review cut. It uses GitHub's raw-file endpoint because the repository blob viewer does not preview the tracked MP4.
+
 The repository includes a machine-checkable evidence manifest. It re-reads both chains, validates 62 assertions, checks both replay guards, compares the CC3 and Sepolia payload hashes, and proves that deployed runtime bytecode matches the local Solidity build:
 
 ```bash
@@ -27,13 +31,15 @@ npm run verify:evidence
 # → { "status": "SUCCESS", "checks": 62 }
 ```
 
+A fresh anonymous clone rehearsal on 2026-09-01 at commit `e4e5cb6` passed the full CI, the 62-check live verifier, and a newly generated Attestcoin proof. Clone, install, CI, evidence verification, and proof verification completed in about 43 seconds total on the rehearsal host; network and machine timings will vary.
+
 For a visual evidence brief, run the dashboard and open [`http://localhost:3100/judge`](http://localhost:3100/judge).
 
 For the fastest judge-ready narrative, open the **[nine-slide pitch deck](docs/attestflow-pitch-deck.pdf)**. Its editable source is [`docs/attestflow-pitch-deck.pptx`](docs/attestflow-pitch-deck.pptx); the [evidence whitepaper](docs/whitepaper.pdf) and [integration guide](docs/integration.md) provide the technical deep dive.
 
 ### 2:29 demo cut
 
-The repository includes a judge-facing 1080p review cut with burned-in captions: [`docs/attestflow-demo-review.mp4`](docs/attestflow-demo-review.mp4). It shows the product before 0:40, the current public transactions, the proof/security boundary, the honest Writability limitation, and an actual 62-check verifier run.
+The repository includes a judge-facing 1080p review cut with burned-in captions: **[public MP4 download](https://github.com/ximilu0114-droid/ximilu-hackson/raw/refs/heads/main/docs/attestflow-demo-review.mp4)** ([tracked file](docs/attestflow-demo-review.mp4)). It shows the product before 0:40, the current public transactions, the proof/security boundary, the honest Writability limitation, and an actual 62-check verifier run.
 
 The cut is deterministic and reproducible from public evidence:
 
@@ -108,6 +114,8 @@ The destination Inbox separately verifies the authorized signature and rejects p
 ## Reproduce locally
 
 Requirements: Node.js 20+ and npm. The default tests and public evidence verifier need no wallet or API key.
+
+`npm ci` may report development-toolchain advisories from the deliberately pinned Hardhat 2.x stack. `npm run ci` finishes with an explicit production-only audit; the verified production result is zero vulnerabilities. Hardhat remains pinned at `2.26.5` because later EDR builds are incompatible with the CC3 testnet/fork behavior used by this repository.
 
 ```bash
 git clone https://github.com/ximilu0114-droid/ximilu-hackson.git

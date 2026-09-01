@@ -69,7 +69,8 @@ AttestFlow uses the live ChainInfo registry, `ProofBuilder`, Merkle and continui
 - Pitch deck: https://github.com/ximilu0114-droid/ximilu-hackson/blob/main/docs/attestflow-pitch-deck.pdf
 - Whitepaper: https://github.com/ximilu0114-droid/ximilu-hackson/blob/main/docs/whitepaper.pdf
 - Integration guide: https://github.com/ximilu0114-droid/ximilu-hackson/blob/main/docs/integration.md
-- Demo video: [FINAL PUBLIC OR UNLISTED VIDEO URL]
+- Repository-hosted review cut (download fallback): https://github.com/ximilu0114-droid/ximilu-hackson/raw/refs/heads/main/docs/attestflow-demo-review.mp4
+- Demo video: [FINAL PUBLIC OR UNLISTED STREAMING URL]
 
 ## Third-party service disclosure
 

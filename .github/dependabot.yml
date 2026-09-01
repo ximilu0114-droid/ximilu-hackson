@@ -5,3 +5,18 @@ updates:
     schedule:
       interval: weekly
     open-pull-requests-limit: 5
+    groups:
+      non-breaking-updates:
+        applies-to: version-updates
+        patterns:
+          - "*"
+        update-types:
+          - minor
+          - patch
+    # Preserve the judged testnet snapshot until after submission. Hardhat is
+    # intentionally pinned for CC3 compatibility; security updates are not
+    # affected by version-update ignore rules.
+    ignore:
+      - dependency-name: "*"
+        update-types:
+          - version-update:semver-major

@@ -114,8 +114,8 @@ npm run dev --prefix web
 
 ### Phase 5 — 评审级打磨与提交（9/1–9/11）🟡 进行中
 - **9/11 ET 前完整提交**，不等待 9/13 23:59 ET deadline。提交前对照 `docs/submission-checklist.md` 逐项勾选。
-- 已完成：关键 replay 漏洞修复、v2 重部署与双链 evidence、断点恢复、`/judge`、评委版 Pitch Deck、CI/CodeQL/Dependabot、SECURITY/LICENSE、文档与可重放 verifier。
-- 人工待办：① 审定当前合成旁白（或重录人声），上传 Demo 视频并匿名测试 URL；② 填 DoraHacks 真实姓名/邮箱/国籍与 eligibility；③ 全部外链匿名复查；④ 点击提交并复查 portal。
+- 已完成：关键 replay 漏洞修复、v2 重部署与双链 evidence、断点恢复、`/judge`、评委版 Pitch Deck、CI/CodeQL/Dependabot、SECURITY/LICENSE、文档与可重放 verifier；公开远端全新 clone 的 CI、62 项 evidence 与 fresh proof 均已实测通过。
+- 人工待办：① 审定当前合成旁白（或重录人声），上传 Demo 视频并匿名测试 URL；② 填 DoraHacks 真实姓名/邮箱/国籍与 eligibility；③ 将 GitHub 仓库重命名为 AttestFlow 品牌名并补齐 About/topics/social preview；④ 全部外链匿名复查；⑤ 点击提交并复查 portal。
 
 ## 工作纪律
 
