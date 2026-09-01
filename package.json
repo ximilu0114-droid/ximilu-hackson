@@ -28,6 +28,6 @@
     "dotenv": "^16.4.5",
     "hardhat-gas-reporter": "^1.0.8",
     "tsx": "^4.19.2",
-    "typescript": "^5.6.3"
+    "typescript": "^7.0.2"
   }
 }
