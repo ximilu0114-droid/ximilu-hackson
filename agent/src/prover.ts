@@ -1,5 +1,5 @@
 import { JsonRpcProvider, Wallet, AbiCoder, Contract, getAddress, solidityPackedKeccak256 } from 'ethers';
-import { chainInfo, proofProvider } from '@gluwa/usc-sdk';
+import { blockProver, chainInfo, proofProvider } from '@gluwa/usc-sdk';
 import { CONFIG } from './config.js';
 import { log } from './state.js';
 
@@ -61,6 +61,87 @@ export async function getProof(txHash: string) {
   const res = await builder.getProof(txHash);
   if (!res.success || !res.data) throw new Error('proof failed: ' + res.error);
   return res.data;
+}
+
+/**
+ * Backlog safety gate: prove 2-10 matched transactions with one shared
+ * continuity proof before any item in that batch enters the settlement path.
+ * A failed batch is retried on the next scan pass; it never degrades to an
+ * unverified or partially accepted batch.
+ */
+export async function preflightBatchProof(
+  txHashes: string[],
+  cc3: JsonRpcProvider,
+): Promise<{ count: number; fromHeader: number; toHeader: number }> {
+  if (txHashes.length < 2 || txHashes.length > 10) {
+    throw new Error('BATCH_PREFLIGHT_SIZE_MUST_BE_2_TO_10');
+  }
+  const requested = new Set(txHashes.map((hash) => hash.toLowerCase()));
+  if (requested.size !== txHashes.length) {
+    throw new Error('BATCH_PREFLIGHT_DUPLICATE_TX');
+  }
+
+  const builder = new proofProvider.service.ProofBuilder(
+    CONFIG.sepoliaChainKey,
+    CONFIG.proverUrl,
+    30_000,
+  );
+  const result = await builder.getBatchProof(txHashes);
+  if (!result.success || !result.data) {
+    throw new Error(`BATCH_PROOF_FAILED:${result.error}`);
+  }
+  const proof = result.data;
+  if (Number(proof.chainKey) !== CONFIG.sepoliaChainKey) {
+    throw new Error('BATCH_PROOF_CHAINKEY_MISMATCH');
+  }
+  if (Number(proof.toHeader) - Number(proof.fromHeader) > 1000) {
+    throw new Error('BATCH_PROOF_BLOCK_SPAN_EXCEEDED');
+  }
+
+  const heights: number[] = [];
+  const txBytes: string[] = [];
+  const merkleProofs: any[] = [];
+  const returned = new Set<string>();
+  for (const [headerNumber, proofsByIndex] of proof.merkleProofs.entries()) {
+    for (const [claimedIndex, entry] of proofsByIndex.entries()) {
+      const derivedIndex = computeTransactionIndex(entry.merkleProof);
+      if (derivedIndex !== BigInt(claimedIndex)) {
+        throw new Error('BATCH_PROOF_TX_INDEX_MISMATCH');
+      }
+      const hash = entry.txHash.toLowerCase();
+      if (!requested.has(hash) || returned.has(hash)) {
+        throw new Error('BATCH_PROOF_MEMBERSHIP_MISMATCH');
+      }
+      returned.add(hash);
+      heights.push(Number(headerNumber));
+      txBytes.push(entry.txBytes);
+      merkleProofs.push(entry.merkleProof);
+    }
+  }
+  if (
+    returned.size !== requested.size ||
+    [...requested].some((hash) => !returned.has(hash))
+  ) {
+    throw new Error('BATCH_PROOF_MEMBERSHIP_MISMATCH');
+  }
+
+  const prover = new blockProver.PrecompileBlockProver(cc3);
+  const verified = await prover.verifyBatch(
+    proof.chainKey,
+    heights,
+    txBytes,
+    merkleProofs,
+    proof.continuityProof,
+  );
+  if (!verified) throw new Error('BATCH_PROOF_PRECOMPILE_REJECTED');
+  log(
+    `batch preflight verified: count=${returned.size} headers=${proof.fromHeader}..${proof.toHeader}`,
+  );
+  return {
+    count: returned.size,
+    fromHeader: Number(proof.fromHeader),
+    toHeader: Number(proof.toHeader),
+  };
 }
 
 export interface TxViewTs {

@@ -12,6 +12,7 @@
 [![CodeQL](https://github.com/ximilu0114-droid/ximilu-hackson/actions/workflows/codeql.yml/badge.svg)](https://github.com/ximilu0114-droid/ximilu-hackson/actions/workflows/codeql.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![ASC on CC3](https://img.shields.io/badge/CC3_ASC-0x4E74...6bF6-22c55e)](https://creditcoin-testnet.blockscout.com/address/0x4E7410Ebf41C213378E1D8aA4423323303086bF6)
+[![Sourcify](https://img.shields.io/badge/Sourcify-exact_match-22c55e)](https://repo.sourcify.dev/102031/0x4E7410Ebf41C213378E1D8aA4423323303086bF6)
 
 ## The 30-second judge path
 
@@ -23,9 +24,9 @@ AttestFlow is not a mocked bridge animation. Its current evidence is a single, l
 | Attestcoin proof gates settlement on CC3 | [`0xec29d5…e4c2`](https://creditcoin-testnet.blockscout.com/tx/0xec29d5b4046d5557c014d6720e6d3799ba0f0b41e31a71147240a09b89c2e4c2) |
 | The exact published payload executes on Sepolia | [`0xc692a1…47fb`](https://sepolia.etherscan.io/tx/0xc692a176f78b1541104e9e0a18f9a8404c585b15e9be2c695df3d118796947fb) |
 
-[![Watch or download the 2:29 AttestFlow judge demo](docs/attestflow-demo-poster.png)](https://github.com/ximilu0114-droid/ximilu-hackson/raw/refs/heads/main/docs/attestflow-demo-review.mp4)
+[![Watch or download the 2:18 AttestFlow judge demo](docs/attestflow-demo-poster.png)](https://github.com/ximilu0114-droid/ximilu-hackson/raw/refs/heads/main/docs/attestflow-demo-review.mp4)
 
-Click the poster for the public 2:29 review cut. It uses GitHub's raw-file endpoint because the repository blob viewer does not preview the tracked MP4.
+Click the poster for the public 2:18 review cut. It uses GitHub's raw-file endpoint because the repository blob viewer does not preview the tracked MP4.
 
 The repository includes a machine-checkable evidence manifest. It re-reads both chains, validates 62 assertions, checks both replay guards, compares the CC3 and Sepolia payload hashes, and proves that deployed runtime bytecode matches the local Solidity build:
 
@@ -35,9 +36,9 @@ npm run verify:evidence
 # → { "status": "SUCCESS", "checks": 62 }
 ```
 
-A fresh anonymous clone rehearsal on 2026-09-01 at commit `3d8d0e2` passed the unified verifier, including the full CI, the 62-check live verifier, and a newly generated Attestcoin proof. Clone, install, and `judge:verify` completed in about 46 seconds total on the rehearsal host; network and machine timings will vary.
+A fresh anonymous clone rehearsal on 2026-09-01 established the baseline. The current five-gate evaluator additionally checks two Sourcify exact matches and generates a multi-block shared batch proof; the latest committed rehearsal is recorded in [`docs/submission-checklist.md`](docs/submission-checklist.md).
 
-For the complete evaluator path after installation, one command runs every local gate, re-reads both public chains, and generates a fresh Attestcoin proof:
+For the complete evaluator path after installation, one command runs every local gate, re-reads both public chains, checks both exact source matches, and generates fresh single and multi-block batch proofs:
 
 ```bash
 npm run judge:verify
@@ -48,9 +49,9 @@ For a visual evidence brief, run the dashboard and open [`http://localhost:3100/
 
 For the fastest judge-ready narrative, open the **[nine-slide pitch deck](docs/attestflow-pitch-deck.pdf)**. Its editable source is [`docs/attestflow-pitch-deck.pptx`](docs/attestflow-pitch-deck.pptx); the [evidence whitepaper](docs/whitepaper.pdf) and [integration guide](docs/integration.md) provide the technical deep dive.
 
-### 2:29 demo cut
+### 2:18 demo cut
 
-The repository includes a judge-facing 1080p review cut with burned-in captions: **[public MP4 download](https://github.com/ximilu0114-droid/ximilu-hackson/raw/refs/heads/main/docs/attestflow-demo-review.mp4)** ([tracked file](docs/attestflow-demo-review.mp4)). It shows the product before 0:40, the current public transactions, the proof/security boundary, the honest Writability limitation, and an actual 62-check verifier run.
+The repository includes a judge-facing 1080p review cut with burned-in captions: **[public MP4 download](https://github.com/ximilu0114-droid/ximilu-hackson/raw/refs/heads/main/docs/attestflow-demo-review.mp4)** ([tracked file](docs/attestflow-demo-review.mp4)). It shows the product before 0:40, the current public transactions, the proof/security boundary, the honest Writability limitation, and an actual five-gate judge-verifier run.
 
 The cut is deterministic and reproducible from public evidence:
 
@@ -58,7 +59,7 @@ The cut is deterministic and reproducible from public evidence:
 npm run render:demo-video
 ```
 
-The renderer requires macOS `say`, Google Chrome, and `ffmpeg`/`ffprobe`. It builds the production dashboard, loads the factual demo fixture, captures the current explorer evidence, runs `verify:evidence`, and assembles the narrated video plus `.srt` and poster artifacts. A public/unlisted viewing URL will be added only after anonymous-access testing.
+The renderer requires macOS `say`, Google Chrome, and `ffmpeg`/`ffprobe`. It builds the production dashboard, loads the factual demo fixture, captures the current explorer evidence, runs the complete five-gate `judge:verify`, and assembles the narrated video plus `.srt` and poster artifacts. A public/unlisted viewing URL will be added only after anonymous-access testing.
 
 ## Real-world wedge
 
@@ -101,12 +102,14 @@ InboxDemo.execute(payload, signature) ◄─────────────
 |---|---|
 | **ChainInfo precompile (`0x0FD3`)** | The agent fails closed unless the live CC3 registry maps Ethereum Sepolia (`chainId 11155111`) to configured `chainKey 1`; the proof smoke test also discovers the chain at runtime. |
 | **ProofBuilder** | Builds real Merkle and continuity proofs through the official hosted prover. The watcher scans only the attested window; `waitUntilHeightAttested` remains available for a specified fresh transaction. |
+| **Shared batch proofs** | Multi-payment backlog recovery calls `getBatchProof()` for 2–10 matches, binds every returned hash and Merkle-derived index, and requires native `verifyBatch()` success before any member enters settlement. `npm run e2e:batch-proof` exercises three distinct attested blocks without gas. |
 | **BlockProver (`0x0FD2`)** | `AttestFlowASC.settle()` calls `verify()` synchronously. A settlement cannot be created from an agent assertion alone. |
 | **Protocol transaction encoding v1** | The ASC decodes attested transaction fields and the receipt. It supports native ETH plus ERC-20 `transfer` and `transferFrom`. |
 | **Proof-derived transaction identity** | The ASC calls `calculateTxIndex()` and rejects a caller-supplied index that differs from the Merkle path, closing an otherwise exploitable replay-key gap. |
 | **Writability semantics** | Until official Outbox/Inbox contracts are deployed on this testnet, the ASC publishes the destination-bound payload and an explicit adapter performs sign → deliver → validate against `InboxDemo`. |
+| **Compiler identity** | Both deployed contracts are Sourcify `exact_match` for creation and runtime bytecode. `npm run verify:sources` checks the public v2 records and can republish the exact Hardhat compiler input without a deployment key. |
 
-See [`docs/integration.md`](docs/integration.md) for byte layouts, threat boundaries, and the exact protocol-to-code mapping.
+See the judge-oriented [`docs/attestcoin-depth.md`](docs/attestcoin-depth.md) ledger and [`docs/integration.md`](docs/integration.md) for capability-by-capability evidence, byte layouts, and threat boundaries.
 
 ## AI trust boundary
 
@@ -139,9 +142,11 @@ git clone https://github.com/ximilu0114-droid/ximilu-hackson.git
 cd ximilu-hackson
 npm ci
 
-npm run judge:verify       # recommended: all three gates below in one command
+npm run judge:verify       # recommended: all five gates below in one command
 npm run ci                 # typecheck + 32 tests + web build + production audit
 npm run verify:evidence    # 62 live, cross-chain assertions
+npm run verify:sources     # Sourcify creation + runtime exact matches
+npm run e2e:batch-proof    # 3 blocks, shared continuity proof, verifyBatch()
 npm run e2e:proof          # fresh real proof + read-only on-chain verification; no gas
 ```
 
@@ -182,12 +187,12 @@ npm run start --prefix agent -- --activate r1 --once
 
 ## Deployed artifacts
 
-| Artifact | Address |
-|---|---|
-| AttestFlowASC · CC3 Testnet | [`0x4E7410Ebf41C213378E1D8aA4423323303086bF6`](https://creditcoin-testnet.blockscout.com/address/0x4E7410Ebf41C213378E1D8aA4423323303086bF6) |
-| InboxDemo · Ethereum Sepolia | [`0x83A0b8D26Dd28094eE0CA74E57e79028194f868E`](https://sepolia.etherscan.io/address/0x83A0b8D26Dd28094eE0CA74E57e79028194f868E) |
-| BlockProver precompile | `0x0000000000000000000000000000000000000FD2` |
-| ChainInfo precompile | `0x0000000000000000000000000000000000000FD3` |
+| Artifact | Address | Source identity |
+|---|---|---|
+| AttestFlowASC · CC3 Testnet | [`0x4E7410Ebf41C213378E1D8aA4423323303086bF6`](https://creditcoin-testnet.blockscout.com/address/0x4E7410Ebf41C213378E1D8aA4423323303086bF6) | [Sourcify exact match](https://repo.sourcify.dev/102031/0x4E7410Ebf41C213378E1D8aA4423323303086bF6) |
+| InboxDemo · Ethereum Sepolia | [`0x83A0b8D26Dd28094eE0CA74E57e79028194f868E`](https://sepolia.etherscan.io/address/0x83A0b8D26Dd28094eE0CA74E57e79028194f868E) | [Sourcify exact match](https://repo.sourcify.dev/11155111/0x83A0b8D26Dd28094eE0CA74E57e79028194f868E) |
+| BlockProver precompile | `0x0000000000000000000000000000000000000FD2` | native CC3 precompile |
+| ChainInfo precompile | `0x0000000000000000000000000000000000000FD3` | native CC3 precompile |
 
 ABI snapshots live in [`deployments/`](deployments/); the evidence record is source-controlled at [`evidence/live-e2e-v2.json`](evidence/live-e2e-v2.json).
 
@@ -197,7 +202,7 @@ ABI snapshots live in [`deployments/`](deployments/); the evidence record is sou
 contracts/   ASC, destination Inbox, mocks, deployment and live E2E scripts
 agent/       rule parser, attested-window watcher, proof/settlement/recovery loop
 web/         Next.js dashboard plus the /judge evidence brief
-scripts/     proof smoke test, evidence verifier, and deterministic video renderer
+scripts/     single/batch proof probes, source/evidence verifiers, and video renderer
 evidence/    immutable cross-chain evidence manifests and factual demo fixture
 docs/        pitch deck, whitepaper, integration deep-dive, demo cut, submission kit
 ```
@@ -210,6 +215,7 @@ Copy-ready DoraHacks text is in [`docs/submission-copy.md`](docs/submission-copy
 - **Public RPC endpoints:** `ethereum-sepolia-rpc.publicnode.com` and `rpc.cc3-testnet.creditcoin.network` by default; both are configurable.
 - **Optional LLM:** setting `OPENAI_API_KEY` enables an OpenAI-compatible parsing/Q&A endpoint. It is never trusted for proof verification or settlement. All core flows and recorded evidence work with the deterministic local parser.
 - **Explorers:** Etherscan and the Creditcoin explorer are evidence links only.
+- **Source verification:** Sourcify API v2 stores the public exact compiler-input matches; no key or proprietary service is required.
 
 ## Honest boundary
 

@@ -24,6 +24,23 @@ const PROVER_URL =
 const SEPOLIA_CHAIN_ID = 11155111;
 const POLL_MS = 15_000;
 const WAIT_TIMEOUT_MS = 15 * 60_000;
+const PROVER_REQUEST_TIMEOUT_MS = 30_000;
+
+async function retry<T>(label: string, operation: () => Promise<T>): Promise<T> {
+  let lastError: unknown;
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    try {
+      return await operation();
+    } catch (error) {
+      lastError = error;
+      if (attempt < 3) {
+        console.log(`${label} attempt ${attempt} hit a transient error; retrying`);
+        await new Promise((resolve) => setTimeout(resolve, attempt * 1_000));
+      }
+    }
+  }
+  throw lastError;
+}
 
 async function main(): Promise<void> {
   const sepolia = new JsonRpcProvider(SEPOLIA_RPC);
@@ -47,6 +64,7 @@ async function main(): Promise<void> {
   // [2] Resolve target transaction
   let txHash: string | undefined = process.env.TX_HASH;
   let blockNumber = 0;
+  const explicitTransaction = Boolean(txHash);
 
   if (txHash) {
     const tx = await sepolia.getTransaction(txHash);
@@ -80,11 +98,32 @@ async function main(): Promise<void> {
   console.log(`[2] Target tx: ${txHash} (block ${blockNumber})`);
 
   // [3] Generate inclusion proof via hosted prover service
-  const builder = new proofProvider.service.ProofBuilder(chainKey, PROVER_URL, 10_000);
-  process.stdout.write('[3] Waiting for attestation... ');
-  await builder.waitUntilHeightAttested(chainKey, blockNumber, POLL_MS, WAIT_TIMEOUT_MS);
-  console.log('attested.');
-  const result = await builder.getProof(txHash);
+  const builder = new proofProvider.service.ProofBuilder(
+    chainKey,
+    PROVER_URL,
+    PROVER_REQUEST_TIMEOUT_MS,
+  );
+  if (explicitTransaction) {
+    process.stdout.write('[3] Waiting for attestation... ');
+    await retry('attestation wait', () =>
+      builder.waitUntilHeightAttested(
+        chainKey,
+        blockNumber,
+        POLL_MS,
+        WAIT_TIMEOUT_MS,
+      ),
+    );
+    console.log('attested.');
+  } else {
+    console.log('[3] Target was selected below the live attested height.');
+  }
+  const result = await retry('proof request', async () => {
+    const candidate = await builder.getProof(txHash);
+    if (!candidate.success || !candidate.data) {
+      throw new Error(`Proof generation failed: ${candidate.error}`);
+    }
+    return candidate;
+  });
   if (!result.success || !result.data) {
     throw new Error(`Proof generation failed: ${result.error}`);
   }

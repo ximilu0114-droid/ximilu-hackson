@@ -56,14 +56,16 @@ docs/        白皮书 PDF 源、集成说明
 ```
 npm install            # 根目录安装所有 workspace
 npm run e2e:proof      # Phase 0 端到端证明验证脚本
+npm run e2e:batch-proof # 3 个不同区块 + shared continuity proof + CC3 verifyBatch
+npm run verify:sources # 两个部署合约 Sourcify creation/runtime exact_match
 npm run typecheck      # tsc --noEmit（根 tsconfig 覆盖 scripts/ 与 agent/src）
 npm run test:agent     # Node test（11 个 Agent/协议编码/策略/模型对抗用例）
 npm run test:web       # Node test（6 个网页规则解析/激活安全边界用例）
 npm run test:contracts # hardhat test（15 个合约用例）
 npm run ci             # typecheck + 32 tests + web build + production audit
-npm run judge:verify   # CI + 62 项 live evidence + fresh Attestcoin proof，一键评委路径
+npm run judge:verify   # CI + evidence + source exact-match + batch/single fresh proof
 npm run verify:evidence # 双链重读并验证 62 项 live evidence
-npm run render:demo-video # 从公开 evidence 生成 2:29 / 1080p 视频、字幕与封面
+npm run render:demo-video # 从公开 evidence 生成 2:18 / 1080p 视频、字幕与封面
 npm run e2e:settle     # Phase 1 dry E2E（无需 gas）
 # 部署 + live 结算（需 CC3 测试币后执行）：
 npm run deploy:testnet --prefix contracts
@@ -81,6 +83,8 @@ npm run dev --prefix web
 - ChainInfo 的 `chainName` 是 hex 编码字符串（如 `0x5365706f6c6961...` = "Sepolia ethereum"），展示前需 decode。
 - Sepolia 公共 RPC 用 `https://ethereum-sepolia-rpc.publicnode.com` 可免注册直连。
 - prover 服务有 REST：`GET /api/v1/attested-height/{chainKey}` → `{"attestedHeight":N}`，免链上查询。
+- `getBatchProof()` + `verifyBatch()` 已实测跨 3 个不同 Sepolia 区块共享 continuity proof；`computeTransactionIndex()` 类型声明为 number，但 ethers v6 运行时返回 bigint，比较前必须显式规范化。
+- Hardhat 2.26 verify 插件仍调已于 2026-07-07 下线的 Sourcify v1；仓库用 `scripts/verify-sourcify-v2.mjs` 提交 standard JSON 并以公开 v2 lookup 的 exact_match 为成功门槛。
 
 ## 合约/工程实测坑（Phase 1 踩过的）
 
@@ -101,6 +105,7 @@ npm run dev --prefix web
 - 自然语言规则 → 结构化策略配置 JSON（builtin 确定性解析器 + 可选 LLM，需披露）；Agent 循环：监听 → 等 attestation → proof → 验证 → 执行。
 - Writability：**官方 Outbox/Inbox 尚未上 testnet**（文档明示审计中）→ ASC 发 `MessagePublished` 事件 + agent relayer 四步语义适配层（sign→deliver）+ Sepolia `InboxDemo` 验签执行合约。提交材料须如实披露此差异。
 - **验收**：① ✅ 中文/英文 ETH 与 USDC 规则输入后全流程无人干预；② ✅ v2 双链证据：CC3 settle `0xec29d5...` → Sepolia InboxDemo `MessageExecuted` `0xc692a1...`，两链 payload hash 完全相等；③ ✅ CC3 已 final 后 Sepolia RPC timeout 的真实恢复：重启从 settlement receipt 提取原始 payload，只补 destination leg，不二次 settle。
+- **Batch backlog gate**：一次扫描出现 2–10 笔待结算时，必须先通过 `getBatchProof()` exact membership/index 检查和 CC3 `verifyBatch()`；失败不保存 cursor、不处理任何成员，下轮整窗重试。
 - **部署地址**：ASC `0x4E7410Ebf41C213378E1D8aA4423323303086bF6`（CC3）；InboxDemo `0x83A0b8D26Dd28094eE0CA74E57e79028194f868E`（Sepolia）。
 - **LIVE 运行方式**：`LIVE=1 ASC_ADDRESS=0x4E7410... INBOX_ADDRESS=0x83A0... npm run start --prefix agent -- --rule "…" [--tx 0x...] [--once]`；escrow 会在启动时按需补足。Agent 启动时经 ChainInfo precompile 验证 Sepolia chainId→chainKey 映射。
 
@@ -110,7 +115,7 @@ npm run dev --prefix web
 - **坑**：动态 GET 路由必须显式 `export const dynamic = 'force-dynamic'`。Next 已升级至 16.3.3，生产依赖审计 0 漏洞。
 
 ### Phase 4 — 提交材料（9/1–9/10）✅ 本地交付物齐全，公开视频 URL 待人工上传
-- **验收**：① ✅ `npm run ci`（typecheck→11 agent tests→6 web tests→15 contract tests→web build→audit）；② ✅ `evidence/live-e2e-v2.json` + `npm run verify:evidence` 62 项 live 双链验真，含 deployed bytecode 对 local build；③ ✅ `docs/attestflow-pitch-deck.pdf`（9 页，最终 PDF 逐页渲染检查）及可编辑 PPTX、`docs/whitepaper.pdf`、`docs/integration.md` 均已完成；④ ✅ `docs/attestflow-demo-review.mp4` 为 2:29 / 1080p 带字幕评审版，实际 verifier 输出入镜；⑤ ✅ `npm run render:demo-video` 可从公开 evidence 复现视频、SRT 与封面；⑥ ✅ `docs/attestflow-logo.png` 方形项目 Logo 已检查全尺寸与 48 px，并接入 Web app icon。最终公开视频上传与匿名访问仍需人工完成。
+- **验收**：① ✅ `npm run ci`（typecheck→11 agent tests→6 web tests→15 contract tests→web build→audit）；② ✅ `evidence/live-e2e-v2.json` + `npm run verify:evidence` 62 项 live 双链验真，含 deployed bytecode 对 local build；③ ✅ shared batch proof 跨 3 个 attested 区块通过 `verifyBatch()`；④ ✅ ASC/Inbox 均为 Sourcify creation/runtime exact_match；⑤ ✅ `docs/attestflow-pitch-deck.pdf`（9 页，最终 PDF 逐页渲染检查）及可编辑 PPTX、`docs/whitepaper.pdf`、`docs/integration.md` 均已完成；⑥ ✅ `docs/attestflow-demo-review.mp4` 为 2:18 / 1080p 带字幕评审版，实际五道 verifier 结果入镜；⑦ ✅ `npm run render:demo-video` 可从公开 evidence 复现视频、SRT 与封面；⑧ ✅ `docs/attestflow-logo.png` 方形项目 Logo 已检查全尺寸与 48 px，并接入 Web app icon。最终公开视频上传与匿名访问仍需人工完成。
 - **实测补充**：Sepolia USDC 真实流量以 transferFrom 为主且大量是金库合约内部转账——发现层必须校验 calldata 而非只看 Transfer 事件。
 
 ### Phase 5 — 评审级打磨与提交（9/1–9/11）🟡 进行中

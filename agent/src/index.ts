@@ -15,7 +15,7 @@ import { Wallet, Contract, parseEther, AbiCoder, getAddress } from 'ethers';
 import { loadEnvDotenv, CONFIG } from './config.js';
 import { loadState, saveState, log, recordEvent, AgentState } from './state.js';
 import { assertSafePolicySpec, parseRule } from './llm.js';
-import { makeClients, assertSepoliaRegistry, agentWallet, getProof, settleOnASC, decodeTxBytes, decodeErc20Call, ensurePolicy, ASC_ABI } from './prover.js';
+import { makeClients, assertSepoliaRegistry, agentWallet, getProof, preflightBatchProof, settleOnASC, decodeTxBytes, decodeErc20Call, ensurePolicy, ASC_ABI } from './prover.js';
 import { scanOnce } from './watcher.js';
 import { deliverMessage, INBOX_ABI } from './relayer.js';
 
@@ -293,8 +293,24 @@ async function main() {
     try {
       const matches = await scanOnce(sepolia, state, state.rules.filter((r) => r.active) as any, wallet.address);
 
-      for (const m of matches) {
-        if (state.settledTx[m.txHash] && state.deliveries[m.txHash]) continue;
+      const pending = matches.filter(
+        (match) => !(state.settledTx[match.txHash] && state.deliveries[match.txHash]),
+      );
+      // Multi-payment catch-up is fail-closed at the protocol layer: each
+      // 2-10 item chunk must pass one native batch verification before any
+      // member is settled. A thrown preflight leaves the cursor unsaved so the
+      // complete window is retried on the next loop.
+      for (let offset = 0; offset < pending.length; offset += 10) {
+        const batch = pending.slice(offset, offset + 10);
+        if (batch.length >= 2) {
+          await preflightBatchProof(
+            batch.map((match) => match.txHash),
+            cc3,
+          );
+        }
+      }
+
+      for (const m of pending) {
         try {
           await processMatch(m, state, sepolia, cc3, asc, inbox, wallet);
         } catch (e: any) {

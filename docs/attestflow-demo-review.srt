@@ -23,9 +23,9 @@ The settlement publishes a destination-bound message. These exact bytes are sign
 The official Writability contracts are not deployed on this testnet, so this return leg uses one authorized relayer and does not pretend to have attestor-quorum security. During the recorded run, CC3 finalized before a Sepolia RPC timeout. On restart, the agent recovered the original event and completed only the missing destination leg.
 
 7
-00:01:44,841 --> 00:02:11,273
-The evidence is independently reproducible. One command re-reads both public chains and performs sixty-two assertions: network identities, deployment provenance, policy fields, source status, settlement events, both replay guards, payload equality, and deployed bytecode equality with the local Solidity build. The repository also passes twenty-eight automated tests, CI, CodeQL, and a production dependency audit.
+00:01:44,841 --> 00:02:00,518
+One command gives judges a five-gate receipt: thirty-two tests and production checks; sixty-two public-chain assertions; two Sourcify exact matches; one shared multi-block batch proof; and one fresh single proof. Every result is independently rerunnable.
 
 8
-00:02:11,273 --> 00:02:28,901
+00:02:00,518 --> 00:02:18,146
 AttestFlow turns natural language into bounded intent, Attestcoin into cross-chain truth, and deterministic contracts into enforceable payment outcomes. The source, settlement, delivery, code, and verifier are all public. This is autonomous finance with a cryptographic stop button.

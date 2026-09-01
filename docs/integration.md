@@ -51,7 +51,15 @@ Discovery is intentionally narrow:
 
 Before submitting, the agent independently derives the transaction index from the sibling directions and rejects any disagreement with the service response.
 
-### 2.4 Synchronous ASC verification
+### 2.4 Shared batch proof as a backlog gate
+
+When an attested scan returns multiple unprocessed matches, the agent groups them into chunks of at most ten and calls `ProofBuilder.getBatchProof()`. It validates the response chain, 1000-block maximum span, exact requested-hash membership, uniqueness, and every Merkle-derived transaction index before calling the native `PrecompileBlockProver.verifyBatch()`.
+
+This check is load-bearing for backlog processing: no member enters the existing settlement pipeline until the whole chunk passes. If proof generation or native verification fails, the scan cursor is not checkpointed, so the complete source window is retried rather than partially accepted. A single match retains the proven single-payment path.
+
+`scripts/e2e-batch-proof.ts` is the gas-free acceptance probe. It deliberately chooses one transaction from each of three distinct attested blocks, requests one shared continuity proof, calls the precompile to derive each index, and verifies the entire batch on CC3. The 2026-09-02 acceptance run covered blocks `11614867..11614869` and returned `SUCCESS`.
+
+### 2.5 Synchronous ASC verification
 
 `AttestFlowASC.settle()` calls the native BlockProver at `0x0000000000000000000000000000000000000FD2`:
 
@@ -73,14 +81,14 @@ require(proofTxIndex == txIndex, "TX_INDEX_MISMATCH");
 
 The index binding is security-critical. The precompile's `verify()` does not accept `txIndex` as an argument. Trusting a caller-supplied index in the replay key would allow the same valid proof to be resubmitted under a different key. The current deployment derives the canonical value from the verified Merkle path.
 
-### 2.5 Empirical `verifyAndEmit()` result
+### 2.6 Empirical `verifyAndEmit()` result
 
 On CC3 Testnet with SDK 0.18.0, an EOA call to `verifyAndEmitSingle` succeeded, while contract-context calls to `verifyAndEmit()` reverted without a reason. The ASC therefore uses the read-only `verify()` synchronously and emits its own domain events. This preserves the proof gate; only the redundant precompile event is omitted.
 
 - EOA experiment: `0x6e24cef5b9974b6a181946100910b5fc60efa3dd5be307207ddd86d23c4d04c5`
 - Current ASC settlement using in-contract `verify()`: `0xec29d5b4046d5557c014d6720e6d3799ba0f0b41e31a71147240a09b89c2e4c2`
 
-### 2.6 Encoding v1 and transaction success
+### 2.7 Encoding v1 and transaction success
 
 The precompile proves inclusion and source-chain continuity; it does not prove that source execution succeeded. The ASC decodes the receipt from the attested bytes and rejects `status != 1`.
 
@@ -166,6 +174,8 @@ This boundary is independent of the proof gate: even an activated policy cannot 
 | Proof-derived sourceTxId | `0x780a2c1665d5c3b62f3326cf745659376f3f566dd0b3ad645e16c44f2f28fd1a` |
 | Published payload hash | `0x4845f5ca486987ddb30d486e58f36ed0cebbf5e514d20783d220b06f0d523faa` |
 | Destination execution | `0xc692a176f78b1541104e9e0a18f9a8404c585b15e9be2c695df3d118796947fb` |
+| ASC compiler identity | Sourcify creation/runtime `exact_match` · match `47006308` |
+| Inbox compiler identity | Sourcify creation/runtime `exact_match` · match `47006310` |
 
 `npm run verify:evidence` re-reads both RPCs and checks 62 conditions, including:
 
@@ -175,6 +185,8 @@ This boundary is independent of the proof gate: even an activated policy cannot 
 - decoded payload fields and cross-chain payload hash equality;
 - ASC and Inbox replay states;
 - deployed runtime bytecode equality with local compiled artifacts.
+
+`npm run verify:sources` independently reads the Sourcify API v2 records for both deployments. `npm run e2e:batch-proof` then generates and verifies a fresh shared proof across three attested blocks. The judge-oriented capability ledger is `docs/attestcoin-depth.md`.
 
 The canonical values are in `evidence/live-e2e-v2.json`; judges can inspect the same summary at `/judge`.
 
@@ -192,3 +204,5 @@ Measured implementation findings:
 3. Ethers v6 may return block transaction entries as hash strings even when prefetch was requested.
 4. Real Sepolia USDC activity uses `transferFrom` heavily and may emit `Transfer` from vault flows; validate calldata, not the event alone.
 5. Hardhat's local fork cannot faithfully emulate the native `0x0FD2` precompile; contract tests install a purpose-built mock at the precompile address, while public-testnet evidence proves the real integration.
+6. SDK 0.18.0 types `computeTransactionIndex()` as a JavaScript `number`, while ethers v6 returns a runtime `bigint`; normalize explicitly before comparing batch-map indices.
+7. Hardhat 2.26's Sourcify task still calls retired API v1. `scripts/verify-sourcify-v2.mjs` submits the same standard JSON compiler input to current API v2 and gates success on the public exact-match lookup.

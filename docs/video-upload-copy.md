@@ -1,6 +1,6 @@
 # Demo Video Upload Pack
 
-Use this file when publishing the checked 2:29 AttestFlow review cut. Upload the existing artifacts without re-encoding them unless the platform rejects the source file.
+Use this file when publishing the checked 2:18 AttestFlow review cut. Upload the existing artifacts without re-encoding them unless the platform rejects the source file.
 
 ## Upload files
 
@@ -54,8 +54,8 @@ Chapters:
 0:53 Defense in depth beyond proof inclusion
 1:11 The exact payload closes the loop
 1:25 Honest Writability boundary and crash recovery
-1:45 Reproduce the 62-check verdict
-2:11 AttestFlow close
+1:45 Reproduce the five-gate verdict
+2:01 AttestFlow close
 ```
 
 ## Tags
@@ -78,7 +78,7 @@ AttestFlow, Attestcoin, Creditcoin, Creditcoin CC3, cross-chain payments, autono
 Use a private browser window with no account session:
 
 - [ ] The URL opens without authentication or an access request.
-- [ ] 1080p playback is available and the total duration is approximately 2:29.
+- [ ] 1080p playback is available and the total duration is approximately 2:18.
 - [ ] Audio starts immediately and remains intelligible at normal speed.
 - [ ] Burned-in captions remain readable; the uploaded caption track can also be enabled.
 - [ ] All eight chapter links seek to the correct scenes.
@@ -90,8 +90,8 @@ Use a private browser window with no account session:
 
 | Artifact | Expected properties | SHA-256 |
 |---|---|---|
-| `attestflow-demo-review.mp4` | H.264 + AAC · 1920×1080 · 30 fps · 149.110 s · 7,700,098 bytes | `1b93f85db1ee8152b85b66e8efe3caeb5e4f68a48681a48040c9795786d788d6` |
-| `attestflow-demo-review.srt` | 8 caption blocks | `64183fc31da99165f634227c7c54ae743b33460851b5a4deda02fadbf2c24dc2` |
-| `attestflow-demo-poster.png` | PNG · 1920×1080 · 477,471 bytes | `a33dee25b0ee04279a4cec76a2fdef7e146acf0dd9bed2860854b256b92a9857` |
+| `attestflow-demo-review.mp4` | H.264 + AAC · 1920×1080 · 30 fps · 138.362 s · 6,937,926 bytes | `88f276469c0c879979443e9a326bf8b1106c5dac8319cbf8658772dac015ffff` |
+| `attestflow-demo-review.srt` | 8 caption blocks · 2,521 bytes | `b87e82724a69ae8e70014463c55f68dac6bf63acfa152192ce2031670b20112f` |
+| `attestflow-demo-poster.png` | PNG · 1920×1080 · 467,548 bytes | `fc97e7512616fdc4eb44421d1ee6353ba9cd13183dd710969541adefc85d49f0` |
 
 If an upload platform re-encodes the video, use the runtime, visual, audio and signed-out checks rather than expecting the hosted copy to retain the local SHA-256.

@@ -128,23 +128,41 @@ h1{margin:38px 0 12px;font-size:104px;line-height:1;letter-spacing:-.065em}h2{ma
 .url{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:#cbd5e1;font-size:23px}.claim{margin-top:28px;color:#e2e8f0;font-size:31px;font-weight:650}
 </style></head><body><main class="wrap">
 <div class="mark">BUIDL CTC 2026 FALL · AI</div><h1>AttestFlow</h1><h2>Proof-Gated Cross-Chain Payments</h2>
-<div class="metrics"><div class="metric"><strong>3</strong><span>linked live transactions</span></div><div class="metric"><strong>62</strong><span>cross-chain checks</span></div><div class="metric"><strong>28</strong><span>automated tests</span></div><div class="metric"><strong>0</strong><span>trusted payment assertions</span></div></div>
+<div class="metrics"><div class="metric"><strong>5</strong><span>independent judge gates</span></div><div class="metric"><strong>62</strong><span>cross-chain checks</span></div><div class="metric"><strong>32</strong><span>automated tests</span></div><div class="metric"><strong>2</strong><span>exact source matches</span></div></div>
 <div class="url">github.com/ximilu0114-droid/ximilu-hackson</div><div class="claim">Natural language for intent · Attestcoin for truth · deterministic contracts for money</div>
 </main></body></html>`;
 }
 
-function terminalHtml(rawOutput) {
+function judgeReceipt(rawOutput) {
   const clean = rawOutput.replace(/\u001b\[[0-9;]*m/g, '').trim();
-  const highlighted = escapeHtml(clean)
+  const marker = '\n{\n  "step": "judge-verify"';
+  const start = clean.lastIndexOf(marker);
+  if (start === -1) throw new Error('judge:verify receipt was not found in output');
+  const verdict = JSON.parse(clean.slice(start + 1));
+  if (verdict.status !== 'SUCCESS' || verdict.results?.length !== 5) {
+    throw new Error(`judge:verify did not produce five successful gates: ${JSON.stringify(verdict)}`);
+  }
+  return [
+    ...verdict.results.map(
+      (result, index) =>
+        `[${index + 1}/5] ${String(result.step).padEnd(20)} ${result.status}  ${result.elapsedSeconds}s`,
+    ),
+    '',
+    `{ "step": "judge-verify", "status": "SUCCESS", "elapsedSeconds": ${verdict.elapsedSeconds} }`,
+  ].join('\n');
+}
+
+function terminalHtml(rawOutput) {
+  const highlighted = escapeHtml(judgeReceipt(rawOutput))
     .replace('"status": "SUCCESS"', '<span class="ok">"status": "SUCCESS"</span>')
-    .replace('"checks": 62', '<span class="ok">"checks": 62</span>');
+    .replaceAll('SUCCESS', '<span class="ok">SUCCESS</span>');
   return `<!doctype html><html><head><meta charset="utf-8"><style>
 *{box-sizing:border-box}html,body{margin:0;width:1920px;height:1080px;overflow:hidden}
 body{display:grid;place-items:center;background:radial-gradient(circle at 50% 20%,#10201b 0,#030706 58%,#010303 100%);font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;color:#dbeafe}
 .terminal{width:1600px;min-height:760px;border:1px solid #334155;border-radius:22px;background:rgba(2,6,23,.96);box-shadow:0 36px 100px rgba(0,0,0,.58);overflow:hidden}
 .bar{display:flex;align-items:center;gap:10px;height:58px;padding:0 24px;border-bottom:1px solid #1e293b;background:#0f172a}.dot{width:14px;height:14px;border-radius:50%}.r{background:#fb7185}.y{background:#fbbf24}.g{background:#34d399}.title{margin-left:14px;color:#94a3b8;font:600 16px Inter,-apple-system,sans-serif;letter-spacing:.05em}
 pre{margin:0;padding:34px 44px 40px;white-space:pre-wrap;font-size:23px;line-height:1.42;color:#cbd5e1}.command{color:#6ee7b7}.ok{color:#34d399;font-weight:800}
-</style></head><body><main class="terminal"><div class="bar"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="title">attestflow — live public-chain verification</span></div><pre><span class="command">$ npm run verify:evidence</span>\n\n${highlighted}</pre></main></body></html>`;
+</style></head><body><main class="terminal"><div class="bar"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="title">attestflow — independent judge receipt</span></div><pre><span class="command">$ npm run judge:verify</span>\n\n${highlighted}</pre></main></body></html>`;
 }
 
 function probeDuration(path) {
@@ -194,7 +212,7 @@ try {
   );
   await waitForDashboard();
 
-  await capture(`${baseUrl}/judge`, sourcePaths['judge-top'], '62 live checks passing');
+  await capture(`${baseUrl}/judge`, sourcePaths['judge-top'], '2 EXACT SOURCE MATCHES');
   await capture(`${baseUrl}/`, sourcePaths.dashboard, 'live-v2');
   await capture(`${baseUrl}/judge#security`, sourcePaths['judge-security'], 'What the verifier proves');
   await capture(
@@ -208,13 +226,13 @@ try {
     '0xc692a176',
   );
 
-  const verificationOutput = await runCapture('npm', ['run', 'verify:evidence']);
+  const verificationOutput = await runCapture('npm', ['run', 'judge:verify']);
   const terminalPath = join(work, 'verifier-terminal.html');
   writeFileSync(terminalPath, terminalHtml(verificationOutput));
   await capture(
     pathToFileURL(terminalPath).href,
     sourcePaths['verifier-terminal'],
-    '"status": "SUCCESS"',
+    'judge-verify',
   );
 
   const closingPath = join(work, 'closing.html');

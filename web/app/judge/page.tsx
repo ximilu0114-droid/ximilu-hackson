@@ -64,7 +64,7 @@ export default function JudgeEvidence() {
       <section className="mb-14 max-w-4xl">
         <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.16em] text-emerald-300">
           <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
-          62 live checks passing
+          62 live checks · 2 exact source matches
         </div>
         <h1 className="text-balance text-4xl font-semibold leading-tight tracking-[-0.04em] text-white sm:text-6xl">
           One payment. Two chains. No trusted payment oracle.
@@ -163,6 +163,62 @@ export default function JudgeEvidence() {
             </p>
           </div>
         </aside>
+      </section>
+
+      <section
+        id="protocol-depth"
+        className="mt-14 scroll-mt-6 rounded-2xl border border-emerald-500/20 bg-emerald-500/5 p-6"
+      >
+        <p className="text-xs font-semibold uppercase tracking-[0.16em] text-emerald-300">
+          Attestcoin depth
+        </p>
+        <h2 className="mt-2 text-2xl font-semibold tracking-tight text-zinc-100">
+          Single settlement, shared batch admission, exact compiler identity.
+        </h2>
+        <div className="mt-6 grid gap-4 md:grid-cols-2">
+          {[
+            {
+              name: 'Live single-proof authority',
+              detail: 'The deployed ASC calls native verify() and calculateTxIndex() before receipt, policy, replay and escrow checks.',
+              href: `https://creditcoin-testnet.blockscout.com/tx/${evidence.settlement.txHash}`,
+              label: 'Open settlement',
+            },
+            {
+              name: 'Fail-closed batch backlog gate',
+              detail: 'Two to ten matches share one continuity proof and must pass exact membership, Merkle-index and native verifyBatch() checks before settlement.',
+              href: 'https://github.com/ximilu0114-droid/ximilu-hackson/blob/main/docs/attestcoin-depth.md',
+              label: 'Inspect depth ledger',
+            },
+            {
+              name: 'AttestFlowASC exact match',
+              detail: 'Sourcify independently matches both creation and runtime bytecode to the published Hardhat compiler input.',
+              href: 'https://repo.sourcify.dev/102031/0x4E7410Ebf41C213378E1D8aA4423323303086bF6',
+              label: 'Open source record',
+            },
+            {
+              name: 'InboxDemo exact match',
+              detail: 'The disclosed single-relayer testnet adapter is equally inspectable, including its signature and destination replay checks.',
+              href: 'https://repo.sourcify.dev/11155111/0x83A0b8D26Dd28094eE0CA74E57e79028194f868E',
+              label: 'Open source record',
+            },
+          ].map((item) => (
+            <article key={item.name} className="rounded-xl border border-emerald-500/15 bg-black/20 p-4">
+              <h3 className="text-sm font-semibold text-zinc-200">{item.name}</h3>
+              <p className="mt-2 text-sm leading-6 text-zinc-500">{item.detail}</p>
+              <a
+                href={item.href}
+                target="_blank"
+                rel="noreferrer"
+                className="mt-4 inline-block text-sm font-medium text-emerald-300 transition hover:text-emerald-200"
+              >
+                {item.label} ↗
+              </a>
+            </article>
+          ))}
+        </div>
+        <pre className="mt-5 overflow-x-auto rounded-xl border border-emerald-500/15 bg-black/30 p-4 text-xs leading-6 text-zinc-300">
+          <code>{`npm run e2e:batch-proof\n# 3 distinct blocks · shared continuity proof · verifyBatch() SUCCESS`}</code>
+        </pre>
       </section>
 
       <section

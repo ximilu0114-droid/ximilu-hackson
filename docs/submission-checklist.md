@@ -17,8 +17,8 @@
 - [x] **Local judge deck:** `docs/attestflow-pitch-deck.pdf` plus editable `docs/attestflow-pitch-deck.pptx`; nine slides, final PDF render checked page by page
 - [ ] **Deck/Whitepaper portal URL:** use the public pitch-deck PDF first; keep `docs/whitepaper.pdf` as the technical backup
 - [x] **Copy-ready video upload pack:** `docs/video-upload-copy.md` contains title, description, chapters, tags, thumbnail, disclosures and integrity hashes
-- [ ] **Demo video URL:** use `docs/video-upload-copy.md`, approve or re-narrate the checked 2:29 review cut, upload Unlisted/Public, verify signed-out access
-- [ ] **Attestcoin integration summary:** link `docs/integration.md`
+- [ ] **Demo video URL:** use `docs/video-upload-copy.md`, approve or re-narrate the checked 2:18 review cut, upload Unlisted/Public, verify signed-out access
+- [ ] **Attestcoin integration summary:** link `docs/attestcoin-depth.md` first, then `docs/integration.md`
 - [ ] **Team identity:** real first/last name, email, country of residence, citizenship, role, short bio; Telegram/X/LinkedIn if requested
 - [ ] **Originality declaration:** confirm the submission is original and disclose reused open-source dependencies
 - [ ] **Eligibility:** personally confirm every legal/eligibility statement before checking it
@@ -26,7 +26,7 @@
 
 ## Suggested integration summary
 
-> AttestFlow uses the live ChainInfo registry, ProofBuilder, Merkle and continuity proofs, the native BlockProver `verify()` and `calculateTxIndex()`, and protocol encoding v1 inside a deployed CC3 ASC. The ASC independently enforces receipt success, proof-index binding, policy match, replay protection, escrow, and a destination-bound payload. Because official Writability Outbox/Inbox contracts are not deployed on the target testnet, the return leg is explicitly labeled as a four-stage adapter using one authorized relayer rather than an attestor quorum.
+> AttestFlow uses the live ChainInfo registry, attestation-aware discovery, single and shared-batch ProofBuilder paths, native BlockProver `verify()` / `verifyBatch()` / `calculateTxIndex()`, and encoding v1 inside a deployed CC3 ASC. Multi-payment backlog chunks must pass one shared continuity proof before any member enters settlement. The ASC independently enforces receipt success, proof-index binding, policy match, replay protection, escrow, and a destination-bound payload. Both deployments are Sourcify creation/runtime exact matches. Because official Writability Outbox/Inbox contracts are not deployed on the target testnet, the return leg is explicitly labeled as a four-stage adapter using one authorized relayer rather than an attestor quorum.
 
 ## Repository readiness
 
@@ -35,12 +35,14 @@
 - [x] `.env` ignored; no testnet private key or seed committed
 - [x] Current ASC and Inbox ABI/deployment snapshots committed
 - [x] ChainInfo, BlockProver, proof encoding, and Writability boundary documented
+- [x] Multi-block shared batch proof is a fail-closed agent backlog gate and has a live CC3 acceptance probe
+- [x] ASC and Inbox creation/runtime bytecode are both Sourcify `exact_match`
 - [x] 32 tests: 15 contracts, 11 agent/protocol/policy, and 6 web policy-boundary tests
 - [x] AI trust boundary: missing fields fail closed; dashboard rules begin as reviewable drafts; model-assisted CLI rules require separate activation
 - [x] CI, CodeQL, Dependabot, production build, and dependency audit
 - [x] `/judge` evidence page passes desktop and 390 px mobile QA
 - [x] Machine-checkable live evidence manifest and 62-check verifier
-- [x] 2:29 / 1080p local review cut, captions, poster, and reproducible renderer
+- [x] 2:18 / 1080p local review cut, captions, poster, and reproducible renderer
 - [x] Square project logo plus Next.js app icon
 - [x] Copy-ready video upload metadata, chapters, captions, thumbnail and integrity manifest
 - [x] Push the final hardening commit and confirm GitHub Actions is green
@@ -70,6 +72,8 @@ The public audit found that GitHub currently shows `No description, website, or 
 | Published/executed payload hash | `0x4845f5ca486987ddb30d486e58f36ed0cebbf5e514d20783d220b06f0d523faa` |
 | InboxDemo · Sepolia | `0x83A0b8D26Dd28094eE0CA74E57e79028194f868E` |
 | Destination execution · Sepolia | `0xc692a176f78b1541104e9e0a18f9a8404c585b15e9be2c695df3d118796947fb` |
+| ASC source identity | Sourcify exact match `47006308` |
+| Inbox source identity | Sourcify exact match `47006310` |
 | Canonical manifest | `evidence/live-e2e-v2.json` |
 
 ## Judge-path rehearsal
@@ -90,10 +94,12 @@ Expected:
 - [x] Next.js production build exits 0 and includes `/judge`.
 - [x] Production audit reports 0 vulnerabilities at the configured threshold.
 - [x] Evidence verifier prints `"status": "SUCCESS"` and `"checks": 62`.
+- [x] Source verifier reports two creation/runtime `exact_match` records.
+- [x] Batch proof reports three transactions, one shared continuity proof, and `"verification": "SUCCESS"`.
 - [x] Fresh proof smoke test prints `"verification": "SUCCESS"`.
 - [x] Unified verifier finishes with `"step": "judge-verify"` and `"status": "SUCCESS"`.
 
-Last full rehearsal from the committed implementation at `392562e2da24` on 2026-09-02: unified `judge:verify` finished in 18.84 s and all three gates returned `SUCCESS`. The run included 32 passing tests, 0 production vulnerabilities, 62 live cross-chain checks, and a fresh CC3-verified proof for Sepolia transaction `0xe9ac1f2d0f5550428a98f08ac4a4b9371198dc5671d74ce461c64b7614e76494` at block `11614269`; timings and the automatically selected attested transaction are environment-dependent.
+The previous three-gate rehearsal at implementation commit `392562e2da24` completed in 18.84 s. Replace this line after the first committed five-gate run; timings and automatically selected attested transactions are environment-dependent.
 
 ## Video acceptance
 
@@ -102,7 +108,7 @@ Last full rehearsal from the committed implementation at `392562e2da24` on 2026-
 - [x] Narration distinguishes inclusion/continuity from receipt success.
 - [x] Proof-derived transaction index and replay defense are named.
 - [x] Honest Writability boundary is stated.
-- [x] Actual `npm run verify:evidence` output finishes on camera with `SUCCESS` / 62 checks.
+- [x] The actual `npm run judge:verify` receipt finishes on camera with all five gates and the final `SUCCESS` verdict.
 - [x] No secrets, personal notifications, or private-wallet information appear.
 - [x] Captions checked; transaction hashes remain readable at 1080p.
 - [ ] Video opens in a private browser window without authentication.

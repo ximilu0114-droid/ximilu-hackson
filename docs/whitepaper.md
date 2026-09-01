@@ -33,8 +33,8 @@ The agent watches only attested source blocks, builds a real Attestcoin proof, a
 </div>
 
 ```bash
-npm ci && npm run verify:evidence
-# → { "status": "SUCCESS", "checks": 62 }
+npm ci && npm run judge:verify
+# → { "step": "judge-verify", "status": "SUCCESS" }
 ```
 
 <div class="page-break"></div>
@@ -99,6 +99,7 @@ AttestFlow uses the protocol as the settlement trust root, not as a decorative A
 |---|---|
 | ChainInfo precompile · `0x0FD3` | Runtime validation that Sepolia `chainId 11155111` maps to `chainKey 1` |
 | Hosted `ProofBuilder` | Real transaction Merkle proof + source-chain continuity proof |
+| Shared batch proof | `getBatchProof()` + native `verifyBatch()` gate 2–10 backlog payments |
 | BlockProver · `0x0FD2` | Synchronous `verify()` inside every settlement |
 | `calculateTxIndex()` | Canonical proof identity and replay-key binding |
 | Encoding v1 | On-chain decode of source fields and receipt status |
@@ -153,6 +154,7 @@ On CC3 Testnet, EOA `verifyAndEmitSingle` succeeded while contract-context `veri
 | agent redirects payout or message | beneficiary and destination stored in policy |
 | forged token event | token address, selector, recipient, and amount checked from calldata |
 | destination payload replay | `executedPayloads[payloadHash]` guard |
+| one invalid payment in a backlog | shared batch proof must pass before any member enters settlement |
 | RPC timeout between chains | checkpoint CC3 leg; recover original payload from receipt; finish only missing leg |
 | LLM emits unsafe or incomplete values | no money defaults; schema rejection; inactive draft; explicit activation |
 
@@ -164,15 +166,9 @@ The two chains cannot commit atomically. AttestFlow persists the CC3 result befo
 
 ## Evidence verifier
 
-The repository does not ask judges to trust log screenshots. `npm run verify:evidence` independently re-reads both networks and validates:
+The repository does not ask judges to trust log screenshots. `npm run verify:evidence` independently re-reads both networks and validates source fields plus the proof-derived `sourceTxId`; CC3 settlement and destination execution status; the three contract events; payload-hash equality; both replay guards; and deployed runtime bytecode against local compiled artifacts.
 
-- source payer, payee, value, status, block, and index;
-- proof-derived `sourceTxId`;
-- CC3 settlement and destination execution status;
-- `PaymentSettled`, `MessagePublished`, and `MessageExecuted` fields;
-- equality of the CC3-published and Sepolia-executed payload hashes;
-- both on-chain replay guards;
-- deployed ASC and Inbox runtime bytecode against local compiled artifacts.
+The unified `judge:verify` adds two public Sourcify creation/runtime exact-match lookups, a fresh shared proof spanning three attested blocks with native `verifyBatch()`, and a fresh single proof with `verifySingle()`.
 
 Current payload integrity anchor:
 
@@ -182,11 +178,9 @@ Current payload integrity anchor:
 
 ## Engineering acceptance
 
-- **15 contract tests:** valid native/ERC-20 flows, failed receipt, bad proof, proof-index mismatch, replay, policy mismatch, escrow, authorization, and destination validation.
-- **11 agent tests:** protocol-byte decoding, ERC-20 calldata variants, Merkle-index derivation, source IDs, exact existing-policy reuse, omitted fields, adversarial model JSON, and draft validation.
-- **6 web tests:** exact decimal parsing, native/token selection, fail-closed omissions, precision rejection, payout bounds, model schema checks, and activation validation.
-- **CI:** TypeScript, all tests, production Next.js build, dependency audit.
-- **Supply-chain checks:** Dependabot and CodeQL workflows; zero known production dependency vulnerabilities at the evidence snapshot.
+**32 automated tests:** 15 contract tests cover native/ERC-20 paths, receipt/proof/index failures, replay, policy, escrow, authorization, and destination; 11 agent tests cover protocol decoding, calldata, Merkle identity, policy reuse, adversarial model JSON, and drafts; 6 web tests cover exact money parsing, fail-closed rules, bounds, and activation.
+
+**Delivery gates:** TypeScript, all tests, production build, dependency audit, Dependabot, and CodeQL; zero known production vulnerabilities. Protocol acceptance adds live single and multi-block batch proofs, 62 cross-chain checks, and two Sourcify exact matches.
 
 <div class="page-break"></div>
 

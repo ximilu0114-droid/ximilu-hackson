@@ -50,8 +50,8 @@
       "label": "07 · REPRODUCE THE VERDICT",
       "source": "verifier-terminal",
       "captionPosition": "top",
-      "caption": "One command re-reads both chains and verifies 62 independent conditions.",
-      "narration": "The evidence is independently reproducible. One command re-reads both public chains and performs sixty-two assertions: network identities, deployment provenance, policy fields, source status, settlement events, both replay guards, payload equality, and deployed bytecode equality with the local Solidity build. The repository also passes twenty-eight automated tests, CI, CodeQL, and a production dependency audit."
+      "caption": "Five gates: CI · 62 live checks · 2 exact matches · shared batch · fresh single proof.",
+      "narration": "One command gives judges a five-gate receipt: thirty-two tests and production checks; sixty-two public-chain assertions; two Sourcify exact matches; one shared multi-block batch proof; and one fresh single proof. Every result is independently rerunnable."
     },
     {
       "id": "close",

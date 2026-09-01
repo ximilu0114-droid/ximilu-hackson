@@ -16,6 +16,16 @@ const steps = [
     args: ["run", "verify:evidence"],
   },
   {
+    id: "source-verification",
+    label: "two Sourcify exact-match source verifications",
+    args: ["run", "verify:sources"],
+  },
+  {
+    id: "batch-proof",
+    label: "multi-block shared proof and native batch verification",
+    args: ["run", "e2e:batch-proof"],
+  },
+  {
     id: "fresh-proof",
     label: "fresh Attestcoin proof and read-only CC3 verification",
     args: ["run", "e2e:proof"],
