@@ -1,0 +1,31 @@
+1
+00:00:00,000 --> 00:00:16,125
+AttestFlow gives a cross-border freelancer automatic escrow without trusting a payment oracle. The live result is one real 0.01 Ether payment on Sepolia, one Attestcoin-verified release on Creditcoin, and the exact settlement payload executed back on Sepolia.
+
+2
+00:00:16,125 --> 00:00:36,731
+The user writes a plain-language rule: when I receive at least 0.01 Ether on Sepolia, release ten percent. The agent compiles that sentence into an inspectable policy, watches only blocks already attested by Creditcoin, builds the proof, settles escrow, and delivers the result. The model is never trusted to say a payment happened.
+
+3
+00:00:36,731 --> 00:00:53,421
+This is the live Creditcoin settlement transaction. Inside it, the Attestcoin BlockProver verifies the transaction's Merkle inclusion and source-chain continuity. The contract then releases 0.001 CTC. An agent assertion alone cannot create this state change.
+
+4
+00:00:53,421 --> 00:01:11,006
+Inclusion is necessary, but it is not enough. The contract derives the source transaction index from the Merkle path itself, rejects a caller-invented index, checks the attested receipt status equals one, matches the payee and amount against the stored policy, checks escrow, and rejects replay.
+
+5
+00:01:11,006 --> 00:01:24,735
+The settlement publishes a destination-bound message. These exact bytes are signed, delivered, and executed by the Sepolia Inbox. The published and executed payload hashes are identical, and the destination has its own replay guard.
+
+6
+00:01:24,735 --> 00:01:44,841
+The official Writability contracts are not deployed on this testnet, so this return leg uses one authorized relayer and does not pretend to have attestor-quorum security. During the recorded run, CC3 finalized before a Sepolia RPC timeout. On restart, the agent recovered the original event and completed only the missing destination leg.
+
+7
+00:01:44,841 --> 00:02:11,273
+The evidence is independently reproducible. One command re-reads both public chains and performs sixty-two assertions: network identities, deployment provenance, policy fields, source status, settlement events, both replay guards, payload equality, and deployed bytecode equality with the local Solidity build. The repository also passes twenty-eight automated tests, CI, CodeQL, and a production dependency audit.
+
+8
+00:02:11,273 --> 00:02:28,901
+AttestFlow turns natural language into bounded intent, Attestcoin into cross-chain truth, and deterministic contracts into enforceable payment outcomes. The source, settlement, delivery, code, and verifier are all public. This is autonomous finance with a cryptographic stop button.

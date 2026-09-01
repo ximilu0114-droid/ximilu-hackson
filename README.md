@@ -7,7 +7,7 @@
 [![CI](https://github.com/ximilu0114-droid/ximilu-hackson/actions/workflows/ci.yml/badge.svg)](https://github.com/ximilu0114-droid/ximilu-hackson/actions/workflows/ci.yml)
 [![CodeQL](https://github.com/ximilu0114-droid/ximilu-hackson/actions/workflows/codeql.yml/badge.svg)](https://github.com/ximilu0114-droid/ximilu-hackson/actions/workflows/codeql.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![ASC on CC3](https://img.shields.io/badge/CC3_ASC-0x4E74...6bF6-22c55e)](https://explorer.cc3-testnet.creditcoin.network/address/0x4E7410Ebf41C213378E1D8aA4423323303086bF6)
+[![ASC on CC3](https://img.shields.io/badge/CC3_ASC-0x4E74...6bF6-22c55e)](https://creditcoin-testnet.blockscout.com/address/0x4E7410Ebf41C213378E1D8aA4423323303086bF6)
 
 ## The 30-second judge path
 
@@ -16,7 +16,7 @@ AttestFlow is not a mocked bridge animation. Its current evidence is a single, l
 | Stage | Public evidence |
 |---|---|
 | Client pays `0.01 ETH` on Sepolia | [`0x6ac68b…55e7`](https://sepolia.etherscan.io/tx/0x6ac68ba923494389999206236504123521d8ecdb9463f60aa52da47d59d555e7) |
-| Attestcoin proof gates settlement on CC3 | [`0xec29d5…e4c2`](https://explorer.cc3-testnet.creditcoin.network/tx/0xec29d5b4046d5557c014d6720e6d3799ba0f0b41e31a71147240a09b89c2e4c2) |
+| Attestcoin proof gates settlement on CC3 | [`0xec29d5…e4c2`](https://creditcoin-testnet.blockscout.com/tx/0xec29d5b4046d5557c014d6720e6d3799ba0f0b41e31a71147240a09b89c2e4c2) |
 | The exact published payload executes on Sepolia | [`0xc692a1…47fb`](https://sepolia.etherscan.io/tx/0xc692a176f78b1541104e9e0a18f9a8404c585b15e9be2c695df3d118796947fb) |
 
 The repository includes a machine-checkable evidence manifest. It re-reads both chains, validates 62 assertions, checks both replay guards, compares the CC3 and Sepolia payload hashes, and proves that deployed runtime bytecode matches the local Solidity build:
@@ -28,6 +28,18 @@ npm run verify:evidence
 ```
 
 For a visual evidence brief, run the dashboard and open [`http://localhost:3100/judge`](http://localhost:3100/judge).
+
+### 2:29 demo cut
+
+The repository includes a judge-facing 1080p review cut with burned-in captions: [`docs/attestflow-demo-review.mp4`](docs/attestflow-demo-review.mp4). It shows the product before 0:40, the current public transactions, the proof/security boundary, the honest Writability limitation, and an actual 62-check verifier run.
+
+The cut is deterministic and reproducible from public evidence:
+
+```bash
+npm run render:demo-video
+```
+
+The renderer requires macOS `say`, Google Chrome, and `ffmpeg`/`ffprobe`. It builds the production dashboard, loads the factual demo fixture, captures the current explorer evidence, runs `verify:evidence`, and assembles the narrated video plus `.srt` and poster artifacts. A public/unlisted viewing URL will be added only after anonymous-access testing.
 
 ## Real-world wedge
 
@@ -138,7 +150,7 @@ Use `--tx 0x… --once` with a known, already-attested transaction for a determi
 
 | Artifact | Address |
 |---|---|
-| AttestFlowASC · CC3 Testnet | [`0x4E7410Ebf41C213378E1D8aA4423323303086bF6`](https://explorer.cc3-testnet.creditcoin.network/address/0x4E7410Ebf41C213378E1D8aA4423323303086bF6) |
+| AttestFlowASC · CC3 Testnet | [`0x4E7410Ebf41C213378E1D8aA4423323303086bF6`](https://creditcoin-testnet.blockscout.com/address/0x4E7410Ebf41C213378E1D8aA4423323303086bF6) |
 | InboxDemo · Ethereum Sepolia | [`0x83A0b8D26Dd28094eE0CA74E57e79028194f868E`](https://sepolia.etherscan.io/address/0x83A0b8D26Dd28094eE0CA74E57e79028194f868E) |
 | BlockProver precompile | `0x0000000000000000000000000000000000000FD2` |
 | ChainInfo precompile | `0x0000000000000000000000000000000000000FD3` |
@@ -151,9 +163,9 @@ ABI snapshots live in [`deployments/`](deployments/); the evidence record is sou
 contracts/   ASC, destination Inbox, mocks, deployment and live E2E scripts
 agent/       rule parser, attested-window watcher, proof/settlement/recovery loop
 web/         Next.js dashboard plus the /judge evidence brief
-scripts/     proof smoke test and public live-evidence verifier
-evidence/    immutable cross-chain evidence manifests
-docs/        whitepaper, integration deep-dive, demo script, submission checklist
+scripts/     proof smoke test, evidence verifier, and deterministic video renderer
+evidence/    immutable cross-chain evidence manifests and factual demo fixture
+docs/        whitepaper, integration deep-dive, demo cut, script, submission checklist
 ```
 
 Copy-ready DoraHacks text is in [`docs/submission-copy.md`](docs/submission-copy.md). Only the team identity and final public video URL remain intentionally blank.

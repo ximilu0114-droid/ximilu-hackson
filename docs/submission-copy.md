@@ -64,7 +64,7 @@ AttestFlow uses the live ChainInfo registry, `ProofBuilder`, Merkle and continui
 ## Public links
 
 - Repository: https://github.com/ximilu0114-droid/ximilu-hackson
-- ASC on CC3: https://explorer.cc3-testnet.creditcoin.network/address/0x4E7410Ebf41C213378E1D8aA4423323303086bF6
+- ASC on CC3: https://creditcoin-testnet.blockscout.com/address/0x4E7410Ebf41C213378E1D8aA4423323303086bF6
 - InboxDemo on Sepolia: https://sepolia.etherscan.io/address/0x83A0b8D26Dd28094eE0CA74E57e79028194f868E
 - Whitepaper: `docs/whitepaper.pdf` in the repository
 - Integration guide: `docs/integration.md` in the repository

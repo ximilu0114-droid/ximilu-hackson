@@ -62,6 +62,7 @@ npm run test:web       # Node test（5 个网页规则解析/安全边界用例�
 npm run test:contracts # hardhat test（15 个合约用例）
 npm run ci             # typecheck + 28 tests + web build + production audit
 npm run verify:evidence # 双链重读并验证 62 项 live evidence
+npm run render:demo-video # 从公开 evidence 生成 2:29 / 1080p 视频、字幕与封面
 npm run e2e:settle     # Phase 1 dry E2E（无需 gas）
 # 部署 + live 结算（需 CC3 测试币后执行）：
 npm run deploy:testnet --prefix contracts
@@ -107,14 +108,14 @@ npm run dev --prefix web
 - 运行：`npm run dev --prefix web`（:3100）；生产 `npm run build && npm start --prefix web`。
 - **坑**：动态 GET 路由必须显式 `export const dynamic = 'force-dynamic'`。Next 已升级至 16.3.3，生产依赖审计 0 漏洞。
 
-### Phase 4 — 提交材料（9/1–9/10）🟡 代码与证据齐，视频待录
-- **验收**：① ✅ `npm run ci`（typecheck→8 agent tests→5 web tests→15 contract tests→web build→audit）；② ✅ `evidence/live-e2e-v2.json` + `npm run verify:evidence` 62 项 live 双链验真，含 deployed bytecode 对 local build；③ ✅ `docs/whitepaper.pdf` 与 `docs/integration.md` 已按 v2 证据更新；④ ⏳ Demo 视频按 `docs/demo-script.md` 录制。
+### Phase 4 — 提交材料（9/1–9/10）✅ 本地交付物齐全，公开视频 URL 待人工上传
+- **验收**：① ✅ `npm run ci`（typecheck→8 agent tests→5 web tests→15 contract tests→web build→audit）；② ✅ `evidence/live-e2e-v2.json` + `npm run verify:evidence` 62 项 live 双链验真，含 deployed bytecode 对 local build；③ ✅ `docs/whitepaper.pdf` 与 `docs/integration.md` 已按 v2 证据更新；④ ✅ `docs/attestflow-demo-review.mp4` 为 2:29 / 1080p 带字幕评审版，实际 verifier 输出入镜；⑤ ✅ `npm run render:demo-video` 可从公开 evidence 复现视频、SRT 与封面。最终公开视频上传与匿名访问仍需人工完成。
 - **实测补充**：Sepolia USDC 真实流量以 transferFrom 为主且大量是金库合约内部转账——发现层必须校验 calldata 而非只看 Transfer 事件。
 
 ### Phase 5 — 评审级打磨与提交（9/1–9/11）🟡 进行中
 - **9/11 ET 前完整提交**，不等待 9/13 23:59 ET deadline。提交前对照 `docs/submission-checklist.md` 逐项勾选。
 - 已完成：关键 replay 漏洞修复、v2 重部署与双链 evidence、断点恢复、`/judge`、CI/CodeQL/Dependabot、SECURITY/LICENSE、文档与可重放 verifier。
-- 人工待办：① 录并上传 Demo 视频；② 填 DoraHacks 真实姓名/邮箱/国籍与 eligibility；③ 最终 push 后确认 GitHub Actions green、仓库公开、全部链接可匿名访问；④ 点击提交并复查 portal。
+- 人工待办：① 审定当前合成旁白（或重录人声），上传 Demo 视频并匿名测试 URL；② 填 DoraHacks 真实姓名/邮箱/国籍与 eligibility；③ 全部外链匿名复查；④ 点击提交并复查 portal。
 
 ## 工作纪律
 

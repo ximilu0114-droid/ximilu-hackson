@@ -11,7 +11,7 @@ Official page checked 2026-09-01: **deadline 2026-09-13 23:59 ET** · winners an
 - [x] **Copy-ready portal text:** `docs/submission-copy.md` (replace only team and video placeholders)
 - [ ] **Public GitHub URL:** `https://github.com/ximilu0114-droid/ximilu-hackson`
 - [ ] **Whitepaper/Deck PDF:** `docs/whitepaper.pdf`
-- [ ] **Demo video URL:** record from `docs/demo-script.md`, upload Unlisted/Public, verify signed-out access
+- [ ] **Demo video URL:** approve or re-narrate the checked 2:29 review cut, upload Unlisted/Public, verify signed-out access
 - [ ] **Attestcoin integration summary:** link `docs/integration.md`
 - [ ] **Team identity:** real first/last name, email, country of residence, citizenship, role, short bio; Telegram/X/LinkedIn if requested
 - [ ] **Originality declaration:** confirm the submission is original and disclose reused open-source dependencies
@@ -33,6 +33,7 @@ Official page checked 2026-09-01: **deadline 2026-09-13 23:59 ET** · winners an
 - [x] CI, CodeQL, Dependabot, production build, and dependency audit
 - [x] `/judge` evidence page passes desktop and 390 px mobile QA
 - [x] Machine-checkable live evidence manifest and 62-check verifier
+- [x] 2:29 / 1080p local review cut, captions, poster, and reproducible renderer
 - [x] Push the final hardening commit and confirm GitHub Actions is green
 - [ ] Replace any final video placeholder with the tested video URL
 - [x] Confirm repository visibility is Public while signed out
@@ -76,14 +77,14 @@ Expected:
 
 ## Video acceptance
 
-- [ ] Outcome and three public transaction links appear in the first 15 seconds.
-- [ ] Product dashboard appears before 0:40.
-- [ ] Narration distinguishes inclusion/continuity from receipt success.
-- [ ] Proof-derived transaction index and replay defense are named.
-- [ ] Honest Writability boundary is stated.
-- [ ] `npm run verify:evidence` finishes on camera.
-- [ ] No secrets, personal notifications, or private-wallet information appear.
-- [ ] Captions checked; transaction hashes remain readable at 1080p.
+- [x] Outcome and three public transaction links appear in the first 15 seconds.
+- [x] Product dashboard appears before 0:40.
+- [x] Narration distinguishes inclusion/continuity from receipt success.
+- [x] Proof-derived transaction index and replay defense are named.
+- [x] Honest Writability boundary is stated.
+- [x] Actual `npm run verify:evidence` output finishes on camera with `SUCCESS` / 62 checks.
+- [x] No secrets, personal notifications, or private-wallet information appear.
+- [x] Captions checked; transaction hashes remain readable at 1080p.
 - [ ] Video opens in a private browser window without authentication.
 
 ## Final portal dry run
@@ -100,7 +101,7 @@ Expected:
 The repository cannot safely infer or submit these:
 
 1. real member identity, nationality/citizenship, and eligibility attestations;
-2. final voice/video recording and public video URL;
+2. approval of the checked narration (or a human re-record), public video upload, and signed-out URL test;
 3. the final DoraHacks submission click.
 
 Do not mark the project complete until all three are confirmed.

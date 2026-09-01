@@ -288,7 +288,7 @@ async function mainInner(): Promise<void> {
     releasedCTC: ethers.formatEther(settledEv.args.releasedAmount),
     settlementTx: rcpt.hash,
     gasUsed: rcpt.gasUsed?.toString(),
-    explorer: `https://explorer.cc3-testnet.creditcoin.network/tx/${rcpt.hash}`,
+    explorer: `https://creditcoin-testnet.blockscout.com/tx/${rcpt.hash}`,
     status: 'SUCCESS',
   }, null, 2));
 }

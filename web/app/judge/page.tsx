@@ -19,7 +19,7 @@ const steps = [
     title: 'The ASC proves, checks and settles',
     detail: 'Attestcoin verify + proof-derived index + receipt status + replay guard',
     hash: evidence.settlement.txHash,
-    href: `https://explorer.cc3-testnet.creditcoin.network/tx/${evidence.settlement.txHash}`,
+    href: `https://creditcoin-testnet.blockscout.com/tx/${evidence.settlement.txHash}`,
     tone: 'border-emerald-500/40 bg-emerald-500/5',
   },
   {
@@ -81,7 +81,7 @@ export default function JudgeEvidence() {
         </p>
       </section>
 
-      <section className="grid gap-4 lg:grid-cols-3">
+      <section id="evidence" className="grid scroll-mt-6 gap-4 lg:grid-cols-3">
         {steps.map((step) => (
           <article key={step.number} className={`rounded-2xl border p-5 ${step.tone}`}>
             <div className="mb-8 flex items-start justify-between">
@@ -104,7 +104,7 @@ export default function JudgeEvidence() {
         ))}
       </section>
 
-      <section className="mt-14 grid gap-8 lg:grid-cols-[1.25fr_0.75fr]">
+      <section id="security" className="mt-14 grid scroll-mt-6 gap-8 lg:grid-cols-[1.25fr_0.75fr]">
         <div className="rounded-2xl border border-zinc-800 bg-zinc-900/40 p-6">
           <div className="mb-6 flex items-center justify-between gap-4">
             <div>
@@ -165,7 +165,7 @@ export default function JudgeEvidence() {
         </aside>
       </section>
 
-      <section className="mt-14 rounded-2xl border border-zinc-800 bg-black p-6">
+      <section id="reproduce" className="mt-14 scroll-mt-6 rounded-2xl border border-zinc-800 bg-black p-6">
         <p className="text-xs font-semibold uppercase tracking-[0.16em] text-zinc-500">
           Reproduce the verdict
         </p>

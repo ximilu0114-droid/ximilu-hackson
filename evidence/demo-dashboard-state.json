@@ -1,0 +1,51 @@
+{
+  "lastHeight": 11608703,
+  "settledTx": {
+    "0x6ac68ba923494389999206236504123521d8ecdb9463f60aa52da47d59d555e7": "0xec29d5b4046d5557c014d6720e6d3799ba0f0b41e31a71147240a09b89c2e4c2"
+  },
+  "rules": [
+    {
+      "id": "live-v2",
+      "text": "When I receive at least 0.01 ETH on Sepolia, release 10%",
+      "engine": "builtin",
+      "active": true,
+      "policyId": 0,
+      "spec": {
+        "minAmount": "10000000000000000",
+        "token": null,
+        "payoutRatioE18": "100000000000000000",
+        "memo": "Recorded live v2 policy"
+      },
+      "createdAt": "2026-08-31T22:49:12.000Z"
+    }
+  ],
+  "deliveries": {
+    "0x4845f5ca486987ddb30d486e58f36ed0cebbf5e514d20783d220b06f0d523faa": "0xc692a176f78b1541104e9e0a18f9a8404c585b15e9be2c695df3d118796947fb"
+  },
+  "events": [
+    {
+      "ts": "2026-08-31T22:49:12.000Z",
+      "stage": "match",
+      "tx": "0x6ac68ba923494389999206236504123521d8ecdb9463f60aa52da47d59d555e7",
+      "detail": "0.01 native ETH to the policy payee"
+    },
+    {
+      "ts": "2026-09-01T00:03:15.000Z",
+      "stage": "proved",
+      "tx": "0x6ac68ba923494389999206236504123521d8ecdb9463f60aa52da47d59d555e7",
+      "detail": "Attestcoin proof accepted by the CC3 ASC"
+    },
+    {
+      "ts": "2026-09-01T00:03:15.000Z",
+      "stage": "settled",
+      "tx": "0x6ac68ba923494389999206236504123521d8ecdb9463f60aa52da47d59d555e7",
+      "detail": "0.001 CTC released"
+    },
+    {
+      "ts": "2026-09-01T00:24:00.000Z",
+      "stage": "delivered",
+      "tx": "0x6ac68ba923494389999206236504123521d8ecdb9463f60aa52da47d59d555e7",
+      "detail": "Exact payload executed by InboxDemo on Sepolia"
+    }
+  ]
+}

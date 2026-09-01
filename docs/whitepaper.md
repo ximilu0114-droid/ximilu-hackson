@@ -22,7 +22,7 @@ The agent watches only attested source blocks, builds a real Attestcoin proof, a
 | Public-testnet leg | Transaction |
 |---|---|
 | Sepolia client payment · 0.01 ETH | [`0x6ac68b…55e7`](https://sepolia.etherscan.io/tx/0x6ac68ba923494389999206236504123521d8ecdb9463f60aa52da47d59d555e7) |
-| CC3 proof-gated settlement · 0.001 CTC released | [`0xec29d5…e4c2`](https://explorer.cc3-testnet.creditcoin.network/tx/0xec29d5b4046d5557c014d6720e6d3799ba0f0b41e31a71147240a09b89c2e4c2) |
+| CC3 proof-gated settlement · 0.001 CTC released | [`0xec29d5…e4c2`](https://creditcoin-testnet.blockscout.com/tx/0xec29d5b4046d5557c014d6720e6d3799ba0f0b41e31a71147240a09b89c2e4c2) |
 | Sepolia execution of the same payload | [`0xc692a1…47fb`](https://sepolia.etherscan.io/tx/0xc692a176f78b1541104e9e0a18f9a8404c585b15e9be2c695df3d118796947fb) |
 
 <div class="metric-grid">

@@ -2,6 +2,18 @@
 
 Goal: make a judge understand the user value in 15 seconds, see a real product by 35 seconds, and independently trust the cross-chain claim by 1:50.
 
+## Reproducible review cut
+
+The repository contains a checked 2:29, 1920×1080 fallback/review cut at `docs/attestflow-demo-review.mp4`, with captions in `docs/attestflow-demo-review.srt` and a poster at `docs/attestflow-demo-poster.png`.
+
+Rebuild all three artifacts from public evidence with:
+
+```bash
+npm run render:demo-video
+```
+
+The renderer requires macOS `say`, Google Chrome, and `ffmpeg`/`ffprobe`. It builds the production dashboard, loads `evidence/demo-dashboard-state.json`, captures the current public transaction pages, runs `npm run verify:evidence`, and puts that actual output into the terminal scene. It uses the local Samantha voice so the fallback is deterministic and contains no external voice service. Prefer a clear human narration for the final upload if it can be recorded without reducing factual precision; otherwise the checked fallback cut is submission-ready. In either case, upload Unlisted/Public and verify the final URL while signed out.
+
 Record at 1920×1080 or 1440×900. Use a 16–18 pt terminal font and hide bookmarks, notifications, wallet balances, `.env`, and all secrets. Pre-open:
 
 1. `http://localhost:3100`
@@ -109,12 +121,12 @@ For a brand-new settlement, send a qualifying payment to the demo wallet at leas
 
 ## Recording-day acceptance
 
-- [ ] `npm ci`, `npm run ci`, and `npm run verify:evidence` pass.
-- [ ] Dashboard renders at desktop width; `/judge` shows 62 live checks.
-- [ ] All three explorer pages load and show successful transactions.
-- [ ] Demo video contains no private key, seed, `.env`, personal wallet, or notification.
-- [ ] Writability limitation is spoken once, clearly and without euphemism.
-- [ ] Narration says “proof of inclusion and continuity,” then separately says the ASC checks receipt success.
-- [ ] Final export is 1080p, readable at 1× speed, and under the portal limit.
+- [x] `npm ci`, `npm run ci`, and `npm run verify:evidence` pass for the review cut.
+- [x] Dashboard renders at desktop width; `/judge` shows 62 live checks.
+- [x] Current explorer evidence is captured and the transactions are successful.
+- [x] Review cut contains no private key, seed, `.env`, personal wallet, or notification.
+- [x] Writability limitation is spoken once, clearly and without euphemism.
+- [x] Narration says “proof of inclusion and continuity,” then separately says the ASC checks receipt success.
+- [x] Review cut is 1080p, readable at 1× speed, and 2:29 long.
 - [ ] Upload is Unlisted or Public, opens while signed out, and has captions.
 - [ ] Replace the README video placeholder/link only after the final URL works.

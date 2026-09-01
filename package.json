@@ -18,7 +18,8 @@
     "test": "npm run test:agent && npm run test:web && npm run test:contracts",
     "verify:evidence": "npm --prefix contracts run compile && tsx scripts/verify-live-evidence.ts",
     "typecheck": "tsc --noEmit",
-    "demo:reset": "bash scripts/demo-reset.sh"
+    "demo:reset": "bash scripts/demo-reset.sh",
+    "render:demo-video": "node scripts/render-demo-video.mjs"
   },
   "devDependencies": {
     "@nomicfoundation/hardhat-ethers": "^3.1.0",
